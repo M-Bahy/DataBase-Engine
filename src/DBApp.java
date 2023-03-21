@@ -1,15 +1,60 @@
 import java.io.*;
+import java.util.Date;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.Vector;
 
+
 public class DBApp {
+	
 	private boolean firstTable = false;
 	private int n;
 
 	public static void main(String[] args) throws Exception {
+		
+		/*Page one = new Page();
+		Page two = new Page();
+		one.nextPage=two;
+		System.out.println(one.nextPage);
+		try {
+			FileOutputStream fileOut = new FileOutputStream("test.bin");
 
+			ObjectOutputStream out = new ObjectOutputStream(fileOut);
+			out.writeObject(one);
+			out.close();
+			fileOut.close();
+		} catch (Exception i) {
+			throw new DBAppException("moshkela fe table names");
+		}
+		
+		Page result ;
+		try {
+
+			ObjectInputStream in = new ObjectInputStream(new FileInputStream("test.bin"));
+			result = (Page) in.readObject();
+			in.close();
+
+		} catch (Exception i) {
+			throw new DBAppException();
+		}
+		
+		System.out.println(result.nextPage);*/
+		
+		
+		
+		/*
+		Vector <String> i = new Vector<String>();
+		i.add("zero");
+		i.add("one");
+		i.add("two");
+		
+		System.out.println(i);
+		i.remove(1);
+		System.out.println(i.get(1));
+		System.out.println(i);*/
+		
+/*
 		DBApp db = new DBApp();
 		if(false) {
 		db.init();
@@ -74,7 +119,7 @@ public class DBApp {
 		  } catch(Exception i) { throw new DBAppException(); }
 		  System.out.println(out.toString()); System.out.println(tableNames);
 		 
-
+*/
 	}
 
 	public int getN() {
@@ -192,12 +237,15 @@ public class DBApp {
 			
 			// Serialize table again
 			try {
+				Vector<String> p = new Vector<String>();
+				
 				FileOutputStream fileOut = new FileOutputStream(strTableName + ".bin");
-
 				ObjectOutputStream out = new ObjectOutputStream(fileOut);
-				out.writeObject(table);
+				out.writeObject(p);
 				out.close();
 				fileOut.close();
+				
+				
 			} catch (Exception i) {
 				throw new DBAppException("moshkela fe table object");
 			}
@@ -244,7 +292,117 @@ public class DBApp {
 	public void createIndex(String strTableName, String[] strarrColName) throws DBAppException {
 	}
 
-	public void insertIntoTable(String strTableName, Hashtable<String, Object> htblColNameValue) throws DBAppException {
+	public void insertIntoTable(String strTableName, Hashtable<String, Object> htblColNameValue) throws DBAppException {   // CHECK , MIN & max   & must include a value for the primary key
+		// check if table exit
+		Vector<String> tableNames = new Vector<String>();
+		boolean [] condition = new boolean [htblColNameValue.keySet().size()];
+		int count = 0;
+
+		try {
+
+			ObjectInputStream in = new ObjectInputStream(new FileInputStream("tableNames.bin"));
+			tableNames = (Vector<String>) in.readObject();
+			in.close();
+
+		} catch (Exception i) {
+			throw new DBAppException();
+		}
+		if(!tableNames.contains(strTableName)) {
+			throw new DBAppException("Table doesn't exit");
+		}
+		try {
+			BufferedReader br = new BufferedReader(new FileReader("metadata.csv"));
+			String line;
+            while ((line = br.readLine()) != null) {
+                String[] values = line.split(",");
+                if(values[0].equals(strTableName)) {
+                	// we got the table
+                if (htblColNameValue.containsKey(values[1]))	{
+                	condition[count] = true;
+                	count ++;
+                	// we checked the coloumn exists
+                	int variable = 1;
+                	switch (values[2]) {
+                	case "java.lang.Integer" :
+                	
+                		if(  (htblColNameValue.get(values[1]) ) instanceof  Integer ) {
+                			variable = 0;
+                		}
+                		
+                		break;
+                		    
+                	
+                	
+                	case "java.lang.String" :   
+                		if(  (htblColNameValue.get(values[1]) ) instanceof  String ) {
+                			variable = 0;
+                		}
+                		
+                		break;
+                	case "java.lang.Double" : 
+                		
+                		if(  (htblColNameValue.get(values[1]) ) instanceof  Double ) {
+                			variable = 0;
+                		}
+                		
+                		break;
+                	case "java.util.Date" :   
+                		
+                		if(  (htblColNameValue.get(values[1]) ) instanceof  Date ) {
+                			variable = 0;
+                		}
+                		
+                		break;
+                	
+                	}
+                	
+                	if(variable==1) {
+                		throw new DBAppException("Data entered doenst match data type in the table");
+                	}
+                	// we made sure data type matches   and all is good 
+                    
+                	Vector<Page> result;
+                	
+                	try {
+
+            			ObjectInputStream in = new ObjectInputStream(new FileInputStream(strTableName+".bin"));
+            			result = (Vector<Page>) in.readObject();
+            			in.close();
+
+            		} catch (Exception i) {
+            			throw new DBAppException();
+            		}
+                	
+                	if(result.isEmpty()) {
+                		Page one = new Page();
+                		one.data.add(htblColNameValue);
+                		one.id=result.size()+1;
+                		one.size = 1;
+                		
+                		
+                	}
+                	
+                	
+                	
+                }
+                  }    
+                
+            }
+            
+            br.close();
+            
+            if(!condition[condition.length-1]) {
+            	throw new DBAppException("An extra invalid column was entered");
+            }
+            
+            
+            
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		
 	}
 
 	public void updateTable(String strTableName, String strClusteringKeyValue,
@@ -268,6 +426,52 @@ public class DBApp {
 	 * 
 	 * 
 	 * { "name" , DFFDZFDF } AND { "age" ,12 }
+	 * 
+	 * 
+	 * 
+	 * {"id",5}
+	 * 
+	 * values[1]
+	 * [false,false]
+	 * 
+	 * id {4544,65456,64565}
+	 * name {fdf,dffdf,dffd}
+	 * 5 , mohamed
+	 * id , name
+	 * 
+	 *  //   insert in order
+	 * 
+	 * 
+	 * 
+	 * ibrahim.bin
+	 * {
+	 * 
+	 * {  5   ,  mohamed                           }     hash tables   row 1
+	 * 
+	 * {  7  ,  mohamed                               }     hash tables   row 2
+	 *  
+	 *  
+	 *  
+	 *  }
+	 *  
+	 *  
+	 *  
+	 *  
+	 *   ibrahim.bin
+	 * {
+	 * 
+	 * {  5,  mohamed                           }     hash tables   row 1
+	 * 
+	 *  {  7 ,  mohamed                               }     hash tables   row 2
+	 *  
+	 *  
+	 *  
+	 *  }
+	 * 
+	 * 
+	 * 
+	 * 
+	 * 
 	 */
 
 }

@@ -1,32 +1,138 @@
 import java.io.Serializable;
+import java.time.LocalDate;
+import java.util.Date;
 import java.util.Vector;
 
+
+
+
 public class Table implements Serializable{
-	 String name;
-	 String clusteringKey;
-	 Vector<String> colName;
-	 Vector<String>colType;
-	 Vector<String> min;
-	 Vector<String> max;
+	private Vector<String> ids ;
+	private Vector<Pair> range ;
+	private String name; 
 	 
-	 
-	 public Table(String name, String clusteringKey) {
+	 public Table(String name) {
+		 	this.name = name;
+			ids = new Vector<String>();
+			range = new Vector<Pair>();
 			
-			this.name = name;
-			this.clusteringKey = clusteringKey;
-			this.colName = new Vector<String>();
-			this.colType =new Vector<String>();
-			this.min = new Vector<String>();
-			this.max = new Vector<String>();
+			
 		}
+
+	public Vector<String> getIds() {
+		return ids;
+	}
+
+	public void setIds(Vector<String> ids) {
+		this.ids = ids;
+	}
+
+	public Vector<Pair> getRange() {
+		return range;
+	}
+
+	public void setRange(Vector<Pair> range) {
+		this.range = range;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+	
+	
+	
+	
+	
+	
+	
+	public int search (Object o, String dataType) {
+		
+		
+		switch (dataType) {
+    	case "java.lang.Integer" :
+    	 int data = (int) o;
+    	 for (int i = 0;i<this.getRange().size();i++) {
+    		 Pair p = this.getRange().get(i);
+    		 int min = (int) p.getMin();
+    		 int max = (int) p.getMax();
+    		 if (data<= max && data >= min) {
+    			return i;
+    		
+    			 
+    		 }
+    		 
+    	 }
+    		
+    		
+    		break;
+    		    
+    	
+    	
+    	case "java.lang.String" :   
+    		String dataa = (String) o;
+        	 for (int i = 0;i<this.getRange().size();i++) {
+        		 Pair p = this.getRange().get(i);
+        		 String min = (String) p.getMin();
+        		 String max = (String) p.getMax();
+        		 if (max.compareTo(dataa) != -1 && min.compareTo(dataa) != 1 ) {
+        			return i;
+        		
+        			 
+        		 }
+        		 
+        	 }
+    		
+    		break;
+    	case "java.lang.Double" : 
+    		double dataaa = (double) o;
+        	 for (int i = 0;i<this.getRange().size();i++) {
+        		 Pair p = this.getRange().get(i);
+        		 double min = (double) p.getMin();
+        		 double max = (double) p.getMax();
+        		 if (dataaa<= max && dataaa >= min) {
+        			return i;
+        		
+        			 
+        		 }
+        		 
+        	 }
+    		
+    		
+    		break;
+    	case "java.util.Date" :   
+    		LocalDate theInput = LocalDate.parse(( (String) o   )) ;
+       	 for (int i = 0;i<this.getRange().size();i++) {
+       		 Pair p = this.getRange().get(i);
+       		String x = (String) p.getMin();  // min
+			String y = (String) p.getMax(); //max
+			//Object i = htblColNameValue.get(values[1]);
+			LocalDate dMIN = LocalDate.parse(x) ;
+			LocalDate dMAX = LocalDate.parse(y) ;
+			int notPos = dMIN.compareTo(theInput)  ;  // not +ve
+			int notNeg =  dMAX.compareTo(theInput)  ;  // not -ve
+			if(notPos<0 && notNeg>-1)
+				return i;
+       		 
+       		 
+       	 }
+    		
+    		
+    		
+    		break;
+    	
+    	}
+		return -1;
+		
+		
+	}
 	 
 	 
 	 
 	 
 
-	 @Override
-	public String toString() {
-		return "Table [name=" + name + ", clusteringKey=" + clusteringKey + ", colName=" + colName + ", colType="
-				+ colType + ", min=" + min + ", max=" + max + "]";
-	}
+	
 }

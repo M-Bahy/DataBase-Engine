@@ -1,9 +1,12 @@
 import java.io.*;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Hashtable;
 import java.util.Iterator;
+import java.util.Locale;
 import java.util.Set;
 import java.util.Vector;
+import java.time.LocalDate;
 
 
 public class DBApp {
@@ -12,6 +15,28 @@ public class DBApp {
 	private int n;
 
 	public static void main(String[] args) throws Exception {
+	
+		/*SimpleDateFormat formatter = new SimpleDateFormat("dd-MMM-yyyy", Locale.ENGLISH);
+		String dateInString = "7-Jun-2013";
+		Date date = formatter.parse(dateInString);
+		System.out.println(date);*/
+		
+		// law rg3t -1 then ely bara is the earlier one
+		// law rag3t 1 then ely bara is later 
+		
+		String x = "2002-04-29";  // min
+		String y = "2023-04-29"; //max
+		Object i = "2002-05-29";
+		LocalDate dMIN = LocalDate.parse(x) ;
+		LocalDate dMAX = LocalDate.parse(y) ;
+		LocalDate theInput = LocalDate.parse(( (String) i   )) ;
+		
+		System.out.println(  dMIN.compareTo(theInput)  );  // not +ve
+		System.out.println(  dMAX.compareTo(theInput)  );  // not -ve
+		
+		
+	//	int g = i  < ((  (Long)    x         ));
+	//	System.out.println(g);
 		
 		/*Page one = new Page();
 		Page two = new Page();
@@ -151,6 +176,17 @@ public class DBApp {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		
+		
+		// write n in csv
+		try {
+			FileWriter csvWriter = new FileWriter("metadata.csv", true);
+			csvWriter.write(this.getN());
+			csvWriter.flush();
+			csvWriter.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 
 	}
 
@@ -178,7 +214,7 @@ public class DBApp {
 		isNew=true;
 		
 
-		Table table = new Table(strTableName, strClusteringKeyColumn);
+		//Table table = new Table(strTableName, strClusteringKeyColumn);
 
 		
 		
@@ -237,8 +273,11 @@ public class DBApp {
 			
 			// Serialize table again
 			try {
-				Vector<String> p = new Vector<String>();
-				
+				//Vector<String> p = new Vector<String>();
+				//  {1,2,3,4,8}  { () , () }
+				Vector<Table> p = new Vector<Table>();
+				Table t = new Table (strTableName);
+				p.add(t);
 				FileOutputStream fileOut = new FileOutputStream(strTableName + ".bin");
 				ObjectOutputStream out = new ObjectOutputStream(fileOut);
 				out.writeObject(p);
@@ -292,7 +331,7 @@ public class DBApp {
 	public void createIndex(String strTableName, String[] strarrColName) throws DBAppException {
 	}
 
-	public void insertIntoTable(String strTableName, Hashtable<String, Object> htblColNameValue) throws DBAppException {   // CHECK , MIN & max   & must include a value for the primary key
+	public void insertIntoTable(String strTableName, Hashtable<String, Object> htblColNameValue) throws DBAppException {     
 		// check if table exit
 		Vector<String> tableNames = new Vector<String>();
 		boolean [] condition = new boolean [htblColNameValue.keySet().size()];
@@ -313,6 +352,9 @@ public class DBApp {
 		try {
 			BufferedReader br = new BufferedReader(new FileReader("metadata.csv"));
 			String line;
+			String pk = "";
+			String dataType = "";
+			boolean isClustering = false;
             while ((line = br.readLine()) != null) {
                 String[] values = line.split(",");
                 if(values[0].equals(strTableName)) {
@@ -320,6 +362,10 @@ public class DBApp {
                 if (htblColNameValue.containsKey(values[1]))	{
                 	condition[count] = true;
                 	count ++;
+                	
+                	
+                	
+                	
                 	// we checked the coloumn exists
                 	int variable = 1;
                 	switch (values[2]) {
@@ -327,6 +373,10 @@ public class DBApp {
                 	
                 		if(  (htblColNameValue.get(values[1]) ) instanceof  Integer ) {
                 			variable = 0;
+                			// 6 min      7  max
+                        	if(    (Integer.parseInt(values[6]))   >   ((int)  (htblColNameValue.get(values[1])))           
+                        			||   (Integer.parseInt(values[7]))   <   ((int)  (htblColNameValue.get(values[1])))    )
+                        		throw new DBAppException("Data is not within the domain of the coloumn !");
                 		}
                 		
                 		break;
@@ -336,6 +386,11 @@ public class DBApp {
                 	case "java.lang.String" :   
                 		if(  (htblColNameValue.get(values[1]) ) instanceof  String ) {
                 			variable = 0;
+                			
+                			if(    (  values[6].compareTo( ( (String)     htblColNameValue.get(values[1])       ) )     == 1         
+                        			||   values[7].compareTo(((String)htblColNameValue.get(values[1])))   == -1     )  )
+                        		throw new DBAppException("Data is not within the domain of the coloumn !");
+                			
                 		}
                 		
                 		break;
@@ -343,6 +398,12 @@ public class DBApp {
                 		
                 		if(  (htblColNameValue.get(values[1]) ) instanceof  Double ) {
                 			variable = 0;
+                			
+                			
+                			if(    (Double.parseDouble(values[6]))   >   ((Double)  (htblColNameValue.get(values[1])))           
+                        			||   (Double.parseDouble(values[7]))   <   ((Double)  (htblColNameValue.get(values[1])))    )
+                        		throw new DBAppException("Data is not within the domain of the coloumn !");
+                			
                 		}
                 		
                 		break;
@@ -350,7 +411,23 @@ public class DBApp {
                 		
                 		if(  (htblColNameValue.get(values[1]) ) instanceof  Date ) {
                 			variable = 0;
+                 			// law rg3t -1 then ely bara is the earlier one
+                			// law rag3t 1 then ely bara is later 
+                			
+                			String x = values[6];  // min
+                			String y = values[7]; //max
+                			Object i = htblColNameValue.get(values[1]);
+                			LocalDate dMIN = LocalDate.parse(x) ;
+                			LocalDate dMAX = LocalDate.parse(y) ;
+                			LocalDate theInput = LocalDate.parse(( (String) i   )) ;
+                			
+                			int notPos = dMIN.compareTo(theInput)  ;  // not +ve
+                			int notNeg =  dMAX.compareTo(theInput)  ;  // not -ve
+                			if(notPos>0 || notNeg<0)
+                				throw new DBAppException("Data is not within the domain of the coloumn !");
+                			
                 		}
+                		
                 		
                 		break;
                 	
@@ -360,27 +437,16 @@ public class DBApp {
                 		throw new DBAppException("Data entered doenst match data type in the table");
                 	}
                 	// we made sure data type matches   and all is good 
-                    
-                	Vector<Page> result;
                 	
-                	try {
-
-            			ObjectInputStream in = new ObjectInputStream(new FileInputStream(strTableName+".bin"));
-            			result = (Vector<Page>) in.readObject();
-            			in.close();
-
-            		} catch (Exception i) {
-            			throw new DBAppException();
-            		}
-                	
-                	if(result.isEmpty()) {
-                		Page one = new Page();
-                		one.data.add(htblColNameValue);
-                		one.id=result.size()+1;
-                		one.size = 1;
-                		
-                		
+                	if(values[3]=="True"&& htblColNameValue.get(values[1]) != null ) {
+                		isClustering = true;
+                	    pk = values[1];
+                	    dataType = values[2];
                 	}
+                
+                	
+                	
+                   
                 	
                 	
                 	
@@ -388,12 +454,90 @@ public class DBApp {
                   }    
                 
             }
+            if (!isClustering)
+            	throw new DBAppException("No value for the Primary key was found !");
             
             br.close();
             
             if(!condition[condition.length-1]) {
             	throw new DBAppException("An extra invalid column was entered");
             }
+            
+            
+            
+        	Vector<Table> p = (Vector<Table>) deserialize(strTableName+".bin");
+        	Table t = p.get(0);
+        	if(t.getIds().isEmpty()) {
+        		Page p1 = new Page();
+        		p1.getData().add(htblColNameValue);
+        		p1.setSize(p1.getSize()+1);
+        		Vector<Page> v = new Vector<Page>();
+        		v.add(p1);
+        		// serialize p1
+        		serialize(v, (strTableName+"Page"+1));
+        		t.getIds().add("1");
+        		t.getRange().add(new Pair (htblColNameValue.get(pk),htblColNameValue.get(pk)));
+        	    
+        		
+        	}
+        	else {
+        		int index = t.search(htblColNameValue.get(pk), dataType);
+        		if( index != -1) {  // We found the page (using the range) and we inserted 
+        			                // , we increased the size of the page too 
+        			String pageID = t.getIds().get(index);
+        			Vector <Page> v = (Vector <Page>) deserialize(strTableName+"Page"+pageID);
+        			Page pp = v.get(0);
+        			if(pp.getSize()<this.getN()) {
+        				
+        				if(dataType == "java.lang.Integer") {
+            				pp.insertHashTableINT(htblColNameValue, pk);
+            			 t.getRange().get(index).setMax(pp.getData().get(pp.getData().size()-1));
+            			 t.getRange().get(index).setMin(pp.getData().get(0));
+            			}
+            			else {
+            				if(dataType == "java.lang.String") {
+                				pp.insertHashTableString(htblColNameValue, pk);
+                				 t.getRange().get(index).setMax(pp.getData().get(pp.getData().size()-1));
+                    			 t.getRange().get(index).setMin(pp.getData().get(0));
+                			}
+            				else {
+            					if(dataType == "java.lang.Double") {
+                    				pp.insertHashTableDOUBLE(htblColNameValue, pk);
+                    				 t.getRange().get(index).setMax(pp.getData().get(pp.getData().size()-1));
+                        			 t.getRange().get(index).setMin(pp.getData().get(0));
+                    			}
+            					else {
+            						if(dataType == "java.util.Date") {
+                        				pp.insertHashTableDate(htblColNameValue, pk);
+                        				 t.getRange().get(index).setMax(pp.getData().get(pp.getData().size()-1));
+                            			 t.getRange().get(index).setMin(pp.getData().get(0));
+                        			}
+            						
+            					}
+            					
+            				}
+            				
+            				
+            			}
+            			pp.setSize(pp.getSize()+1);
+        				
+        			}
+        			else {
+        				// I here must shift the last row in the curr page to the next page
+        				
+        			}
+        			
+        		}
+        		else {
+        			// WE didnt find the page using the range :( 
+        			// what to do ? 
+        			// check the min of the 2nd page , if > my value then insert my value in the 1st page
+        			// keep checking the min of the next pages similary to find a place to insert it . 
+        			
+        		}
+        		
+     
+        	}
             
             
             
@@ -407,6 +551,38 @@ public class DBApp {
 
 	public void updateTable(String strTableName, String strClusteringKeyValue,
 			Hashtable<String, Object> htblColNameValue) throws DBAppException {
+	}
+	public static Object deserialize (String name) {
+		Object r =null;
+		try {
+
+			ObjectInputStream in = new ObjectInputStream(new FileInputStream(name+".bin"));
+			 r =  in.readObject();
+			in.close();
+
+		} catch (Exception i) {
+			i.printStackTrace();
+		}
+		return r;
+		
+	}
+	public static void serialize (Vector<Page> p,String name) {
+		try {
+			//Vector<String> p = new Vector<String>();
+			//  {1,2,3,4,8}  { () , () }
+			
+			FileOutputStream fileOut = new FileOutputStream(name + ".bin");
+			ObjectOutputStream out = new ObjectOutputStream(fileOut);
+			out.writeObject(p);
+			out.close();
+			fileOut.close();
+			
+			
+		} catch (Exception i) {
+			i.printStackTrace();
+		}
+		
+		
 	}
 
 	public void deleteFromTable(String strTableName, Hashtable<String, Object> htblColNameValue) throws DBAppException {

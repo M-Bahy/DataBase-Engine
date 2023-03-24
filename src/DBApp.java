@@ -487,45 +487,45 @@ public class DBApp {
         			String pageID = t.getIds().get(index);
         			Vector <Page> v = (Vector <Page>) deserialize(strTableName+"Page"+pageID);
         			Page pp = v.get(0);
-        			if(pp.getSize()<this.getN()) {
+        			
         				
-        				if(dataType == "java.lang.Integer") {
-            				pp.insertHashTableINT(htblColNameValue, pk);
-            			 t.getRange().get(index).setMax(pp.getData().get(pp.getData().size()-1));
-            			 t.getRange().get(index).setMin(pp.getData().get(0));
+        			if(dataType == "java.lang.Integer") {
+    	    			pp.insertHashTableINT(htblColNameValue, pk);
+                    	t.getRange().get(index).setMax(pp.getData().get(pp.getData().size()-1));
+        			    t.getRange().get(index).setMin(pp.getData().get(0));
             			}
+            		else {
+            			if(dataType == "java.lang.String") {
+                			pp.insertHashTableString(htblColNameValue, pk);
+                			t.getRange().get(index).setMax(pp.getData().get(pp.getData().size()-1));
+                			t.getRange().get(index).setMin(pp.getData().get(0));
+                		}
             			else {
-            				if(dataType == "java.lang.String") {
-                				pp.insertHashTableString(htblColNameValue, pk);
-                				 t.getRange().get(index).setMax(pp.getData().get(pp.getData().size()-1));
-                    			 t.getRange().get(index).setMin(pp.getData().get(0));
-                			}
+            				if(dataType == "java.lang.Double") {
+                    			pp.insertHashTableDOUBLE(htblColNameValue, pk);
+                    		    t.getRange().get(index).setMax(pp.getData().get(pp.getData().size()-1));
+                        		t.getRange().get(index).setMin(pp.getData().get(0));
+                    		}
             				else {
-            					if(dataType == "java.lang.Double") {
-                    				pp.insertHashTableDOUBLE(htblColNameValue, pk);
-                    				 t.getRange().get(index).setMax(pp.getData().get(pp.getData().size()-1));
-                        			 t.getRange().get(index).setMin(pp.getData().get(0));
-                    			}
-            					else {
-            						if(dataType == "java.util.Date") {
-                        				pp.insertHashTableDate(htblColNameValue, pk);
-                        				 t.getRange().get(index).setMax(pp.getData().get(pp.getData().size()-1));
-                            			 t.getRange().get(index).setMin(pp.getData().get(0));
-                        			}
+            					if(dataType == "java.util.Date") {
+                        			pp.insertHashTableDate(htblColNameValue, pk);
+                        			t.getRange().get(index).setMax(pp.getData().get(pp.getData().size()-1));
+                            		t.getRange().get(index).setMin(pp.getData().get(0));
+                        		}
             						
-            					}
-            					
             				}
-            				
-            				
+            					
             			}
+            				
+            				
+            		}
             			pp.setSize(pp.getSize()+1);
-        				
-        			}
-        			else {
+
         				// I here must shift the last row in the curr page to the next page
-        				
-        			}
+						if(pp.getSize() > this.getN()) {
+							Page newPage = new Page();
+						}
+        			
         			
         		}
         		else {

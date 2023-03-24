@@ -24,25 +24,32 @@ public class DBApp {
 		// law rg3t -1 then ely bara is the earlier one
 		// law rag3t 1 then ely bara is later 
 		DBApp dbApp = new DBApp();
-		dbApp.init();
+		// dbApp.init();
 
-		Hashtable htblColNameType = new Hashtable( );
-		htblColNameType.put("id", "java.lang.Integer");
-		htblColNameType.put("name", "java.lang.String");
-		htblColNameType.put("gpa", "java.lang.Double");
+		// Hashtable htblColNameType = new Hashtable( );
+		// htblColNameType.put("id", "java.lang.Integer");
+		// htblColNameType.put("name", "java.lang.String");
+		// htblColNameType.put("gpa", "java.lang.Double");
 
-		Hashtable htblColNameMin = new Hashtable<>();
-		htblColNameMin.put("id", "1");
-		htblColNameMin.put("name", "A");
-		htblColNameMin.put("gpa", "0");
+		// Hashtable htblColNameMin = new Hashtable<>();
+		// htblColNameMin.put("id", "1");
+		// htblColNameMin.put("name", "A");
+		// htblColNameMin.put("gpa", "0");
 		
 
-		Hashtable htblColNameMax = new Hashtable<>();
-		htblColNameMax.put("id", "20");
-		htblColNameMax.put("name", "ZZZZZZZZZZZ");
-		htblColNameMax.put("gpa", "4");
+		// Hashtable htblColNameMax = new Hashtable<>();
+		// htblColNameMax.put("id", "20");
+		// htblColNameMax.put("name", "ZZZZZZZZZZZ");
+		// htblColNameMax.put("gpa", "4");
 
-		dbApp.createTable("Student", "id", htblColNameType, htblColNameMin, htblColNameMax);
+		// dbApp.createTable("Student", "id", htblColNameType, htblColNameMin, htblColNameMax);
+
+		Hashtable htblColNameValue = new Hashtable<>();
+		htblColNameValue.put("id", new Integer( 3 ));
+		htblColNameValue.put("name", new String("nour" ) );
+		htblColNameValue.put("gpa", new Double( 0.95 ) ); 
+
+		dbApp.insertIntoTable("Student", htblColNameValue);
 		
 		// String x = "2002-04-29";  // min
 		// String y = "2023-04-29"; //max
@@ -458,8 +465,8 @@ public class DBApp {
                 		throw new DBAppException("Data entered doenst match data type in the table");
                 	}
                 	// we made sure data type matches   and all is good 
-                	
-                	if(values[3]=="True"&& htblColNameValue.get(values[1]) != null ) {
+					//change2
+                	if(values[3].compareTo("True") == 0 && htblColNameValue.get(values[1]) != null ) { // instead of == "True", use compareto(String)
                 		isClustering = true;
                 	    pk = values[1];
                 	    dataType = values[2];
@@ -484,10 +491,10 @@ public class DBApp {
             	throw new DBAppException("An extra invalid column was entered");
             }
             
-            
-            
-        	Vector<Table> p = (Vector<Table>) deserialize(strTableName+".bin");
+			// change1
+        	Vector<Table> p = (Vector<Table>) deserialize(strTableName); // without + ".bin
         	Table t = p.get(0);
+			p.remove(t);
         	if(t.getIds().isEmpty()) {
         		Page p1 = new Page();
         		p1.getData().add(htblColNameValue);
@@ -497,7 +504,26 @@ public class DBApp {
         		// serialize p1
         		serialize(v, (strTableName+"Page"+1));
         		t.getIds().add("1");
+				System.out.println(t.getIds().get(0));
         		t.getRange().add(new Pair (htblColNameValue.get(pk),htblColNameValue.get(pk)));
+				
+				try {
+					//Vector<String> p = new Vector<String>();
+					//  {1,2,3,4,8}  { () , () }
+					p = new Vector<Table>();
+					//Table t = new Table (strTableName);
+					p.add(t);
+					FileOutputStream fileOut = new FileOutputStream(strTableName + ".bin");
+					ObjectOutputStream out = new ObjectOutputStream(fileOut);
+					out.writeObject(p);
+					out.close();
+					fileOut.close();
+					
+					
+				} catch (Exception i) {
+					i.printStackTrace();
+					throw new DBAppException("moshkela fe table object");
+				}
         	    
         		
         	}
@@ -544,7 +570,123 @@ public class DBApp {
 
         				// I here must shift the last row in the curr page to the next page
 						if(pp.getSize() > this.getN()) {
+	
+							int shiftedindex = pp.getSize() - 1;
+							Hashtable<String, Object> shiftedRow = pp.getData().get(shiftedindex); // last entry to shift 
+							pp.getData().remove(shiftedindex);
+							pp.setSize(pp.getSize() - 1);
+
+							//serialize pp 
+
+						
+							try {
+								int i = 1;
+								while(true){
+								pageID = t.getIds().get(index + i);
+        						Vector <Page> v1 = (Vector <Page>) deserialize(strTableName+"Page"+pageID);
+        						Page pp1 = v1.get(0);
+								
+								if(dataType == "java.lang.Integer") {
+									pp1.insertHashTableINT(htblColNameValue, pk);
+									t.getRange().get(index).setMax(pp1.getData().get(pp1.getData().size()-1));
+									t.getRange().get(index).setMin(pp1.getData().get(0));
+									}
+								else {
+									if(dataType == "java.lang.String") {
+										pp1.insertHashTableString(htblColNameValue, pk);
+										t.getRange().get(index).setMax(pp1.getData().get(pp1.getData().size()-1));
+										t.getRange().get(index).setMin(pp1.getData().get(0));
+									}
+									else {
+										if(dataType == "java.lang.Double") {
+											pp1.insertHashTableDOUBLE(htblColNameValue, pk);
+											t.getRange().get(index).setMax(pp1.getData().get(pp1.getData().size()-1));
+											t.getRange().get(index).setMin(pp1.getData().get(0));
+										}
+										else {
+											if(dataType == "java.util.Date") {
+												pp1.insertHashTableDate(htblColNameValue, pk);
+												t.getRange().get(index).setMax(pp1.getData().get(pp1.getData().size()-1));
+												t.getRange().get(index).setMin(pp1.getData().get(0));
+											}
+												
+										}
+											
+									}
+										
+										
+								}
+								pp1.setSize(pp1.getSize() + 1);
+
+								if(pp1.getSize() < this.getN()) break;
+								
+								//else 
+								shiftedRow = pp1.getData().get(shiftedindex);
+								pp1.setSize(pp.getSize() - 1);
+								i++;
+
+								// we should serialize any change in any page before entering the loop again
+
+								// 1. serialize the page
+								
+								v1 = new Vector<>();
+								v1.add(pp1);
+								serialize(v1, strTableName+"Page"+pageID);
+								
+								// 2. serialize the table
+								try {
+									Vector tableV = new Vector<Table>();
+									tableV.add(t);
+									FileOutputStream fileOut = new FileOutputStream(strTableName + ".bin");
+									ObjectOutputStream out = new ObjectOutputStream(fileOut);
+									out.writeObject(tableV);
+									out.close();
+									fileOut.close();
+									
+									
+								} catch (Exception e) {
+									e.printStackTrace();
+									throw new DBAppException("moshkela fe table object");
+								}
+									}
+							} 
+
+							catch (NullPointerException e) { 
+							// did not find next page
+							// so we create a new page
 							Page newPage = new Page();
+							newPage.getData().add(shiftedRow);
+							newPage.setSize(1);
+
+							//serialize and add to table
+
+							// 1. serialize the page
+							pageID = pageID + 1;
+							Vector<Page> v1 = new Vector<>();
+							v1.add(newPage);
+							serialize(v1, strTableName+"Page"+pageID);
+							
+							// 2. serialize the table
+							t.getIds().add(pageID);
+							t.getRange().add(new Pair(shiftedRow.get(pk), shiftedRow.get(pk)));
+							try {
+								Vector tableV = new Vector<Table>();
+								tableV.add(t);
+								FileOutputStream fileOut = new FileOutputStream(strTableName + ".bin");
+								ObjectOutputStream out = new ObjectOutputStream(fileOut);
+								out.writeObject(tableV);
+								out.close();
+								fileOut.close();
+								
+								
+							} catch (Exception i) {
+								i.printStackTrace();
+								throw new DBAppException("moshkela fe table object");
+							}
+							
+
+							}
+							
 						}
         			
         			

@@ -1,6 +1,6 @@
+import java.io.Serializable;
 
-
-public class Pair {
+public class Pair implements Serializable{
 	private Object min;
 	private Object max;
 	public Pair (Object min , Object max) {

@@ -23,16 +23,36 @@ public class DBApp {
 		
 		// law rg3t -1 then ely bara is the earlier one
 		// law rag3t 1 then ely bara is later 
+		DBApp dbApp = new DBApp();
+		dbApp.init();
+
+		Hashtable htblColNameType = new Hashtable( );
+		htblColNameType.put("id", "java.lang.Integer");
+		htblColNameType.put("name", "java.lang.String");
+		htblColNameType.put("gpa", "java.lang.Double");
+
+		Hashtable htblColNameMin = new Hashtable<>();
+		htblColNameMin.put("id", "1");
+		htblColNameMin.put("name", "A");
+		htblColNameMin.put("gpa", "0");
 		
-		String x = "2002-04-29";  // min
-		String y = "2023-04-29"; //max
-		Object i = "2002-05-29";
-		LocalDate dMIN = LocalDate.parse(x) ;
-		LocalDate dMAX = LocalDate.parse(y) ;
-		LocalDate theInput = LocalDate.parse(( (String) i   )) ;
+
+		Hashtable htblColNameMax = new Hashtable<>();
+		htblColNameMax.put("id", "20");
+		htblColNameMax.put("name", "ZZZZZZZZZZZ");
+		htblColNameMax.put("gpa", "4");
+
+		dbApp.createTable("Student", "id", htblColNameType, htblColNameMin, htblColNameMax);
 		
-		System.out.println(  dMIN.compareTo(theInput)  );  // not +ve
-		System.out.println(  dMAX.compareTo(theInput)  );  // not -ve
+		// String x = "2002-04-29";  // min
+		// String y = "2023-04-29"; //max
+		// Object i = "2002-05-29";
+		// LocalDate dMIN = LocalDate.parse(x) ;
+		// LocalDate dMAX = LocalDate.parse(y) ;
+		// LocalDate theInput = LocalDate.parse(( (String) i   )) ;
+		
+		// System.out.println(  dMIN.compareTo(theInput)  );  // not +ve
+		// System.out.println(  dMAX.compareTo(theInput)  );  // not -ve
 		
 		
 	//	int g = i  < ((  (Long)    x         ));
@@ -205,6 +225,7 @@ public class DBApp {
 			in.close();
 
 		} catch (Exception i) {
+			i.printStackTrace();
 			throw new DBAppException();
 		}
 
@@ -228,7 +249,7 @@ public class DBApp {
 			if (htblColNameMin.containsKey(s) != true || htblColNameMax.containsKey(s) != true) {
 				throw new DBAppException("There is no min and max specified for Column: " + s);
 			}
-			if (!(htblColNameType.get(s) == "java.lang.Integer" || htblColNameType.get(s) == "java.lang.String"
+			if (!((htblColNameType.get(s)) == "java.lang.Integer" || htblColNameType.get(s) == "java.lang.String"
 					|| htblColNameType.get(s) == "java.lang.Double" || htblColNameType.get(s) == "java.util.Date"))
 				throw new DBAppException("This is data type is not supported");
 			if (htblColNameMin.get(s).compareTo(htblColNameMax.get(s)) > 0)
@@ -552,6 +573,7 @@ public class DBApp {
 	public void updateTable(String strTableName, String strClusteringKeyValue,
 			Hashtable<String, Object> htblColNameValue) throws DBAppException {
 	}
+
 	public static Object deserialize (String name) {
 		Object r =null;
 		try {

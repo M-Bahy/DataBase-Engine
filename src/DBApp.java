@@ -10,6 +10,7 @@ import java.time.LocalDate;
 
 
 public class DBApp {
+	// creates metaData eventhough it throws a DBappException **Important**
 	
 	private boolean firstTable = false;
 	private int n;
@@ -24,28 +25,28 @@ public class DBApp {
 		// law rg3t -1 then ely bara is the earlier one
 		// law rag3t 1 then ely bara is later 
 		DBApp dbApp = new DBApp();
-		// dbApp.init();
+		dbApp.init();
 
-		// Hashtable htblColNameType = new Hashtable( );
-		// htblColNameType.put("id", "java.lang.Integer");
-		// htblColNameType.put("name", "java.lang.String");
-		// htblColNameType.put("gpa", "java.lang.Double");
+		Hashtable htblColNameType = new Hashtable( );
+		htblColNameType.put("id", "java.lang.Integer");
+		htblColNameType.put("name", "java.lang.String");
+		htblColNameType.put("gpa", "java.lang.Double");
 
-		// Hashtable htblColNameMin = new Hashtable<>();
-		// htblColNameMin.put("id", "1");
-		// htblColNameMin.put("name", "A");
-		// htblColNameMin.put("gpa", "0");
+		Hashtable htblColNameMin = new Hashtable<>();
+		htblColNameMin.put("id", "1");
+		htblColNameMin.put("name", "A");
+		htblColNameMin.put("gpa", "0");
 		
 
-		// Hashtable htblColNameMax = new Hashtable<>();
-		// htblColNameMax.put("id", "20");
-		// htblColNameMax.put("name", "ZZZZZZZZZZZ");
-		// htblColNameMax.put("gpa", "4");
+		Hashtable htblColNameMax = new Hashtable<>();
+		htblColNameMax.put("id", "20");
+		htblColNameMax.put("name", "ZZZZZZZZZZZ");
+		htblColNameMax.put("gpa", "4");
 
-		// dbApp.createTable("Student", "id", htblColNameType, htblColNameMin, htblColNameMax);
+		dbApp.createTable("Student", "id", htblColNameType, htblColNameMin, htblColNameMax);
 
 		Hashtable htblColNameValue = new Hashtable<>();
-		htblColNameValue.put("id", new Integer(8));
+		htblColNameValue.put("id", new Integer(10));
 		htblColNameValue.put("name", new String("Aamad" ) );
 		htblColNameValue.put("gpa", new Double( 0.96 ) ); 
 
@@ -256,12 +257,14 @@ public class DBApp {
 			if (htblColNameMin.containsKey(s) != true || htblColNameMax.containsKey(s) != true) {
 				throw new DBAppException("There is no min and max specified for Column: " + s);
 			}
-			if (!((htblColNameType.get(s)) == "java.lang.Integer" || htblColNameType.get(s) == "java.lang.String"
-					|| htblColNameType.get(s) == "java.lang.Double" || htblColNameType.get(s) == "java.util.Date"))
+			if ((htblColNameType.get(s)).compareTo("java.lang.Integer") != 0 && (htblColNameType.get(s)).compareTo("java.lang.String") != 0
+					&& (htblColNameType.get(s)).compareTo("java.lang.Double") != 0 && (htblColNameType.get(s)).compareTo("java.lang.Date") != 0){
+						System.out.println(htblColNameType.get(s));
 				throw new DBAppException("This is data type is not supported");
+					}
 			if (htblColNameMin.get(s).compareTo(htblColNameMax.get(s)) > 0)
 				throw new DBAppException("Min greater than max");
-			if (strClusteringKeyColumn == null || strClusteringKeyColumn == "")
+			if (strClusteringKeyColumn == null || strClusteringKeyColumn.compareTo("") == 0)
 				throw new DBAppException("Primary key equals null or Empty");
 
 			ans += strTableName + "," + s + "," + htblColNameType.get(s) + ","

@@ -10,7 +10,20 @@ import java.time.LocalDate;
 
 
 public class DBApp {
-	// creates metaData eventhough it throws a DBappException **Important**
+	// **Important**
+	// creates metaData eventhough it throws a DBAppException in createTable
+
+	// Changes (what I remember lolz):
+	// first line in metadata is the N for it to be saved
+	// changed insertion to min and max to .get(pk)
+	// changed all == to compareTo (Stings only tab3an)
+	// In Page.java, instead of returning if record found throw DBAppExeception (Check Class)
+	// br.readline done twice at the beginning since N is saved in the first record (3ayez akalemko feeha)
+	// fe kam 7aga 3ameltelha comment bs msh fakerhom lolz
+	// el mafrood insertion is finished keda we garabtaha  
+
+	// Mal7ooza:
+	// el code kinda shaklo msh lateef
 	
 	private boolean firstTable = false;
 	private int n;
@@ -184,7 +197,7 @@ public class DBApp {
 	}
 
 	public void init() {
-		this.setN(20);
+		this.setN(2);
 		
 		
 		try {
@@ -532,7 +545,7 @@ public class DBApp {
         		
         	}
         	else {
-				System.out.println(htblColNameValue.get(pk));
+				//System.out.println(htblColNameValue.get(pk));
         		int index = t.search(htblColNameValue.get(pk), dataType); //kill
         		if( index != -1) {  // We found the page (using the range) and we inserted 
         			                // , we increased the size of the page too 
@@ -656,13 +669,13 @@ public class DBApp {
 									}
 							} 
 
-							catch (NullPointerException e) { 
+							catch (ArrayIndexOutOfBoundsException e) { 
 							// did not find next page
 							// so we create a new page
 							Page newPage = new Page();
 							newPage.getData().add(shiftedRow);
 							newPage.setSize(1);
-
+							System.out.println(newPage.getData().get(0).get(pk));
 							//serialize and add to table
 
 							// 1. serialize the page

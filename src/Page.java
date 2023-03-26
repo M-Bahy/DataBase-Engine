@@ -25,7 +25,7 @@ public class Page implements Serializable {
 	}
 	
 	
-	public void insertHashTableINT( Hashtable<String, Object> newHashtable,String pk) {
+	public void insertHashTableINT( Hashtable<String, Object> newHashtable,String pk) throws DBAppException{
       //  Hashtable<String, Object> newHashtable = new Hashtable<Integer, String>();
         //newHashtable.put(key, value);
         
@@ -43,7 +43,7 @@ public class Page implements Serializable {
                 high = mid - 1;
             } else {
                 // Key already exists, do not insert new hashtable
-                return;
+                throw new DBAppException("Record with same primary key already exists");
             }
         }
         
@@ -52,7 +52,7 @@ public class Page implements Serializable {
         this.getData().add(insertIndex, newHashtable);
         
     }
-	public void insertHashTableDOUBLE( Hashtable<String, Object> newHashtable,String pk) {
+	public void insertHashTableDOUBLE( Hashtable<String, Object> newHashtable,String pk) throws DBAppException{
 	      //  Hashtable<String, Object> newHashtable = new Hashtable<Integer, String>();
 	        //newHashtable.put(key, value);
 	        
@@ -70,7 +70,7 @@ public class Page implements Serializable {
 	                high = mid - 1;
 	            } else {
 	                // Key already exists, do not insert new hashtable
-	                return;
+					throw new DBAppException("Record with same primary key already exists");
 	            }
 	        }
 	        
@@ -78,7 +78,7 @@ public class Page implements Serializable {
 	        int insertIndex = low;
 	        this.getData().add(insertIndex, newHashtable);
 	    }
-	public void insertHashTableString( Hashtable<String, Object> newHashtable,String pk) {
+	public void insertHashTableString( Hashtable<String, Object> newHashtable,String pk) throws DBAppException{
 	      //  Hashtable<String, Object> newHashtable = new Hashtable<Integer, String>();
 	        //newHashtable.put(key, value);
 	        
@@ -96,7 +96,7 @@ public class Page implements Serializable {
 	                high = mid - 1;
 	            } else {
 	                // Key already exists, do not insert new hashtable
-	                return;
+					throw new DBAppException("Record with same primary key already exists");
 	            }
 	        }
 	        
@@ -105,7 +105,7 @@ public class Page implements Serializable {
 	        this.getData().add(insertIndex, newHashtable);
 	    }
 	
-	public void insertHashTableDate( Hashtable<String, Object> newHashtable,String pk) {
+	public void insertHashTableDate( Hashtable<String, Object> newHashtable,String pk) throws DBAppException{
 	      //  Hashtable<String, Object> newHashtable = new Hashtable<Integer, String>();
 	        //newHashtable.put(key, value);
 	        
@@ -131,7 +131,7 @@ public class Page implements Serializable {
 	                high = mid - 1;
 	            } else {
 	                // Key already exists, do not insert new hashtable
-	                return;
+					throw new DBAppException("Record with same primary key already exists");
 	            }
 	        }
 	        

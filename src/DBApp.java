@@ -10,6 +10,20 @@ import java.time.LocalDate;
 
 
 public class DBApp {
+	// **Important**
+	// creates metaData eventhough it throws a DBAppException in createTable
+
+	// Changes (what I remember lolz):
+	// first line in metadata is the N for it to be saved
+	// changed insertion to min and max to .get(pk)
+	// changed all == to compareTo (Stings only tab3an)
+	// In Page.java, instead of returning if record found throw DBAppExeception (Check Class)
+	// br.readline done twice at the beginning since N is saved in the first record (3ayez akalemko feeha)
+	// fe kam 7aga 3ameltelha comment bs msh fakerhom lolz
+	// el mafrood insertion is finished keda we garabtaha  
+
+	// Mal7ooza:
+	// el code kinda shaklo msh lateef
 	
 	private boolean firstTable = false;
 	private int n;
@@ -24,30 +38,30 @@ public class DBApp {
 		// law rg3t -1 then ely bara is the earlier one
 		// law rag3t 1 then ely bara is later 
 		DBApp dbApp = new DBApp();
-		// dbApp.init();
+		dbApp.init();
 
-		// Hashtable htblColNameType = new Hashtable( );
-		// htblColNameType.put("id", "java.lang.Integer");
-		// htblColNameType.put("name", "java.lang.String");
-		// htblColNameType.put("gpa", "java.lang.Double");
+		Hashtable htblColNameType = new Hashtable( );
+		htblColNameType.put("id", "java.lang.Integer");
+		htblColNameType.put("name", "java.lang.String");
+		htblColNameType.put("gpa", "java.lang.Double");
 
-		// Hashtable htblColNameMin = new Hashtable<>();
-		// htblColNameMin.put("id", "1");
-		// htblColNameMin.put("name", "A");
-		// htblColNameMin.put("gpa", "0");
+		Hashtable htblColNameMin = new Hashtable<>();
+		htblColNameMin.put("id", "1");
+		htblColNameMin.put("name", "A");
+		htblColNameMin.put("gpa", "0");
 		
 
-		// Hashtable htblColNameMax = new Hashtable<>();
-		// htblColNameMax.put("id", "20");
-		// htblColNameMax.put("name", "ZZZZZZZZZZZ");
-		// htblColNameMax.put("gpa", "4");
+		Hashtable htblColNameMax = new Hashtable<>();
+		htblColNameMax.put("id", "20");
+		htblColNameMax.put("name", "ZZZZZZZZZZZ");
+		htblColNameMax.put("gpa", "4");
 
-		// dbApp.createTable("Student", "id", htblColNameType, htblColNameMin, htblColNameMax);
+		dbApp.createTable("Student", "id", htblColNameType, htblColNameMin, htblColNameMax);
 
 		Hashtable htblColNameValue = new Hashtable<>();
-		htblColNameValue.put("id", new Integer( 3 ));
-		htblColNameValue.put("name", new String("nour" ) );
-		htblColNameValue.put("gpa", new Double( 0.95 ) ); 
+		htblColNameValue.put("id", new Integer(10));
+		htblColNameValue.put("name", new String("Aamad" ) );
+		htblColNameValue.put("gpa", new Double( 0.96 ) ); 
 
 		dbApp.insertIntoTable("Student", htblColNameValue);
 		
@@ -183,7 +197,7 @@ public class DBApp {
 	}
 
 	public void init() {
-		this.setN(20);
+		this.setN(2);
 		
 		
 		try {
@@ -208,7 +222,7 @@ public class DBApp {
 		// write n in csv
 		try {
 			FileWriter csvWriter = new FileWriter("metadata.csv", true);
-			csvWriter.write(this.getN());
+			csvWriter.write(Integer.toString(this.getN()) + "\n");
 			csvWriter.flush();
 			csvWriter.close();
 		} catch (Exception e) {
@@ -256,12 +270,14 @@ public class DBApp {
 			if (htblColNameMin.containsKey(s) != true || htblColNameMax.containsKey(s) != true) {
 				throw new DBAppException("There is no min and max specified for Column: " + s);
 			}
-			if (!((htblColNameType.get(s)) == "java.lang.Integer" || htblColNameType.get(s) == "java.lang.String"
-					|| htblColNameType.get(s) == "java.lang.Double" || htblColNameType.get(s) == "java.util.Date"))
+			if ((htblColNameType.get(s)).compareTo("java.lang.Integer") != 0 && (htblColNameType.get(s)).compareTo("java.lang.String") != 0
+					&& (htblColNameType.get(s)).compareTo("java.lang.Double") != 0 && (htblColNameType.get(s)).compareTo("java.lang.Date") != 0){
+						System.out.println(htblColNameType.get(s));
 				throw new DBAppException("This is data type is not supported");
+					}
 			if (htblColNameMin.get(s).compareTo(htblColNameMax.get(s)) > 0)
 				throw new DBAppException("Min greater than max");
-			if (strClusteringKeyColumn == null || strClusteringKeyColumn == "")
+			if (strClusteringKeyColumn == null || strClusteringKeyColumn.compareTo("") == 0)
 				throw new DBAppException("Primary key equals null or Empty");
 
 			ans += strTableName + "," + s + "," + htblColNameType.get(s) + ","
@@ -379,7 +395,8 @@ public class DBApp {
 		}
 		try {
 			BufferedReader br = new BufferedReader(new FileReader("metadata.csv"));
-			String line;
+			String line = br.readLine();
+			int N = Integer.parseInt(line);
 			String pk = "";
 			String dataType = "";
 			boolean isClustering = false;
@@ -504,7 +521,7 @@ public class DBApp {
         		// serialize p1
         		serialize(v, (strTableName+"Page"+1));
         		t.getIds().add("1");
-				System.out.println(t.getIds().get(0));
+				// System.out.println(t.getIds().get(0));
         		t.getRange().add(new Pair (htblColNameValue.get(pk),htblColNameValue.get(pk)));
 				
 				try {
@@ -528,7 +545,8 @@ public class DBApp {
         		
         	}
         	else {
-        		int index = t.search(htblColNameValue.get(pk), dataType);
+				//System.out.println(htblColNameValue.get(pk));
+        		int index = t.search(htblColNameValue.get(pk), dataType); //kill
         		if( index != -1) {  // We found the page (using the range) and we inserted 
         			                // , we increased the size of the page too 
         			String pageID = t.getIds().get(index);
@@ -536,40 +554,40 @@ public class DBApp {
         			Page pp = v.get(0);
         			
         				
-        			if(dataType == "java.lang.Integer") {
-    	    			pp.insertHashTableINT(htblColNameValue, pk);
-                    	t.getRange().get(index).setMax(pp.getData().get(pp.getData().size()-1));
-        			    t.getRange().get(index).setMin(pp.getData().get(0));
-            			}
-            		else {
-            			if(dataType == "java.lang.String") {
-                			pp.insertHashTableString(htblColNameValue, pk);
-                			t.getRange().get(index).setMax(pp.getData().get(pp.getData().size()-1));
-                			t.getRange().get(index).setMin(pp.getData().get(0));
-                		}
-            			else {
-            				if(dataType == "java.lang.Double") {
-                    			pp.insertHashTableDOUBLE(htblColNameValue, pk);
-                    		    t.getRange().get(index).setMax(pp.getData().get(pp.getData().size()-1));
-                        		t.getRange().get(index).setMin(pp.getData().get(0));
-                    		}
-            				else {
-            					if(dataType == "java.util.Date") {
-                        			pp.insertHashTableDate(htblColNameValue, pk);
-                        			t.getRange().get(index).setMax(pp.getData().get(pp.getData().size()-1));
-                            		t.getRange().get(index).setMin(pp.getData().get(0));
-                        		}
-            						
-            				}
-            					
-            			}
-            				
-            				
-            		}
+					if(dataType.compareTo("java.lang.Integer") == 0) {
+						pp.insertHashTableINT(htblColNameValue, pk);
+						t.getRange().get(index).setMax(pp.getData().get(pp.getData().size()-1).get(pk));
+						t.getRange().get(index).setMin(pp.getData().get(0).get(pk));
+						}
+					else {
+						if(dataType.compareTo("java.lang.String") == 0) {
+							pp.insertHashTableString(htblColNameValue, pk);
+							t.getRange().get(index).setMax(pp.getData().get(pp.getData().size()-1).get(pk));
+							t.getRange().get(index).setMin(pp.getData().get(0).get(pk));
+						}
+						else {
+							if(dataType.compareTo("java.lang.Double") == 0) {
+								pp.insertHashTableDOUBLE(htblColNameValue, pk);
+								t.getRange().get(index).setMax(pp.getData().get(pp.getData().size()-1).get(pk));
+								t.getRange().get(index).setMin(pp.getData().get(0).get(pk));
+							}
+							else {
+								if(dataType.compareTo("java.lang.Date") == 0) {
+									pp.insertHashTableDate(htblColNameValue, pk);
+									t.getRange().get(index).setMax(pp.getData().get(pp.getData().size()-1).get(pk));
+									t.getRange().get(index).setMin(pp.getData().get(0).get(pk));
+								}
+									
+							}
+								
+						}
+							
+							
+					}
             			pp.setSize(pp.getSize()+1);
 
         				// I here must shift the last row in the curr page to the next page
-						if(pp.getSize() > this.getN()) {
+						if(pp.getSize() > N) {
 	
 							int shiftedindex = pp.getSize() - 1;
 							Hashtable<String, Object> shiftedRow = pp.getData().get(shiftedindex); // last entry to shift 
@@ -586,28 +604,28 @@ public class DBApp {
         						Vector <Page> v1 = (Vector <Page>) deserialize(strTableName+"Page"+pageID);
         						Page pp1 = v1.get(0);
 								
-								if(dataType == "java.lang.Integer") {
-									pp1.insertHashTableINT(htblColNameValue, pk);
-									t.getRange().get(index).setMax(pp1.getData().get(pp1.getData().size()-1));
-									t.getRange().get(index).setMin(pp1.getData().get(0));
+								if(dataType.compareTo("java.lang.Integer") == 0) {
+									pp.insertHashTableINT(htblColNameValue, pk);
+									t.getRange().get(index).setMax(pp.getData().get(pp.getData().size()-1).get(pk));
+									t.getRange().get(index).setMin(pp.getData().get(0).get(pk));
 									}
 								else {
-									if(dataType == "java.lang.String") {
-										pp1.insertHashTableString(htblColNameValue, pk);
-										t.getRange().get(index).setMax(pp1.getData().get(pp1.getData().size()-1));
-										t.getRange().get(index).setMin(pp1.getData().get(0));
+									if(dataType.compareTo("java.lang.String") == 0) {
+										pp.insertHashTableString(htblColNameValue, pk);
+										t.getRange().get(index).setMax(pp.getData().get(pp.getData().size()-1).get(pk));
+										t.getRange().get(index).setMin(pp.getData().get(0).get(pk));
 									}
 									else {
-										if(dataType == "java.lang.Double") {
-											pp1.insertHashTableDOUBLE(htblColNameValue, pk);
-											t.getRange().get(index).setMax(pp1.getData().get(pp1.getData().size()-1));
-											t.getRange().get(index).setMin(pp1.getData().get(0));
+										if(dataType.compareTo("java.lang.Double") == 0) {
+											pp.insertHashTableDOUBLE(htblColNameValue, pk);
+											t.getRange().get(index).setMax(pp.getData().get(pp.getData().size()-1).get(pk));
+											t.getRange().get(index).setMin(pp.getData().get(0).get(pk));
 										}
 										else {
-											if(dataType == "java.util.Date") {
-												pp1.insertHashTableDate(htblColNameValue, pk);
-												t.getRange().get(index).setMax(pp1.getData().get(pp1.getData().size()-1));
-												t.getRange().get(index).setMin(pp1.getData().get(0));
+											if(dataType.compareTo("java.lang.Date") == 0) {
+												pp.insertHashTableDate(htblColNameValue, pk);
+												t.getRange().get(index).setMax(pp.getData().get(pp.getData().size()-1).get(pk));
+												t.getRange().get(index).setMin(pp.getData().get(0).get(pk));
 											}
 												
 										}
@@ -618,7 +636,7 @@ public class DBApp {
 								}
 								pp1.setSize(pp1.getSize() + 1);
 
-								if(pp1.getSize() < this.getN()) break;
+								if(pp1.getSize() < N) break;
 								
 								//else 
 								shiftedRow = pp1.getData().get(shiftedindex);
@@ -635,7 +653,7 @@ public class DBApp {
 								
 								// 2. serialize the table
 								try {
-									Vector tableV = new Vector<Table>();
+									Vector<Table> tableV = new Vector<Table>();
 									tableV.add(t);
 									FileOutputStream fileOut = new FileOutputStream(strTableName + ".bin");
 									ObjectOutputStream out = new ObjectOutputStream(fileOut);
@@ -651,13 +669,13 @@ public class DBApp {
 									}
 							} 
 
-							catch (NullPointerException e) { 
+							catch (ArrayIndexOutOfBoundsException e) { 
 							// did not find next page
 							// so we create a new page
 							Page newPage = new Page();
 							newPage.getData().add(shiftedRow);
 							newPage.setSize(1);
-
+							System.out.println(newPage.getData().get(0).get(pk));
 							//serialize and add to table
 
 							// 1. serialize the page
@@ -670,7 +688,7 @@ public class DBApp {
 							t.getIds().add(pageID);
 							t.getRange().add(new Pair(shiftedRow.get(pk), shiftedRow.get(pk)));
 							try {
-								Vector tableV = new Vector<Table>();
+								Vector<Table> tableV = new Vector<Table>();
 								tableV.add(t);
 								FileOutputStream fileOut = new FileOutputStream(strTableName + ".bin");
 								ObjectOutputStream out = new ObjectOutputStream(fileOut);
@@ -695,7 +713,122 @@ public class DBApp {
         			// WE didnt find the page using the range :( 
         			// what to do ? 
         			// check the min of the 2nd page , if > my value then insert my value in the 1st page
-        			// keep checking the min of the next pages similary to find a place to insert it . 
+        			// keep checking the min of the next pages similary to find a place to insert it. 
+					
+					boolean addPage = false;
+					
+					int ind = t.searchPageAccordingToMin(htblColNameValue.get(pk), dataType); 
+					String pageID = t.getIds().get(ind);
+					Vector <Page> v = (Vector <Page>) deserialize(strTableName+"Page"+pageID);
+        			Page pp = v.get(0);
+					// if index is != -1 then page is found
+					if(ind != -1){
+						
+						// check page < N
+						for (int i = ind; i < t.getRange().size(); i++) { // get first "empty" page
+							pageID = t.getIds().get(i);
+        					v = (Vector <Page>) deserialize(strTableName+"Page"+pageID);
+        					pp = v.get(0);
+							if(pp.getSize() >= N){
+								ind = i + 1;
+								if(ind == t.getRange().size()){
+									addPage = true;
+									break;
+								}
+							}
+							else break;
+						}
+
+
+					}
+					
+					// change 3: compareto instead of ==
+					if(!addPage){
+						if(dataType.compareTo("java.lang.Integer") == 0) {
+							pp.insertHashTableINT(htblColNameValue, pk);
+							t.getRange().get(ind).setMax(pp.getData().get(pp.getData().size()-1).get(pk));
+							t.getRange().get(ind).setMin(pp.getData().get(0).get(pk));
+							}
+						else {
+							if(dataType.compareTo("java.lang.String") == 0) {
+								pp.insertHashTableString(htblColNameValue, pk);
+								t.getRange().get(ind).setMax(pp.getData().get(pp.getData().size()-1).get(pk));
+								t.getRange().get(ind).setMin(pp.getData().get(0).get(pk));
+							}
+							else {
+								if(dataType.compareTo("java.lang.Double") == 0) {
+									pp.insertHashTableDOUBLE(htblColNameValue, pk);
+									t.getRange().get(ind).setMax(pp.getData().get(pp.getData().size()-1).get(pk));
+									t.getRange().get(ind).setMin(pp.getData().get(0).get(pk));
+								}
+								else {
+									if(dataType.compareTo("java.lang.Date") == 0) {
+										pp.insertHashTableDate(htblColNameValue, pk);
+										t.getRange().get(ind).setMax(pp.getData().get(pp.getData().size()-1).get(pk));
+										t.getRange().get(ind).setMin(pp.getData().get(0).get(pk));
+									}
+										
+								}
+									
+							}
+								
+								
+						}
+							pp.setSize(pp.getSize()+1);
+							System.out.println(pp.getSize());
+							//1. serialize page
+							Vector<Page> v1 = new Vector<>();
+							v1.add(pp);
+							serialize(v1, strTableName+"Page"+pageID);
+								
+							// 2. serialize the table
+							try {
+								Vector<Table> tableV = new Vector<Table>();
+								tableV.add(t);
+								FileOutputStream fileOut = new FileOutputStream(strTableName + ".bin");
+								ObjectOutputStream out = new ObjectOutputStream(fileOut);
+								out.writeObject(tableV);
+								out.close();
+								fileOut.close();
+									
+									
+							} catch (Exception e) {
+								e.printStackTrace();
+								throw new DBAppException("moshkela fe table object");
+							}
+					}
+					// add a new page
+					else{
+						Page newPage = new Page();
+						newPage.getData().add(htblColNameValue);
+						newPage.setSize(1);
+
+						//serialize and add to table
+
+						// 1. serialize the page
+						pageID = pageID + 1;
+						Vector<Page> v1 = new Vector<>();
+						v1.add(newPage);
+						serialize(v1, strTableName+"Page"+pageID);
+						
+						// 2. serialize the table
+						t.getIds().add(pageID);
+						t.getRange().add(new Pair(htblColNameValue.get(pk), htblColNameValue.get(pk)));
+						try {
+							Vector<Table> tableV = new Vector<Table>();
+							tableV.add(t);
+							FileOutputStream fileOut = new FileOutputStream(strTableName + ".bin");
+							ObjectOutputStream out = new ObjectOutputStream(fileOut);
+							out.writeObject(tableV);
+							out.close();
+							fileOut.close();
+								
+								
+						} catch (Exception i) {
+							i.printStackTrace();
+							throw new DBAppException("moshkela fe table object");
+						}
+					}
         			
         		}
         		

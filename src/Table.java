@@ -57,6 +57,7 @@ public class Table implements Serializable{
     	 int data = (int) o;
     	 for (int i = 0;i<this.getRange().size();i++) {
     		 Pair p = this.getRange().get(i);
+			 System.out.println(p.getMin());
     		 int min = (int) p.getMin();
     		 int max = (int) p.getMax();
     		 if (data<= max && data >= min) {
@@ -116,6 +117,90 @@ public class Table implements Serializable{
 			int notNeg =  dMAX.compareTo(theInput)  ;  // not -ve
 			if(notPos<0 && notNeg>-1)
 				return i;
+       		 
+       		 
+       	 }
+    		
+    		
+    		
+    		break;
+    	
+    	}
+		return -1;
+		
+		
+	}
+
+	public int searchPageAccordingToMin(Object o, String dataType) {
+		
+		if(this.getRange().size() == 1){
+			return 0;
+		}
+
+		switch (dataType) {
+    	case "java.lang.Integer" :
+    	 int data = (int) o;
+    	 for (int i = 0;i<this.getRange().size();i++) {
+    		 Pair p = this.getRange().get(i);
+    		 int min = (int) p.getMin();
+    		 int max = (int) p.getMax();
+    		 if (data < min) {
+    			return i-1;
+    		
+    			 
+    		 }
+    		 
+    	 }
+    		
+    		
+    		break;
+    		    
+    	
+    	
+    	case "java.lang.String" :   
+    		String dataa = (String) o;
+        	 for (int i = 0;i<this.getRange().size();i++) {
+        		 Pair p = this.getRange().get(i);
+        		 String min = (String) p.getMin();
+        		 String max = (String) p.getMax();
+        		 if (min.compareTo(dataa) == 1 ) {
+        			return i - 1;
+        		
+        			 
+        		 }
+        		 
+        	 }
+    		
+    		break;
+    	case "java.lang.Double" : 
+    		double dataaa = (double) o;
+        	 for (int i = 0;i<this.getRange().size();i++) {
+        		 Pair p = this.getRange().get(i);
+        		 double min = (double) p.getMin();
+        		 double max = (double) p.getMax();
+        		 if (dataaa < min) {
+        			return i - 1;
+        		
+        			 
+        		 }
+        		 
+        	 }
+    		
+    		
+    		break;
+    	case "java.util.Date" :   
+    		LocalDate theInput = LocalDate.parse(( (String) o   )) ;
+       	 for (int i = 0;i<this.getRange().size();i++) {
+       		 Pair p = this.getRange().get(i);
+       		String x = (String) p.getMin();  // min
+			String y = (String) p.getMax(); //max
+			//Object i = htblColNameValue.get(values[1]);
+			LocalDate dMIN = LocalDate.parse(x) ;
+			LocalDate dMAX = LocalDate.parse(y) ;
+			int notPos = dMIN.compareTo(theInput)  ;  // not +ve
+			int notNeg =  dMAX.compareTo(theInput)  ;  // not -ve
+			if(notPos > 0)
+				return i - 1;
        		 
        		 
        	 }

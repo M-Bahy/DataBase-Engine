@@ -139,8 +139,96 @@ public class Page implements Serializable {
 	        int insertIndex = low;
 	        this.getData().add(insertIndex, newHashtable);
 	    }
-	  
+	public Hashtable<String,Object> binarySearchDouble (Double key,String pk){
 
+		int low = 0;
+	        int high = this.getData().size() - 1;
+	        
+	        while (low <= high) {
+	            int mid = (low + high) / 2;
+	            Hashtable<String, Object> midHashtable = this.getData().get(mid);
+	            double midKey = (double) midHashtable.get(pk);
+	            //double key = (double) newHashtable.get(pk);
+	            if (midKey < key) {
+	                low = mid + 1;
+	            } else if (midKey > key) {
+	                high = mid - 1;
+	            } else {
+	                // Key already exists, do not insert new hashtable
+					return midHashtable;
+	            }
+	        }
 
+		return null;
+	}
+	public Hashtable<String,Object> binarySearchInteger (int key,String pk){
+		int low = 0;
+        int high = this.getData().size() - 1;
+        
+        while (low <= high) {
+            int mid = (low + high) / 2;
+            Hashtable<String, Object> midHashtable = this.getData().get(mid);
+			System.out.println(pk);
+            int midKey = (int) midHashtable.get(pk);
+           
+            if (midKey < key) {
+                low = mid + 1;
+            } else if (midKey > key) {
+                high = mid - 1;
+            } else {
+                // Key already exists, do not insert new hashtable
+                return midHashtable;
+            }
+        }
+		return null ;
+	}
+	public Hashtable<String,Object> binarySearchString (String key,String pk){
+		int low = 0;
+		int high = this.getData().size() - 1;
+		
+		while (low <= high) {
+			int mid = (low + high) / 2;
+			Hashtable<String, Object> midHashtable = this.getData().get(mid);
+			String midKey = (String) midHashtable.get(pk);
+			//String key = (String) newHashtable.get(pk);
+			if (midKey.compareTo(key) == -1) {  // midKey < key
+				low = mid + 1;
+			} else if (midKey.compareTo(key) == 1) {   // midKey > key
+				high = mid - 1;
+			} else {
+				// Key already exists, do not insert new hashtable
+				return midHashtable;
+			}
+		}
+		return null ;
+	}
+	public Hashtable<String,Object> binarySearchDate (String key,String pk){
+		int low = 0;
+		int high = this.getData().size() - 1;
+		
+		while (low <= high) {
+			int mid = (low + high) / 2;
+			Hashtable<String, Object> midHashtable = this.getData().get(mid);
+			String midKey = (String) midHashtable.get(pk);
+			//String key = (String) newHashtable.get(pk);
+			
+			LocalDate mIDKEY = LocalDate.parse(midKey) ;
+			LocalDate kEY = LocalDate.parse(key) ;
+			/*a negative integer if the object being compared is less than the argument    // ely gowa > ely bara   ---> -ve
+			zero if the object being compared is equal to the argument
+			a positive integer if the object being compared is greater than the argument.*/
+			
+			
+			if (mIDKEY.compareTo(kEY) < 0) {  // midKey < key
+				low = mid + 1;
+			} else if (mIDKEY.compareTo(kEY) > 0) {   // midKey > key
+				high = mid - 1;
+			} else {
+				// Key already exists, do not insert new hashtable
+				return midHashtable;
+			}
+		}
+		return null;
+	}
 }
 

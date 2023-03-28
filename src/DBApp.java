@@ -34,9 +34,10 @@ public class DBApp {
 		DBApp db = new DBApp();
 		//db.init();
 		Vector<Page> p = (Vector<Page>) deserialize("StudentPage1");
-		System.out.println(p.toString());
+		//System.out.println(p.toString());
 		Hashtable<String,Object> htblColNameValue = new Hashtable<String,Object> ();
-		htblColNameValue.put("gpa", new Double("3.15"));
+		htblColNameValue.put("name", "Bahy");
+		htblColNameValue.put("gpa", new Double("1.9"));
 		Page p1 = p.get(0);
 		System.out.println();
 		System.out.println("old : ");
@@ -46,6 +47,10 @@ public class DBApp {
 		System.out.println("Output : ");
 		System.out.println();
 		db.updateTable("Student", "10", htblColNameValue);
+		System.out.println();
+		Vector<Page> p2 = (Vector<Page>) deserialize("StudentPage1");
+		Page p22 = p2.get(0);
+		System.out.println(p22.getData());
 		
 	{
 		/*SimpleDateFormat formatter = new SimpleDateFormat("dd-MMM-yyyy", Locale.ENGLISH);
@@ -1041,20 +1046,27 @@ public class DBApp {
 			}
 			if (doesExist != null) { // we now have the row that will be updated
 				// وصلنا بالسلامه الحمد الله
-
+				//System.out.println(htblColNameValue.keySet().size());
+				Iterator<String> it = htblColNameValue.keySet().iterator();
 				for (int k = 0;k<htblColNameValue.keySet().size();k++){
-					String updatedColumn = htblColNameValue.keySet().iterator().next();
-					//System.out.println("   "+updatedColumn+"   "+htblColNameValue.get(updatedColumn));
-					switch(htblColNameValue.get(updatedColumn) instanceof Date ? "java.lang.Double"
+					String updatedColumn = it.next();
+					//System.out.println(" here  :  up col  "+updatedColumn+"  here  get :   "+htblColNameValue.get(updatedColumn));
+					//System.out.println(htblColNameValue.get(updatedColumn) instanceof String);
+					String x = htblColNameValue.get(updatedColumn) instanceof Date ? "java.util.Date"
 					: ( htblColNameValue.get(updatedColumn) instanceof Integer ? "java.lang.Integer"  
-					:  ( htblColNameValue.get(updatedColumn) instanceof Double ? "java.lang.Double" :  "java.util.Date" ) )){
+					:  ( htblColNameValue.get(updatedColumn) instanceof Double ? "java.lang.Double" 
+					:  "java.lang.String" ) );
+					//System.out.println(x);
+					switch(x){
 						case "java.lang.Integer" : doesExist.put(updatedColumn, (Integer) htblColNameValue.get(updatedColumn));break;
-						case "java.lang.String" : doesExist.put(updatedColumn, (String) htblColNameValue.get(updatedColumn)); break ;
+						case "java.lang.String" : doesExist.put(updatedColumn, (String) htblColNameValue.get(updatedColumn)); break;
+						//System.out.println(updatedColumn+"here");break ;
 						case "java.lang.Double" : doesExist.put(updatedColumn, (Double) htblColNameValue.get(updatedColumn));break;
 						case "java.util.Date" : 
 							doesExist.put(updatedColumn,(Date) htblColNameValue.get(updatedColumn) ) ; break;
 			
 					}
+					System.out.println(updatedColumn);
 				}
 				pages.add(page); // tableName+"Page"+(pageIndex+1
 				serialize(pages, tableName+"Page"+(pageIndex+1));

@@ -1,2 +1,2 @@
-# DataBase-2-project
+# DataBase project
 A database engine build using java

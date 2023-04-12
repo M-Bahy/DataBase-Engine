@@ -1,4 +1,5 @@
 import java.io.*;
+import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -21,26 +22,53 @@ public class DBApp {
 	public static void main(String[] args) throws Exception {
 		DBApp db = new DBApp();
 		//db.init();
-		Vector<Page> p = (Vector<Page>) deserialize("StudentPage1");
-		//System.out.println(p.toString());
-		Hashtable<String,Object> htblColNameValue = new Hashtable<String,Object> ();
-		htblColNameValue.put("name", "nour");
-		htblColNameValue.put("gpa", new Double("2"));
-		Page p1 = p.get(0);
-		System.out.println();
-		System.out.println("old : ");
-		System.out.println();
-		System.out.println(p1.getData());
-		System.out.println();
-		System.out.println("Output : ");
-		System.out.println();
-		db.updateTable("Student", "10", htblColNameValue);
-		System.out.println();
-		Vector<Page> p2 = (Vector<Page>) deserialize("StudentPage1");
-		Page p22 = p2.get(0);
-		System.out.println(p22.getData());
+		//createDummyData(db);
+		
+		/*int id = 1;
+		int number = 5;
+		String string = "Hi";
+		Double floatnum = 2.5;
+		String date = "2012-09-25";
 
-	
+		Hashtable<String,Object> h4 = new Hashtable<String,Object>();
+		h4.put("id", 1);
+		h4.put("testInteger", 5);
+		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+		Date elDate = dateFormat.parse(date);
+		h4.put("testDouble", new Double("2.7"));
+		h4.put("testString", "Ahmed");
+		h4.put("testDate", elDate);
+
+		db.insertIntoTable("dumbTable", h4);*/
+		Vector<Page> pages = (Vector<Page>)  deserialize("dumbTablePage1");
+		Page p1 = pages.get(0);
+		System.out.println(p1.getData());
+		
+	}
+
+	private static void createDummyData(DBApp db) throws DBAppException {
+		Hashtable<String,String> h1 = new Hashtable<String,String>();
+		h1.put("id", theInt);
+		h1.put("testInteger", theInt);
+		h1.put("testDouble", theDouble);
+		h1.put("testString", theString);
+		h1.put("testDate", theDate);
+
+		Hashtable<String,String> h2 = new Hashtable<String,String>();
+		h2.put("id", "1");
+		h2.put("testInteger", "0");
+		h2.put("testDouble", "0.0");
+		h2.put("testString", "A");
+		h2.put("testDate", "2002-04-29");
+
+		Hashtable<String,String> h3 = new Hashtable<String,String>();
+		h3.put("id", "10");
+		h3.put("testInteger", "1000");
+		h3.put("testDouble", "1000.0");
+		h3.put("testString", "ZZZZZZZZZZZZ");
+		h3.put("testDate", "2023-04-29");
+
+		db.createTable("dumbTable", "id", h1, h2, h3);
 	}
 
 	public int getN() {
@@ -319,7 +347,14 @@ public class DBApp {
                 			Object i = htblColNameValue.get(values[1]);
                 			LocalDate dMIN = LocalDate.parse(x) ;
                 			LocalDate dMAX = LocalDate.parse(y) ;
-                			LocalDate theInput = LocalDate.parse(( (String) i   )) ;
+							Date test = (Date) i;
+							
+							//System.out.println("The test : " + test);
+							SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+							String testingDate = dateFormat.format(test);
+							//System.out.println("The String : " + testingDate);
+
+                			LocalDate theInput = LocalDate.parse(( testingDate   )) ;
                 			
                 			int notPos = dMIN.compareTo(theInput)  ;  // not +ve
                 			int notNeg =  dMAX.compareTo(theInput)  ;  // not -ve
@@ -972,62 +1007,26 @@ public class DBApp {
 		return null;
 	}
 
-	/*
-	 * { valeu , key } { Integer , id } { id , 50002 },{ name , a } { "name" ,
-	 * DFFDZFDF }
-	 * 
-	 * 
-	 * 
-	 * { "name" , DFFDZFDF } { "age" ,12 }
-	 * 
-	 * 
-	 * { "name" , DFFDZFDF } AND { "age" ,12 }
-	 * 
-	 * 
-	 * 
-	 * {"id",5}
-	 * 
-	 * values[1]
-	 * [false,false]
-	 * 
-	 * id {4544,65456,64565}
-	 * name {fdf,dffdf,dffd}
-	 * 5 , mohamed
-	 * id , name
-	 * 
-	 *  //   insert in order
-	 * 
-	 * 
-	 * 
-	 * ibrahim.bin
-	 * {
-	 * 
-	 * {  5   ,  mohamed                           }     hash tables   row 1
-	 * 
-	 * {  7  ,  mohamed                               }     hash tables   row 2
-	 *  
-	 *  
-	 *  
-	 *  }
-	 *  
-	 *  
-	 *  
-	 *  
-	 *   ibrahim.bin
-	 * {
-	 * 
-	 * {  5,  mohamed                           }     hash tables   row 1
-	 * 
-	 *  {  7 ,  mohamed                               }     hash tables   row 2
-	 *  
-	 *  
-	 *  
-	 *  }
-	 * 
-	 * 
-	 * 
-	 * 
-	 * 
-	 */
+	{
+		/*//db.init();
+		Vector<Page> p = (Vector<Page>) deserialize("StudentPage1");
+		//System.out.println(p.toString());
+		Hashtable<String,Object> htblColNameValue = new Hashtable<String,Object> ();
+		htblColNameValue.put("name", "nour");
+		htblColNameValue.put("gpa", new Double("2"));
+		Page p1 = p.get(0);
+		System.out.println();
+		System.out.println("old : ");
+		System.out.println();
+		System.out.println(p1.getData());
+		System.out.println();
+		System.out.println("Output : ");
+		System.out.println();
+		db.updateTable("Student", "10", htblColNameValue);
+		System.out.println();
+		Vector<Page> p2 = (Vector<Page>) deserialize("StudentPage1");
+		Page p22 = p2.get(0);
+		System.out.println(p22.getData());*/
+	}
 
 }

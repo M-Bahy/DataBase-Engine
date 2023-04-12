@@ -15,7 +15,7 @@ public class DBApp {
 	private int n;
 	private String theString = "java.lang.String";
 	private String theDouble = "java.lang.Double";
-	private String theDate;
+	private String theDate = "java.util.Date";
 	private String theInt = "java.lang.Integer";
 
 	public static void main(String[] args) throws Exception {
@@ -126,7 +126,7 @@ public class DBApp {
 				throw new DBAppException("There is no min and max specified for Column: " + s);
 			}
 			if ((htblColNameType.get(s)).compareTo(theInt) != 0 && (htblColNameType.get(s)).compareTo(theString) != 0
-					&& (htblColNameType.get(s)).compareTo(theDouble) != 0 && (htblColNameType.get(s)).compareTo("java.util.Date") != 0){
+					&& (htblColNameType.get(s)).compareTo(theDouble) != 0 && (htblColNameType.get(s)).compareTo(theDate) != 0){
 						System.out.println(htblColNameType.get(s));
 				throw new DBAppException("This is data type is not supported");
 					}
@@ -307,7 +307,7 @@ public class DBApp {
                 		}
                 		
                 		break;
-                	case "java.util.Date" :   
+                	case theDate :   
                 		
                 		if(  (htblColNameValue.get(values[1]) ) instanceof  Date ) {
                 			variable = 0;
@@ -428,7 +428,7 @@ public class DBApp {
 								t.getRange().get(index).setMin(pp.getData().get(0).get(pk));
 							}
 							else {
-								if(dataType.compareTo("java.util.Date") == 0) {
+								if(dataType.compareTo(theDate) == 0) {
 									pp.insertHashTableDate(htblColNameValue, pk);
 									t.getRange().get(index).setMax(pp.getData().get(pp.getData().size()-1).get(pk));
 									t.getRange().get(index).setMin(pp.getData().get(0).get(pk));
@@ -478,7 +478,7 @@ public class DBApp {
 											t.getRange().get(index).setMin(pp.getData().get(0).get(pk));
 										}
 										else {
-											if(dataType.compareTo("java.util.Date") == 0) {
+											if(dataType.compareTo(theDate) == 0) {
 												pp.insertHashTableDate(htblColNameValue, pk);
 												t.getRange().get(index).setMax(pp.getData().get(pp.getData().size()-1).get(pk));
 												t.getRange().get(index).setMin(pp.getData().get(0).get(pk));
@@ -618,7 +618,7 @@ public class DBApp {
 									t.getRange().get(ind).setMin(pp.getData().get(0).get(pk));
 								}
 								else {
-									if(dataType.compareTo("java.util.Date") == 0) {
+									if(dataType.compareTo(theDate) == 0) {
 										pp.insertHashTableDate(htblColNameValue, pk);
 										t.getRange().get(ind).setMax(pp.getData().get(pp.getData().size()-1).get(pk));
 										t.getRange().get(ind).setMin(pp.getData().get(0).get(pk));
@@ -780,7 +780,7 @@ public class DBApp {
                 		}
                 		
                 		break;
-                	case "java.util.Date" :   
+                	case theDate :   
                 		
                 		if(  (htblColNameValue.get(values[1]) ) instanceof  Date ) {
                 			variable = 0;
@@ -842,7 +842,7 @@ public class DBApp {
 			case theInt : o = Integer.parseInt(keyValue);break;
 			case theString : o = keyValue; break ;
 			case theDouble : o = new Double(keyValue);break;
-			case "java.util.Date" : try {
+			case theDate : try {
 					o = dateFormat.parse(keyValue);
 				} catch (ParseException e) {
 					// TODO Auto-generated catch block
@@ -869,7 +869,7 @@ public class DBApp {
 					break;
 				case theString : doesExist = page.binarySearchString(keyValue, key); break ;
 				case theDouble : doesExist = page.binarySearchDouble(new Double(keyValue), key) ;break;
-				case "java.util.Date" : doesExist = page.binarySearchDate(keyValue, key); break;
+				case theDate : doesExist = page.binarySearchDate(keyValue, key); break;
 	
 			}
 			if (doesExist != null) { // we now have the row that will be updated
@@ -900,7 +900,7 @@ public class DBApp {
 			String updatedColumn = it.next();
 			//System.out.println(" here  :  up col  "+updatedColumn+"  here  get :   "+htblColNameValue.get(updatedColumn));
 			//System.out.println(htblColNameValue.get(updatedColumn) instanceof String);
-			String x = htblColNameValue.get(updatedColumn) instanceof Date ? "java.util.Date"
+			String x = htblColNameValue.get(updatedColumn) instanceof Date ? theDate
 			: ( htblColNameValue.get(updatedColumn) instanceof Integer ? theInt  
 			:  ( htblColNameValue.get(updatedColumn) instanceof Double ? theDouble 
 			:  theString ) );
@@ -910,7 +910,7 @@ public class DBApp {
 				case theString : doesExist.put(updatedColumn, (String) htblColNameValue.get(updatedColumn)); break;
 				//System.out.println(updatedColumn+"here");break ;
 				case theDouble : doesExist.put(updatedColumn, (Double) htblColNameValue.get(updatedColumn));break;
-				case "java.util.Date" : 
+				case theDate : 
 					doesExist.put(updatedColumn,(Date) htblColNameValue.get(updatedColumn) ) ; break;
 
 			}

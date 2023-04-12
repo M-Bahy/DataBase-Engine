@@ -11,26 +11,10 @@ import java.time.LocalDate;
 
 
 public class DBApp {
-	{
-	// **Important**
-	// creates metaData eventhough it throws a DBAppException in createTable
-
-	// Changes (what I remember lolz):
-	// first line in metadata is the N for it to be saved
-	// changed insertion to min and max to .get(pk)
-	// changed all == to compareTo (Stings only tab3an)
-	// In Page.java, instead of returning if record found throw DBAppExeception (Check Class)
-	// br.readline done twice at the beginning since N is saved in the first record (3ayez akalemko feeha)
-	// fe kam 7aga 3ameltelha comment bs msh fakerhom lolz
-	// el mafrood insertion is finished keda we garabtaha  
-
-	// Mal7ooza:
-	// el code kinda shaklo msh lateef
-	}
 	private boolean firstTable = false;
 	private int n;
 	private String theString = "java.lang.String";
-	private String theDouble;
+	private String theDouble = "java.lang.Double";
 	private String theDate;
 	private String theInt = "java.lang.Integer";
 
@@ -142,7 +126,7 @@ public class DBApp {
 				throw new DBAppException("There is no min and max specified for Column: " + s);
 			}
 			if ((htblColNameType.get(s)).compareTo(theInt) != 0 && (htblColNameType.get(s)).compareTo(theString) != 0
-					&& (htblColNameType.get(s)).compareTo("java.lang.Double") != 0 && (htblColNameType.get(s)).compareTo("java.util.Date") != 0){
+					&& (htblColNameType.get(s)).compareTo(theDouble) != 0 && (htblColNameType.get(s)).compareTo("java.util.Date") != 0){
 						System.out.println(htblColNameType.get(s));
 				throw new DBAppException("This is data type is not supported");
 					}
@@ -310,7 +294,7 @@ public class DBApp {
                 		}
                 		
                 		break;
-                	case "java.lang.Double" : 
+                	case theDouble : 
                 		
                 		if(  (htblColNameValue.get(values[1]) ) instanceof  Double ) {
                 			variable = 0;
@@ -438,7 +422,7 @@ public class DBApp {
 							t.getRange().get(index).setMin(pp.getData().get(0).get(pk));
 						}
 						else {
-							if(dataType.compareTo("java.lang.Double") == 0) {
+							if(dataType.compareTo(theDouble) == 0) {
 								pp.insertHashTableDOUBLE(htblColNameValue, pk);
 								t.getRange().get(index).setMax(pp.getData().get(pp.getData().size()-1).get(pk));
 								t.getRange().get(index).setMin(pp.getData().get(0).get(pk));
@@ -488,7 +472,7 @@ public class DBApp {
 										t.getRange().get(index).setMin(pp.getData().get(0).get(pk));
 									}
 									else {
-										if(dataType.compareTo("java.lang.Double") == 0) {
+										if(dataType.compareTo(theDouble) == 0) {
 											pp.insertHashTableDOUBLE(htblColNameValue, pk);
 											t.getRange().get(index).setMax(pp.getData().get(pp.getData().size()-1).get(pk));
 											t.getRange().get(index).setMin(pp.getData().get(0).get(pk));
@@ -628,7 +612,7 @@ public class DBApp {
 								t.getRange().get(ind).setMin(pp.getData().get(0).get(pk));
 							}
 							else {
-								if(dataType.compareTo("java.lang.Double") == 0) {
+								if(dataType.compareTo(theDouble) == 0) {
 									pp.insertHashTableDOUBLE(htblColNameValue, pk);
 									t.getRange().get(ind).setMax(pp.getData().get(pp.getData().size()-1).get(pk));
 									t.getRange().get(ind).setMin(pp.getData().get(0).get(pk));
@@ -783,7 +767,7 @@ public class DBApp {
                 		}
                 		
                 		break;
-                	case "java.lang.Double" : 
+                	case theDouble : 
                 		
                 		if(  (htblColNameValue.get(values[1]) ) instanceof  Double ) {
                 			variable = 0;
@@ -857,7 +841,7 @@ public class DBApp {
 		switch(keyDataType){
 			case theInt : o = Integer.parseInt(keyValue);break;
 			case theString : o = keyValue; break ;
-			case "java.lang.Double" : o = new Double(keyValue);break;
+			case theDouble : o = new Double(keyValue);break;
 			case "java.util.Date" : try {
 					o = dateFormat.parse(keyValue);
 				} catch (ParseException e) {
@@ -884,7 +868,7 @@ public class DBApp {
 					doesExist = page.binarySearchInteger(iValue, key);
 					break;
 				case theString : doesExist = page.binarySearchString(keyValue, key); break ;
-				case "java.lang.Double" : doesExist = page.binarySearchDouble(new Double(keyValue), key) ;break;
+				case theDouble : doesExist = page.binarySearchDouble(new Double(keyValue), key) ;break;
 				case "java.util.Date" : doesExist = page.binarySearchDate(keyValue, key); break;
 	
 			}
@@ -918,14 +902,14 @@ public class DBApp {
 			//System.out.println(htblColNameValue.get(updatedColumn) instanceof String);
 			String x = htblColNameValue.get(updatedColumn) instanceof Date ? "java.util.Date"
 			: ( htblColNameValue.get(updatedColumn) instanceof Integer ? theInt  
-			:  ( htblColNameValue.get(updatedColumn) instanceof Double ? "java.lang.Double" 
+			:  ( htblColNameValue.get(updatedColumn) instanceof Double ? theDouble 
 			:  theString ) );
 			//System.out.println(x);
 			switch(x){
 				case theInt : doesExist.put(updatedColumn, (Integer) htblColNameValue.get(updatedColumn));break;
 				case theString : doesExist.put(updatedColumn, (String) htblColNameValue.get(updatedColumn)); break;
 				//System.out.println(updatedColumn+"here");break ;
-				case "java.lang.Double" : doesExist.put(updatedColumn, (Double) htblColNameValue.get(updatedColumn));break;
+				case theDouble : doesExist.put(updatedColumn, (Double) htblColNameValue.get(updatedColumn));break;
 				case "java.util.Date" : 
 					doesExist.put(updatedColumn,(Date) htblColNameValue.get(updatedColumn) ) ; break;
 

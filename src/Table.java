@@ -140,7 +140,8 @@ public class Table implements Serializable{
 		switch (dataType) {
     	case "java.lang.Integer" :
     	 int data = (int) o;
-    	 for (int i = 0;i<this.getRange().size();i++) {
+		 
+    	 for ( int i = 0;i<this.getRange().size();i++) {
     		 Pair p = this.getRange().get(i);
     		 int min = (int) p.getMin();
     		 int max = (int) p.getMax();
@@ -151,6 +152,10 @@ public class Table implements Serializable{
     		 }
     		 
     	 }
+		 
+		 	if(true)
+				return this.getRange().size()-1;
+		 
     		
     		
     		break;
@@ -170,6 +175,8 @@ public class Table implements Serializable{
         		 }
         		 
         	 }
+			 if(true)
+				return this.getRange().size()-1;
     		
     		break;
     	case "java.lang.Double" : 
@@ -185,7 +192,8 @@ public class Table implements Serializable{
         		 }
         		 
         	 }
-    		
+			 if(true)
+			 return this.getRange().size()-1;
     		
     		break;
     	case "java.util.Date" :   
@@ -204,7 +212,8 @@ public class Table implements Serializable{
        		 
        		 
        	 }
-    		
+    		if(true)
+				return this.getRange().size()-1;
     		
     		
     		break;

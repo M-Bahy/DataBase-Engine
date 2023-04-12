@@ -23,16 +23,19 @@ public class DBApp {
 		DBApp db = new DBApp();
 		//db.init();
 		//createDummyData(db);
-		insertDummyData(db, 2, 7, "Bahy", "2013-06-01");
-		insertDummyData(db, 3, 25, "ali", "2008-08-14");
+		insertDummyData(db, 7, 55, "5ara", "2013-06-01");
+		/*insertDummyData(db, 3, 25, "ali", "2008-08-14");
 		insertDummyData(db, 4, 101, "nour", "2010-05-23");
-		insertDummyData(db, 5, 619, "omar", "2019-12-15");
+		insertDummyData(db, 5, 619, "omar", "2019-12-15");*/
 		
 
 		
-		/*Vector<Page> pages = (Vector<Page>)  deserialize("dumbTablePage1");
+		/*Vector<Page> pages = (Vector<Page>)  deserialize("dumbTablePage11");
 		Page p1 = pages.get(0);
 		System.out.println(p1.getData());*/
+		/*Vector<Table> t = (Vector<Table>) deserialize("dumbTable");
+		Table tt = t.get(0);
+		System.out.println(tt.getRange().get(1).getMin() + "   " + tt.getRange().get(1).getMax());*/
 		
 	}
 

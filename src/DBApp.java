@@ -298,7 +298,7 @@ public class DBApp {
 				throw new DBAppException("There is no min and max specified for Column: " + s);
 			}
 			if ((htblColNameType.get(s)).compareTo("java.lang.Integer") != 0 && (htblColNameType.get(s)).compareTo("java.lang.String") != 0
-					&& (htblColNameType.get(s)).compareTo("java.lang.Double") != 0 && (htblColNameType.get(s)).compareTo("java.lang.Date") != 0){
+					&& (htblColNameType.get(s)).compareTo("java.lang.Double") != 0 && (htblColNameType.get(s)).compareTo("java.util.Date") != 0){
 						System.out.println(htblColNameType.get(s));
 				throw new DBAppException("This is data type is not supported");
 					}
@@ -600,7 +600,7 @@ public class DBApp {
 								t.getRange().get(index).setMin(pp.getData().get(0).get(pk));
 							}
 							else {
-								if(dataType.compareTo("java.lang.Date") == 0) {
+								if(dataType.compareTo("java.util.Date") == 0) {
 									pp.insertHashTableDate(htblColNameValue, pk);
 									t.getRange().get(index).setMax(pp.getData().get(pp.getData().size()-1).get(pk));
 									t.getRange().get(index).setMin(pp.getData().get(0).get(pk));
@@ -650,7 +650,7 @@ public class DBApp {
 											t.getRange().get(index).setMin(pp.getData().get(0).get(pk));
 										}
 										else {
-											if(dataType.compareTo("java.lang.Date") == 0) {
+											if(dataType.compareTo("java.util.Date") == 0) {
 												pp.insertHashTableDate(htblColNameValue, pk);
 												t.getRange().get(index).setMax(pp.getData().get(pp.getData().size()-1).get(pk));
 												t.getRange().get(index).setMin(pp.getData().get(0).get(pk));
@@ -790,7 +790,7 @@ public class DBApp {
 									t.getRange().get(ind).setMin(pp.getData().get(0).get(pk));
 								}
 								else {
-									if(dataType.compareTo("java.lang.Date") == 0) {
+									if(dataType.compareTo("java.util.Date") == 0) {
 										pp.insertHashTableDate(htblColNameValue, pk);
 										t.getRange().get(ind).setMax(pp.getData().get(pp.getData().size()-1).get(pk));
 										t.getRange().get(ind).setMin(pp.getData().get(0).get(pk));

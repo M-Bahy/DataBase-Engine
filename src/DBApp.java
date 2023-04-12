@@ -13,10 +13,10 @@ import java.time.LocalDate;
 public class DBApp {
 	private boolean firstTable = false;
 	private int n;
-	private String theString = "java.lang.String";
-	private String theDouble = "java.lang.Double";
-	private String theDate = "java.util.Date";
-	private String theInt = "java.lang.Integer";
+	private final static String theString = "java.lang.String";
+	private final static String theDouble = "java.lang.Double";
+	private final static String theDate = "java.util.Date";
+	private final static String theInt = "java.lang.Integer";
 
 	public static void main(String[] args) throws Exception {
 		DBApp db = new DBApp();

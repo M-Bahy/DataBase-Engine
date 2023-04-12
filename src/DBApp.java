@@ -23,27 +23,31 @@ public class DBApp {
 		DBApp db = new DBApp();
 		//db.init();
 		//createDummyData(db);
+		insertDummyData(db, 2, 7, "Bahy", "2013-06-01");
+		insertDummyData(db, 3, 25, "ali", "2008-08-14");
+		insertDummyData(db, 4, 101, "nour", "2010-05-23");
+		insertDummyData(db, 5, 619, "omar", "2019-12-15");
 		
-		/*int id = 1;
-		int number = 5;
-		String string = "Hi";
-		Double floatnum = 2.5;
-		String date = "2012-09-25";
 
+		
+		/*Vector<Page> pages = (Vector<Page>)  deserialize("dumbTablePage1");
+		Page p1 = pages.get(0);
+		System.out.println(p1.getData());*/
+		
+	}
+
+	private static void insertDummyData(DBApp db, int id, int number, String string, String date)
+			throws ParseException, DBAppException {
 		Hashtable<String,Object> h4 = new Hashtable<String,Object>();
-		h4.put("id", 1);
-		h4.put("testInteger", 5);
+		h4.put("id", id);
+		h4.put("testInteger", number);
 		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 		Date elDate = dateFormat.parse(date);
 		h4.put("testDouble", new Double("2.7"));
-		h4.put("testString", "Ahmed");
+		h4.put("testString", string);
 		h4.put("testDate", elDate);
 
-		db.insertIntoTable("dumbTable", h4);*/
-		Vector<Page> pages = (Vector<Page>)  deserialize("dumbTablePage1");
-		Page p1 = pages.get(0);
-		System.out.println(p1.getData());
-		
+		db.insertIntoTable("dumbTable", h4);
 	}
 
 	private static void createDummyData(DBApp db) throws DBAppException {

@@ -29,6 +29,10 @@ public class DBApp {
 	}
 	private boolean firstTable = false;
 	private int n;
+	private String theString;
+	private String theDouble;
+	private String theDate;
+	private String theInt = "java.lang.Integer";
 
 	public static void main(String[] args) throws Exception {
 		DBApp db = new DBApp();
@@ -137,7 +141,7 @@ public class DBApp {
 			if (htblColNameMin.containsKey(s) != true || htblColNameMax.containsKey(s) != true) {
 				throw new DBAppException("There is no min and max specified for Column: " + s);
 			}
-			if ((htblColNameType.get(s)).compareTo("java.lang.Integer") != 0 && (htblColNameType.get(s)).compareTo("java.lang.String") != 0
+			if ((htblColNameType.get(s)).compareTo(theInt) != 0 && (htblColNameType.get(s)).compareTo("java.lang.String") != 0
 					&& (htblColNameType.get(s)).compareTo("java.lang.Double") != 0 && (htblColNameType.get(s)).compareTo("java.util.Date") != 0){
 						System.out.println(htblColNameType.get(s));
 				throw new DBAppException("This is data type is not supported");
@@ -281,7 +285,7 @@ public class DBApp {
                 	// we checked the coloumn exists
                 	int variable = 1;
                 	switch (values[2]) {
-                	case "java.lang.Integer" :
+                	case theInt :
                 	
                 		if(  (htblColNameValue.get(values[1]) ) instanceof  Integer ) {
                 			variable = 0;
@@ -422,7 +426,7 @@ public class DBApp {
         			Page pp = v.get(0);
         			
         				
-					if(dataType.compareTo("java.lang.Integer") == 0) {
+					if(dataType.compareTo(theInt) == 0) {
 						pp.insertHashTableINT(htblColNameValue, pk);
 						t.getRange().get(index).setMax(pp.getData().get(pp.getData().size()-1).get(pk));
 						t.getRange().get(index).setMin(pp.getData().get(0).get(pk));
@@ -472,7 +476,7 @@ public class DBApp {
         						Vector <Page> v1 = (Vector <Page>) deserialize(strTableName+"Page"+pageID);
         						Page pp1 = v1.get(0);
 								
-								if(dataType.compareTo("java.lang.Integer") == 0) {
+								if(dataType.compareTo(theInt) == 0) {
 									pp.insertHashTableINT(htblColNameValue, pk);
 									t.getRange().get(index).setMax(pp.getData().get(pp.getData().size()-1).get(pk));
 									t.getRange().get(index).setMin(pp.getData().get(0).get(pk));
@@ -612,7 +616,7 @@ public class DBApp {
 					
 					// change 3: compareto instead of ==
 					if(!addPage){
-						if(dataType.compareTo("java.lang.Integer") == 0) {
+						if(dataType.compareTo(theInt) == 0) {
 							pp.insertHashTableINT(htblColNameValue, pk);
 							t.getRange().get(ind).setMax(pp.getData().get(pp.getData().size()-1).get(pk));
 							t.getRange().get(ind).setMin(pp.getData().get(0).get(pk));
@@ -754,7 +758,7 @@ public class DBApp {
 					// we got the cloumn now we check if it is correct data type and within the range 
 						int variable = 1;
                 	switch (values[2]) {
-                	case "java.lang.Integer" :
+                	case theInt :
                 	
                 		if(  (htblColNameValue.get(values[1]) ) instanceof  Integer ) {
                 			variable = 0;
@@ -851,7 +855,7 @@ public class DBApp {
 		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 		//Date date = dateFormat.parse(dateString);
 		switch(keyDataType){
-			case "java.lang.Integer" : o = Integer.parseInt(keyValue);break;
+			case theInt : o = Integer.parseInt(keyValue);break;
 			case "java.lang.String" : o = keyValue; break ;
 			case "java.lang.Double" : o = new Double(keyValue);break;
 			case "java.util.Date" : try {
@@ -874,7 +878,7 @@ public class DBApp {
 			pages.remove(page);
 			Hashtable<String,Object> doesExist = null;
 			switch(keyDataType){
-				case "java.lang.Integer" : 
+				case theInt : 
 					Integer iTMP = Integer.parseInt(keyValue) ;
 					int iValue = iTMP.intValue();
 					doesExist = page.binarySearchInteger(iValue, key);
@@ -913,12 +917,12 @@ public class DBApp {
 			//System.out.println(" here  :  up col  "+updatedColumn+"  here  get :   "+htblColNameValue.get(updatedColumn));
 			//System.out.println(htblColNameValue.get(updatedColumn) instanceof String);
 			String x = htblColNameValue.get(updatedColumn) instanceof Date ? "java.util.Date"
-			: ( htblColNameValue.get(updatedColumn) instanceof Integer ? "java.lang.Integer"  
+			: ( htblColNameValue.get(updatedColumn) instanceof Integer ? theInt  
 			:  ( htblColNameValue.get(updatedColumn) instanceof Double ? "java.lang.Double" 
 			:  "java.lang.String" ) );
 			//System.out.println(x);
 			switch(x){
-				case "java.lang.Integer" : doesExist.put(updatedColumn, (Integer) htblColNameValue.get(updatedColumn));break;
+				case theInt : doesExist.put(updatedColumn, (Integer) htblColNameValue.get(updatedColumn));break;
 				case "java.lang.String" : doesExist.put(updatedColumn, (String) htblColNameValue.get(updatedColumn)); break;
 				//System.out.println(updatedColumn+"here");break ;
 				case "java.lang.Double" : doesExist.put(updatedColumn, (Double) htblColNameValue.get(updatedColumn));break;

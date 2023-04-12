@@ -21,32 +21,56 @@ public class DBApp {
 
 	public static void main(String[] args) throws Exception {
 		DBApp db = new DBApp();
-		//db.init();
-		//createDummyData(db);
-		insertDummyData(db, 7, 55, "5ara", "2013-06-01");
-		/*insertDummyData(db, 3, 25, "ali", "2008-08-14");
-		insertDummyData(db, 4, 101, "nour", "2010-05-23");
-		insertDummyData(db, 5, 619, "omar", "2019-12-15");*/
-		
+		/*db.init();
+		createDummyData(db);
+		insertDummyData(db, 1, 55, "5ara", "2013-06-01" , 2.2);
+		insertDummyData(db, 2, 25, "ali", "2008-08-14" , 2.3);
+		insertDummyData(db, 3, 101, "nour", "2010-05-23" , 2.4);
+		insertDummyData(db, 4, 619, "omar", "2019-12-15" , 2.5);*/
 
 		
-		/*Vector<Page> pages = (Vector<Page>)  deserialize("dumbTablePage11");
-		Page p1 = pages.get(0);
-		System.out.println(p1.getData());*/
-		/*Vector<Table> t = (Vector<Table>) deserialize("dumbTable");
-		Table tt = t.get(0);
-		System.out.println(tt.getRange().get(1).getMin() + "   " + tt.getRange().get(1).getMax());*/
+		displayThe2Pages();
+		System.out.println();
+		Hashtable<String,Object> h5 = new Hashtable<String,Object>();
+		h5.put("testDouble", 7.8);
+		h5.put("testString", "Bahy");
+		h5.put("testInteger", 445);
+
+		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+
+		// Parse the string "2012-9-25" into a date object
+		Date date = dateFormat.parse("2012-9-25");
+
+		h5.put("testDate", date);
+		db.updateTable("dumbTable", "3", h5);
+		System.out.println();
+		displayThe2Pages();
+		
+		/*Vector<Table> tt = (Vector<Table>) deserialize("dumbTable");
+		Table t = tt.get(0);
+		System.out.println(t.getIds());*/
+		
 		
 	}
 
-	private static void insertDummyData(DBApp db, int id, int number, String string, String date)
+	private static void displayThe2Pages() {
+		Vector<Page> pages = (Vector<Page>)  deserialize("dumbTablePage1");
+		Page p1 = pages.get(0);
+		System.out.println(p1.getData());
+		System.out.println();
+		Vector<Page> pagess = (Vector<Page>)  deserialize("dumbTablePage2");
+		Page p11 = pagess.get(0);
+		System.out.println(p11.getData());
+	}
+
+	private static void insertDummyData(DBApp db, int id, int number, String string, String date , Double d)
 			throws ParseException, DBAppException {
 		Hashtable<String,Object> h4 = new Hashtable<String,Object>();
 		h4.put("id", id);
 		h4.put("testInteger", number);
 		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 		Date elDate = dateFormat.parse(date);
-		h4.put("testDouble", new Double("2.7"));
+		h4.put("testDouble", d);
 		h4.put("testString", string);
 		h4.put("testDate", elDate);
 
@@ -677,7 +701,7 @@ public class DBApp {
 							//1. serialize page
 							Vector<Page> v1 = new Vector<>();
 							v1.add(pp);
-							serialize(v1, strTableName+"Page"+pageID);
+							serialize(v1, (strTableName+"Page"+pageID));
 								
 							// 2. serialize the table
 							try {
@@ -704,7 +728,8 @@ public class DBApp {
 						//serialize and add to table
 
 						// 1. serialize the page
-						pageID = pageID + 1;
+						int pid = Integer.parseInt(pageID);
+						pageID = (pid + 1)+"";
 						Vector<Page> v1 = new Vector<>();
 						v1.add(newPage);
 						serialize(v1, strTableName+"Page"+pageID);
@@ -823,9 +848,11 @@ public class DBApp {
                 		
                 		break;
                 	case theDate :   
-                		
+                		System.out.println("ana gowa el date");
+						System.out.println(htblColNameValue.get(values[1]));
                 		if(  (htblColNameValue.get(values[1]) ) instanceof  Date ) {
                 			variable = 0;
+							System.out.println("ana gowa el if");
                  			// law rg3t -1 then ely bara is the earlier one
                 			// law rag3t 1 then ely bara is later 
                 			
@@ -834,7 +861,12 @@ public class DBApp {
                 			Object i = htblColNameValue.get(values[1]);
                 			LocalDate dMIN = LocalDate.parse(x) ;
                 			LocalDate dMAX = LocalDate.parse(y) ;
-                			LocalDate theInput = LocalDate.parse(( (String) i   )) ;
+							Date test = (Date) i;
+							
+							//System.out.println("The test : " + test);
+							SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+							String testingDate = dateFormat.format(test);
+                			LocalDate theInput = LocalDate.parse(( testingDate   )) ;
                 			
                 			int notPos = dMIN.compareTo(theInput)  ;  // not +ve
                 			int notNeg =  dMAX.compareTo(theInput)  ;  // not -ve

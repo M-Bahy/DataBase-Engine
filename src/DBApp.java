@@ -29,28 +29,25 @@ public class DBApp {
 		insertDummyData(db, 4, 619, "omar", "2019-12-15" , 2.5);*/
 
 		
-		displayThe2Pages();
-		System.out.println();
-		Hashtable<String,Object> h5 = new Hashtable<String,Object>();
-		h5.put("testDouble", 7.8);
-		h5.put("testString", "Bahy");
-		h5.put("testInteger", 445);
-
-		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-
-		// Parse the string "2012-9-25" into a date object
-		Date date = dateFormat.parse("2012-9-25");
-
-		h5.put("testDate", date);
-		db.updateTable("dumbTable", "3", h5);
-		System.out.println();
-		displayThe2Pages();
 		
-		/*Vector<Table> tt = (Vector<Table>) deserialize("dumbTable");
+		
+		printData();
+		insertDummyData(db, 5, 312, "nour", "2008-07-14" , 6.9);
+		printData();
+	}
+
+	private static void printData() {
+		Vector<Table> tt = (Vector<Table>) deserialize("dumbTable");
 		Table t = tt.get(0);
-		System.out.println(t.getIds());*/
-		
-		
+		System.out.println( "Total number of Pages : " + t.getIds().size());
+		System.out.println();
+		for(String s:t.getIds()){
+			Vector<Page> pages = (Vector<Page>)  deserialize("dumbTablePage"+s);
+			Page p1 = pages.get(0);
+			System.out.println("Page "+s+" Data : ");
+			System.out.println(p1.getData());
+			System.out.println();
+		}
 	}
 
 	private static void displayThe2Pages() {

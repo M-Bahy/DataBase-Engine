@@ -14,6 +14,7 @@ import java.time.LocalDate;
 public class DBApp {
 	private boolean firstTable = false;
 	private int n;
+	private static String thePK = "";
 	private final static String theString = "java.lang.String";
 	private final static String theDouble = "java.lang.Double";
 	private final static String theDate = "java.util.Date";
@@ -33,13 +34,32 @@ public class DBApp {
 		insertDummyData(db, 12, 99, "twoelf", "2014-05-23" , 2.4);
 		
 		insertDummyData(db, 1, 55, "one", "2013-06-01" , 2.2);
-		insertDummyData(db, 4, 101, "four", "2010-05-23" , 2.4);*/
-		//insertDummyData(db, 13, 25, "threeTEEN", "2008-08-14" , 2.3);
+		insertDummyData(db, 4, 101, "four", "2010-05-23" , 2.4);
+		insertDummyData(db, 13, 25, "threeTEEN", "2008-08-14" , 2.3);
+		
+		printData();
+		Hashtable<String,Object> h = new Hashtable<String,Object>();
+		h.put("testInteger", 5);
+		db.updateTable("dumbTable", "5", h);
+		printData();*/
+
+		insertDummyData(db, 15, 25, "threeTEEN", "2008-08-14" , 2.3);
 		printData();
 		
 		
 		
 		
+	}
+	public static void fixTheRanges (String tableName,String pk){
+		Vector<Table> tables = (Vector<Table>) deserialize(tableName);
+		Table t = tables.get(0);
+		for (int i =0 ;i<t.getIds().size();i++){
+			Vector<Page> pp = (Vector<Page>) deserialize(tableName+"Page"+t.getIds().get(i));
+			Page p = pp.get(0);
+			t.getRange().get(i).setMin(p.getData().get(0).get(pk));
+			t.getRange().get(i).setMax(p.getData().get(p.getData().size()-1).get(pk));
+		}
+		serializeTable(tables, tableName);
 	}
 
 	private static void printData() {
@@ -292,7 +312,7 @@ public class DBApp {
 	public void createIndex(String strTableName, String[] strarrColName) throws DBAppException {
 	}
 
-	public void insertIntoTable(String strTableName, Hashtable<String, Object> htblColNameValue) throws DBAppException {     
+	public void insertIntoTable2(String strTableName, Hashtable<String, Object> htblColNameValue) throws DBAppException {     
 		// check if table exit
 		Vector<String> tableNames = new Vector<String>();
 		boolean [] condition = new boolean [htblColNameValue.keySet().size()];
@@ -411,6 +431,7 @@ public class DBApp {
 						// instead of == "True", use compareto(String)
                 		isClustering = true;
                 	    pk = values[1];
+						thePK = pk;
                 	    dataType = values[2];
                 	}
                 
@@ -525,7 +546,7 @@ public class DBApp {
         				// I here must shift the last row in the curr page to the next page
 						if(pp.getSize() > N) {
 							System.out.println("AYWAAAAAAAA >N");
-							int shiftedindex = pp.getSize() - 1;
+							int shiftedindex = pp.getData().size() - 1;
 							Hashtable<String, Object> shiftedRow = pp.getData().get(shiftedindex); // last entry to shift 
 							pp.getData().remove(shiftedindex);
 							
@@ -954,15 +975,18 @@ public class DBApp {
 					}
 				}
 			}
+			//System.out.println(line);
 		}
 		} catch (Exception e) {
-			e.printStackTrace();
+			System.out.println(e.getCause());
+			//e.getCause()
 		}
 
 
 		if (isDataCorrect==htblColNameValue.size()){
 			// table exists and data is valid (in the correct data type and within the min & the max)
 			// now lets go check if the row (the hashtable) exists or not
+			//System.out.println("The rest of code");
 			return rowExists(tableName, keyValue, key, keyDataType,htblColNameValue);
 		}
 		else {
@@ -1006,6 +1030,9 @@ public class DBApp {
 				case theInt : 
 					Integer iTMP = Integer.parseInt(keyValue) ;
 					int iValue = iTMP.intValue();
+					System.out.println("The ivalue : "+iValue+" While the key is : "+key);
+					System.out.println();
+					System.out.println(  "THAAAAAAAAAA DATA IN PAGE" + page.getData());
 					doesExist = page.binarySearchInteger(iValue, key);
 					break;
 				case theString : doesExist = page.binarySearchString(keyValue, key); break ;
@@ -1112,7 +1139,31 @@ public class DBApp {
 	public Iterator selectFromTable(SQLTerm[] arrSQLTerms, String[] strarrOperators) throws DBAppException {
 		return null;
 	}
+	
+	public void insertIntoTable(String strTableName, Hashtable<String, Object> htblColNameValue) throws DBAppException {
+		insertIntoTable2(strTableName, htblColNameValue);
+		fixTheRanges(strTableName, thePK);
 
+	}
+	
+	public static void serializeTable (Vector<Table> p,String name) {
+		try {
+			//Vector<String> p = new Vector<String>();
+			//  {1,2,3,4,8}  { () , () }
+			
+			FileOutputStream fileOut = new FileOutputStream(name + ".bin");
+			ObjectOutputStream out = new ObjectOutputStream(fileOut);
+			out.writeObject(p);
+			out.close();
+			fileOut.close();
+			
+			
+		} catch (Exception i) {
+			i.printStackTrace();
+		}
+		
+		
+	}
 	{
 		/*//db.init();
 		Vector<Page> p = (Vector<Page>) deserialize("StudentPage1");

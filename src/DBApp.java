@@ -28,16 +28,15 @@ public class DBApp {
 		insertDummyData(db, 5, 619, "five", "2019-12-15" , 2.5);
 		
 		insertDummyData(db, 6, 619, "six", "2019-12-15" , 2.5);
-		insertDummyData(db, 2, 55, "two", "2013-06-01" , 2.2);*/
-		insertDummyData(db, 4, 101, "four", "2010-05-23" , 2.4);
+		insertDummyData(db, 2, 55, "two", "2013-06-01" , 2.2);
+
+		insertDummyData(db, 12, 99, "twoelf", "2014-05-23" , 2.4);
 		
 		insertDummyData(db, 1, 55, "one", "2013-06-01" , 2.2);
+		insertDummyData(db, 4, 101, "four", "2010-05-23" , 2.4);*/
+		//insertDummyData(db, 13, 25, "threeTEEN", "2008-08-14" , 2.3);
 		printData();
-		Vector<Table> tt = (Vector<Table>) deserialize("dumbTable");
-		Table t = tt.get(0);
-		for(Pair p :t.getRange()){
-			System.out.println("The min is : "+p.getMin()+" While the max is : "+p.getMax());
-		}
+		
 		
 		
 		
@@ -97,7 +96,7 @@ public class DBApp {
 		h2.put("testDate", "2002-04-29");
 
 		Hashtable<String,String> h3 = new Hashtable<String,String>();
-		h3.put("id", "10");
+		h3.put("id", "20");
 		h3.put("testInteger", "1000");
 		h3.put("testDouble", "1000.0");
 		h3.put("testString", "ZZZZZZZZZZZZ");

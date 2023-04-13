@@ -9,7 +9,7 @@ import java.util.Locale;
 import java.util.Set;
 import java.util.Vector;
 import java.time.LocalDate;
-
+import java.util.function.*;
 
 public class DBApp {
 	private boolean firstTable = false;

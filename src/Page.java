@@ -42,6 +42,7 @@ public class Page implements Serializable {
             } else if (midKey > key) {
                 high = mid - 1;
             } else {
+				System.out.println("THE MID KEY IS : "+midKey+" WHILE THE KEY IS : "+key);
                 // Key already exists, do not insert new hashtable
                 throw new DBAppException("Record with same primary key already exists");
             }

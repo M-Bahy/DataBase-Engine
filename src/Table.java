@@ -60,8 +60,9 @@ public class Table implements Serializable{
 			 System.out.println(p.getMin());
     		 int min = (int) p.getMin();
     		 int max = (int) p.getMax();
-    		 if (data<= max && data >= min) {
+    		 if (   (data<= max && data >= min)   ||  (data<=min)  ) {
     			return i;
+				/*Mistake here : the min in 3 and the max is 5 , number 2 can't be inserted here */
     		
     			 
     		 }
@@ -146,6 +147,8 @@ public class Table implements Serializable{
     		 int min = (int) p.getMin();
     		 int max = (int) p.getMax();
     		 if (data < min) {
+				if(i==0)
+					return 0;
     			return i-1;
     		
     			 

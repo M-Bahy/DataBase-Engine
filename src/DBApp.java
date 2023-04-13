@@ -23,17 +23,24 @@ public class DBApp {
 		DBApp db = new DBApp();
 		/*db.init();
 		createDummyData(db);
-		insertDummyData(db, 1, 55, "5ara", "2013-06-01" , 2.2);
-		insertDummyData(db, 2, 25, "ali", "2008-08-14" , 2.3);
-		insertDummyData(db, 3, 101, "nour", "2010-05-23" , 2.4);
-		insertDummyData(db, 4, 619, "omar", "2019-12-15" , 2.5);*/
-
+		insertDummyData(db, 3, 25, "three", "2008-08-14" , 2.3);
 		
+		insertDummyData(db, 5, 619, "five", "2019-12-15" , 2.5);
 		
+		insertDummyData(db, 6, 619, "six", "2019-12-15" , 2.5);
+		insertDummyData(db, 2, 55, "two", "2013-06-01" , 2.2);*/
+		insertDummyData(db, 4, 101, "four", "2010-05-23" , 2.4);
 		
+		insertDummyData(db, 1, 55, "one", "2013-06-01" , 2.2);
 		printData();
-		insertDummyData(db, 5, 312, "nour", "2008-07-14" , 6.9);
-		printData();
+		Vector<Table> tt = (Vector<Table>) deserialize("dumbTable");
+		Table t = tt.get(0);
+		for(Pair p :t.getRange()){
+			System.out.println("The min is : "+p.getMin()+" While the max is : "+p.getMax());
+		}
+		
+		
+		
 	}
 
 	private static void printData() {
@@ -466,6 +473,14 @@ public class DBApp {
         	else {
 				//System.out.println(htblColNameValue.get(pk));
         		int index = t.search(htblColNameValue.get(pk), dataType); //kill
+				System.out.println("00000000000000000000000000000000");
+				System.out.println("THE PK : "+htblColNameValue.get(pk)+" THE INDEX FOUND : "+index);
+				System.out.println();
+				for(int g = 0;g<t.getRange().size();g++){
+					Pair f = t.getRange().get(g);
+					System.out.println("In the "+g+" Page , The minimum is : "+f.getMin()+" While the max is : "+f.getMax());
+				}
+				System.out.println("00000000000000000000000000000000");
         		if( index != -1) {  // We found the page (using the range) and we inserted 
         			                // , we increased the size of the page too 
         			String pageID = t.getIds().get(index);
@@ -477,6 +492,9 @@ public class DBApp {
 						pp.insertHashTableINT(htblColNameValue, pk);
 						t.getRange().get(index).setMax(pp.getData().get(pp.getData().size()-1).get(pk));
 						t.getRange().get(index).setMin(pp.getData().get(0).get(pk));
+						System.out.println("*******************************************************************");
+						System.out.println(pp.getData());
+						System.out.println("*******************************************************************");
 						}
 					else {
 						if(dataType.compareTo(theString) == 0) {
@@ -507,26 +525,40 @@ public class DBApp {
 
         				// I here must shift the last row in the curr page to the next page
 						if(pp.getSize() > N) {
-	
+							System.out.println("AYWAAAAAAAA >N");
 							int shiftedindex = pp.getSize() - 1;
 							Hashtable<String, Object> shiftedRow = pp.getData().get(shiftedindex); // last entry to shift 
 							pp.getData().remove(shiftedindex);
+							
 							pp.setSize(pp.getSize() - 1);
-
+							t.getRange().get(index).setMax(pp.getData().get(pp.getData().size()-1).get(pk));
+							System.out.println("++++++++++++++++++++++++++++++++++++++");
+							System.out.println("THE SHIFTED ROW : "+shiftedRow);
+							System.out.println("++++++++++++++++++++++++++++++++++++++");
 							//serialize pp 
-
+							String oldPID = pageID;
 						
 							try {
 								int i = 1;
+								Object oldMAX = null;
+								Object oldMIN = null;
 								while(true){
 								pageID = t.getIds().get(index + i);
         						Vector <Page> v1 = (Vector <Page>) deserialize(strTableName+"Page"+pageID);
         						Page pp1 = v1.get(0);
 								
 								if(dataType.compareTo(theInt) == 0) {
-									pp.insertHashTableINT(htblColNameValue, pk);
-									t.getRange().get(index).setMax(pp.getData().get(pp.getData().size()-1).get(pk));
-									t.getRange().get(index).setMin(pp.getData().get(0).get(pk));
+									if(!pp1.getData().contains(shiftedRow)){
+										pp1.insertHashTableINT(shiftedRow, pk);
+										System.out.println("4444444444444444444444444444444444444");
+										System.out.println("The new page (PP1) is : "+pp1.getData());
+										System.out.println("4444444444444444444444444444444444444");
+									 oldMIN = t.getRange().get(index).getMin();
+									 oldMAX =  t.getRange().get(index).getMax();
+									t.getRange().get(index).setMax(pp1.getData().get(pp1.getData().size()-1).get(pk));
+									t.getRange().get(index).setMin(pp1.getData().get(0).get(pk));
+									}
+									
 									}
 								else {
 									if(dataType.compareTo(theString) == 0) {
@@ -555,17 +587,55 @@ public class DBApp {
 								}
 								pp1.setSize(pp1.getSize() + 1);
 
-								if(pp1.getSize() < N) break;
+								if(pp1.getSize() <= N){
+								v1 = new Vector<>();
+								v1.add(pp1);
+								System.out.println(pp1.getData());
+								serialize(v1, strTableName+"Page"+pageID);
+
+								Vector<Page> ser = new Vector<Page>();
+								ser.add(pp);
+								System.out.println("The old PID : "+oldPID);
+								serialize(ser, strTableName+"Page"+oldPID);
+								
+								// 2. serialize the table
+								try {
+									Vector<Table> tableV = new Vector<Table>();
+									tableV.add(t);
+									FileOutputStream fileOut = new FileOutputStream(strTableName + ".bin");
+									ObjectOutputStream out = new ObjectOutputStream(fileOut);
+									out.writeObject(tableV);
+									out.close();
+									fileOut.close();
+									
+									
+								} catch (Exception e) {
+									e.printStackTrace();
+									throw new DBAppException("moshkela fe table object");
+								}
+
+
+									return;
+								} 
 								
 								//else 
-								shiftedRow = pp1.getData().get(shiftedindex);
-								pp1.setSize(pp.getSize() - 1);
+								//shiftedRow = pp1.getData().get(shiftedindex);
+								shiftedRow = pp1.getData().remove(pp1.getData().size()-1);
+								//pp1.setSize(pp.getSize() - 1);
+								t.getRange().get(index).setMax(pp1.getData().get(pp1.getData().size()-1).get(pk));
+								t.getRange().get(index).setMin(pp1.getData().get(0).get(pk));
 								i++;
 
 								// we should serialize any change in any page before entering the loop again
 
 								// 1. serialize the page
 								
+								Vector<Page> ser = new Vector<Page>();
+								ser.add(pp);
+								System.out.println("The old PID : "+oldPID);
+								serialize(ser, strTableName+"Page"+oldPID);
+
+
 								v1 = new Vector<>();
 								v1.add(pp1);
 								serialize(v1, strTableName+"Page"+pageID);
@@ -598,7 +668,7 @@ public class DBApp {
 							//serialize and add to table
 
 							// 1. serialize the page
-							pageID = pageID + 1;
+							pageID = Integer.parseInt(pageID) + 1+"";
 							Vector<Page> v1 = new Vector<>();
 							v1.add(newPage);
 							serialize(v1, strTableName+"Page"+pageID);
@@ -637,6 +707,7 @@ public class DBApp {
 					boolean addPage = false;
 					
 					int ind = t.searchPageAccordingToMin(htblColNameValue.get(pk), dataType); 
+					System.out.println("THE IND : "+ind);
 					String pageID = t.getIds().get(ind);
 					Vector <Page> v = (Vector <Page>) deserialize(strTableName+"Page"+pageID);
         			Page pp = v.get(0);

@@ -22,28 +22,49 @@ public class DBApp {
 
 	public static void main(String[] args) throws Exception {
 		DBApp db = new DBApp();
-		/*db.init();
+		db.init();
 		createDummyData(db);
 		insertDummyData(db, 3, 25, "three", "2008-08-14" , 2.3);
 		
 		insertDummyData(db, 5, 619, "five", "2019-12-15" , 2.5);
 		
-		insertDummyData(db, 6, 619, "six", "2019-12-15" , 2.5);
+		insertDummyData(db, 8, 619, "six", "2019-12-15" , 2.5);
 		insertDummyData(db, 2, 55, "two", "2013-06-01" , 2.2);
 
 		insertDummyData(db, 12, 99, "twoelf", "2014-05-23" , 2.4);
 		
 		insertDummyData(db, 1, 55, "one", "2013-06-01" , 2.2);
 		insertDummyData(db, 4, 101, "four", "2010-05-23" , 2.4);
+		insertDummyData(db, 14, 25, "threeTEEN", "2008-08-14" , 2.3);
+		insertDummyData(db, 7, 25, "threeTEEN", "2008-08-14" , 2.3);
 		insertDummyData(db, 13, 25, "threeTEEN", "2008-08-14" , 2.3);
-		
-		printData();
-		Hashtable<String,Object> h = new Hashtable<String,Object>();
+		insertDummyData(db, 15, 25, "threeTEEN", "2008-08-14" , 2.3);
+		insertDummyData(db, 16, 25, "threeTEEN", "2008-08-14" , 2.3);
+		//printData();
+		/*Hashtable<String,Object> h = new Hashtable<String,Object>();
 		h.put("testInteger", 5);
 		db.updateTable("dumbTable", "5", h);
 		printData();*/
+		
+		
+		/*System.out.println("****************************");
+		System.out.println("Before adding 7 : ");
+		printData();
+		System.out.println();
+		System.out.println("****************************");
+		
+		System.out.println("****************************");
+		System.out.println("after adding 7 : ");
+		printData();
+		System.out.println();
+		System.out.println("****************************");
+		insertDummyData(db, 14, 25, "threeTEEN", "2008-08-14" , 2.3);
+		System.out.println("****************************");
+		System.out.println("Before adding 14 : ");
+		printData();
+		System.out.println();
+		System.out.println("****************************");*/
 
-		insertDummyData(db, 15, 25, "threeTEEN", "2008-08-14" , 2.3);
 		printData();
 		
 		

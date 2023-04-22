@@ -21,49 +21,29 @@ public class DBApp {
 	private final static String theInt = "java.lang.Integer";
 
 	public static void main(String[] args) throws Exception {
-		DBApp db = new DBApp();
+		/*DBApp db = new DBApp();
 		db.init();
 		createDummyData(db);
-		insertDummyData(db, 3, 25, "three", "2008-08-14" , 2.3);
+		insertDummyData(db, 3, 25, "three", "2008-08-14" , 2.3); //in
 		
-		insertDummyData(db, 5, 619, "five", "2019-12-15" , 2.5);
+		insertDummyData(db, 5, 619, "five", "2019-12-15" , 2.5); //in
 		
-		insertDummyData(db, 8, 619, "six", "2019-12-15" , 2.5);
-		insertDummyData(db, 2, 55, "two", "2013-06-01" , 2.2);
+		insertDummyData(db, 8, 619, "eight", "2019-12-15" , 2.5); //in
+		insertDummyData(db, 2, 55, "two", "2013-06-01" , 2.2); //in
 
-		insertDummyData(db, 12, 99, "twoelf", "2014-05-23" , 2.4);
+		insertDummyData(db, 12, 99, "twoelf", "2014-05-23" , 2.4); //in
 		
-		insertDummyData(db, 1, 55, "one", "2013-06-01" , 2.2);
-		insertDummyData(db, 4, 101, "four", "2010-05-23" , 2.4);
-		insertDummyData(db, 14, 25, "threeTEEN", "2008-08-14" , 2.3);
-		insertDummyData(db, 7, 25, "threeTEEN", "2008-08-14" , 2.3);
+		insertDummyData(db, 1, 55, "one", "2013-06-01" , 2.2); //in
+		insertDummyData(db, 4, 101, "four", "2010-05-23" , 2.4); //in
+		insertDummyData(db, 14, 25, "fourTEEN", "2008-08-14" , 2.3); //in
+		insertDummyData(db, 7, 25, "seven", "2008-08-14" , 2.3); //in
+		
 		insertDummyData(db, 13, 25, "threeTEEN", "2008-08-14" , 2.3);
-		insertDummyData(db, 15, 25, "threeTEEN", "2008-08-14" , 2.3);
-		insertDummyData(db, 16, 25, "threeTEEN", "2008-08-14" , 2.3);
-		//printData();
-		/*Hashtable<String,Object> h = new Hashtable<String,Object>();
-		h.put("testInteger", 5);
-		db.updateTable("dumbTable", "5", h);
-		printData();*/
 		
+		insertDummyData(db, 15, 25, "fifTEEN", "2008-08-14" , 2.3); //in
+		insertDummyData(db, 16, 25, "sixTEEN", "2008-08-14" , 2.3); //in
+		*/
 		
-		/*System.out.println("****************************");
-		System.out.println("Before adding 7 : ");
-		printData();
-		System.out.println();
-		System.out.println("****************************");
-		
-		System.out.println("****************************");
-		System.out.println("after adding 7 : ");
-		printData();
-		System.out.println();
-		System.out.println("****************************");
-		insertDummyData(db, 14, 25, "threeTEEN", "2008-08-14" , 2.3);
-		System.out.println("****************************");
-		System.out.println("Before adding 14 : ");
-		printData();
-		System.out.println();
-		System.out.println("****************************");*/
 
 		printData();
 		
@@ -533,9 +513,13 @@ public class DBApp {
 						pp.insertHashTableINT(htblColNameValue, pk);
 						t.getRange().get(index).setMax(pp.getData().get(pp.getData().size()-1).get(pk));
 						t.getRange().get(index).setMin(pp.getData().get(0).get(pk));
+
 						System.out.println("*******************************************************************");
 						System.out.println(pp.getData());
 						System.out.println("*******************************************************************");
+						if((int) pp.getData().get(0).get("id") == 13){
+							System.out.println("Aywa ana 13");
+						}
 						}
 					else {
 						if(dataType.compareTo(theString) == 0) {
@@ -734,9 +718,28 @@ public class DBApp {
 							
 
 							}
+							return;
 							
 						}
-        			
+						Vector<Page> sol = new Vector<Page>();
+						sol.add(pp);
+						serialize(sol, strTableName+"Page"+pageID);
+						// 2. serialize the table
+						try {
+							Vector<Table> tableV = new Vector<Table>();
+							tableV.add(t);
+							FileOutputStream fileOut = new FileOutputStream(strTableName + ".bin");
+							ObjectOutputStream out = new ObjectOutputStream(fileOut);
+							out.writeObject(tableV);
+							out.close();
+							fileOut.close();
+							
+							
+						} catch (Exception e) {
+							e.printStackTrace();
+							throw new DBAppException("moshkela fe table object");
+						}
+
         			
         		}
         		else {
@@ -874,7 +877,7 @@ public class DBApp {
 			e.printStackTrace();
 		}
 		
-		
+		// here we should serialize the "insert 13" probllem
 	}
 
 	public void updateTable(String strTableName, String strClusteringKeyValue,

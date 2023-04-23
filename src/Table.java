@@ -80,7 +80,7 @@ public class Table implements Serializable{
         		 Pair p = this.getRange().get(i);
         		 String min = (String) p.getMin();
         		 String max = (String) p.getMax();
-        		 if (max.compareTo(dataa) != -1 && min.compareTo(dataa) != 1 ) {
+        		 if (   (  max.compareTo(dataa) > 0  && min.compareTo(dataa) < 0 )   ||  (min.compareTo(dataa) >= 0)   ) {
         			return i;
         		
         			 
@@ -172,6 +172,8 @@ public class Table implements Serializable{
         		 String min = (String) p.getMin();
         		 String max = (String) p.getMax();
         		 if (min.compareTo(dataa) == 1 ) {
+					if(i==0)
+						return 0;
         			return i - 1;
         		
         			 
@@ -189,6 +191,8 @@ public class Table implements Serializable{
         		 double min = (double) p.getMin();
         		 double max = (double) p.getMax();
         		 if (dataaa < min) {
+					if(i==0)
+						return 0;
         			return i - 1;
         		
         			 
@@ -210,9 +214,11 @@ public class Table implements Serializable{
 			LocalDate dMAX = LocalDate.parse(y) ;
 			int notPos = dMIN.compareTo(theInput)  ;  // not +ve
 			int notNeg =  dMAX.compareTo(theInput)  ;  // not -ve
-			if(notPos > 0)
+			if(notPos > 0){
+				if(i==0)
+					return 0;
 				return i - 1;
-       		 
+			}
        		 
        	 }
     		if(true)

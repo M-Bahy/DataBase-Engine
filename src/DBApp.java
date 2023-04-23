@@ -21,15 +21,50 @@ public class DBApp {
 	private final static String theInt = "java.lang.Integer";
 
 	public static void main(String[] args) throws Exception {
-		
 		DBApp dbApp = new DBApp();
+		/*DBApp dbApp = new DBApp();
         dbApp.init();
 
         createTheTables(dbApp);
+		dbApp.insertStudentRecords(dbApp, 50);*/
+		/*Vector<Page> v1 = new Vector<Page>();
+		v1 = (Vector<Page>) deserialize("studentsPage1");
+		Page pv1 = v1.get(0);
+		System.out.println(pv1.getData()); // 40s
 
-		
-		
-		
+		Vector<Page> v11 = new Vector<Page>();
+		v11 = (Vector<Page>) deserialize("studentsPage2");
+		Page pv11 = v11.get(0);
+		System.out.println(pv11.getData()); // 60s
+
+		Vector<Page> v111 = new Vector<Page>();
+		v111 = (Vector<Page>) deserialize("studentsPage3");
+		Page pv111 = v111.get(0);
+		System.out.println(pv111.getData()); // 80s */
+
+		/*for (int i = 0;i<25;i++){
+			Vector<Page> v = new Vector<Page>();
+			v = (Vector<Page>) deserialize("studentsPage"+(i+1));
+			Page pv = v.get(0);
+			System.out.println("Page "+(i+1)+" :");
+			System.out.println(pv.getData());
+		}*/
+		//{id=88-7707, gpa=2.69, dob=Sun Nov 29 00:00:00 EET 1992, first_name=Mariele, last_name=Sothena}
+		Hashtable<String, Object> row = new Hashtable<>();
+		//row.put("id", "88-7707");
+		row.put("first_name", "Bahy");
+		row.put("last_name", "Omar");
+		row.put("dob", new Date(1992, 11, 25));
+		row.put("gpa",1.5);
+		dbApp.updateTable("students", "88-7707", row);
+
+		for (int i = 0;i<25;i++){
+			Vector<Page> v = new Vector<Page>();
+			v = (Vector<Page>) deserialize("studentsPage"+(i+1));
+			Page pv = v.get(0);
+			System.out.println("Page "+(i+1)+" :");
+			System.out.println(pv.getData());
+		}
 		
 		
 	}
@@ -40,7 +75,7 @@ public class DBApp {
         createPCsTable(dbApp);
 	}
 	private void insertStudentRecords(DBApp dbApp, int limit) throws Exception {
-        BufferedReader studentsTable = new BufferedReader(new FileReader("src/main/resources/students_table.csv"));
+        BufferedReader studentsTable = new BufferedReader(new FileReader("students.csv"));
         String record;
         int c = limit;
         if (limit == -1) {
@@ -65,6 +100,11 @@ public class DBApp {
             double gpa = Double.parseDouble(fields[4].trim());
 
             row.put("gpa", gpa);
+
+			if(fields[0].equals("48-8527")){
+				System.out.println("here");
+			}
+
 
             dbApp.insertIntoTable("students", row);
             row.clear();
@@ -742,6 +782,9 @@ public class DBApp {
 						}
 					else {
 						if(dataType.compareTo(theString) == 0) {
+							System.out.println("OMAAAAAAAAAAAAAAAAAAAAAAAAAAAAAR");
+							System.out.println(pp.getData());
+							System.out.println("OMAAAAAAAAAAAAAAAAAAAAAAAAAAAAAR");
 							pp.insertHashTableString(htblColNameValue, pk);
 							t.getRange().get(index).setMax(pp.getData().get(pp.getData().size()-1).get(pk));
 							t.getRange().get(index).setMin(pp.getData().get(0).get(pk));
@@ -806,21 +849,24 @@ public class DBApp {
 									}
 								else {
 									if(dataType.compareTo(theString) == 0) {
-										pp.insertHashTableString(htblColNameValue, pk);
-										t.getRange().get(index).setMax(pp.getData().get(pp.getData().size()-1).get(pk));
-										t.getRange().get(index).setMin(pp.getData().get(0).get(pk));
+										if(!pp1.getData().contains(shiftedRow)){
+											
+										pp1.insertHashTableString(shiftedRow, pk);
+										t.getRange().get(index).setMax(pp1.getData().get(pp.getData().size()-1).get(pk));
+										t.getRange().get(index).setMin(pp1.getData().get(0).get(pk));
+										}
 									}
 									else {
 										if(dataType.compareTo(theDouble) == 0) {
-											pp.insertHashTableDOUBLE(htblColNameValue, pk);
-											t.getRange().get(index).setMax(pp.getData().get(pp.getData().size()-1).get(pk));
-											t.getRange().get(index).setMin(pp.getData().get(0).get(pk));
+											pp1.insertHashTableString(shiftedRow, pk);
+											t.getRange().get(index).setMax(pp1.getData().get(pp.getData().size()-1).get(pk));
+											t.getRange().get(index).setMin(pp1.getData().get(0).get(pk));
 										}
 										else {
 											if(dataType.compareTo(theDate) == 0) {
-												pp.insertHashTableDate(htblColNameValue, pk);
-												t.getRange().get(index).setMax(pp.getData().get(pp.getData().size()-1).get(pk));
-												t.getRange().get(index).setMin(pp.getData().get(0).get(pk));
+												pp1.insertHashTableString(shiftedRow, pk);
+												t.getRange().get(index).setMax(pp1.getData().get(pp.getData().size()-1).get(pk));
+												t.getRange().get(index).setMin(pp1.getData().get(0).get(pk));
 											}
 												
 										}
@@ -917,6 +963,14 @@ public class DBApp {
 							v1.add(newPage);
 							serialize(v1, strTableName+"Page"+pageID);
 							
+							// serialize the old page
+							Vector<Page> ser = new Vector<Page>();
+							ser.add(pp);
+							System.out.println("The old PID : "+oldPID);
+							serialize(ser, strTableName+"Page"+oldPID);
+
+
+
 							// 2. serialize the table
 							t.getIds().add(pageID);
 							t.getRange().add(new Pair(shiftedRow.get(pk), shiftedRow.get(pk)));
@@ -1327,6 +1381,7 @@ public class DBApp {
 			}
 			System.out.println(updatedColumn);
 		}
+		System.out.println(page.getData());
 		pages.add(page); // tableName+"Page"+(pageIndex+1
 		serialize(pages, tableName+"Page"+(pageIndex+1));
 	}			

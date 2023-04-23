@@ -10,3 +10,9 @@ dumbTablePage21.bin
 dumbTablePage4.bin
 dumbTablePage5.bin
 dumbTablePage6.bin
+courses.bin
+pcs.bin
+students.bin
+transcripts.bin
+lib/junit-platform-console-standalone-1.9.2.jar
+src/Milestone1Tests.java

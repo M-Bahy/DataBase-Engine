@@ -1431,9 +1431,7 @@ public class DBApp {
 		
 	}
 
-	public void deleteFromTable(String strTableName, Hashtable<String, Object> htblColNameValue) throws DBAppException {
-	}
-
+	
 	public Iterator selectFromTable(SQLTerm[] arrSQLTerms, String[] strarrOperators) throws DBAppException {
 		return null;
 	}
@@ -1462,6 +1460,29 @@ public class DBApp {
 		
 		
 	}
+
+
+	public static void serializet (Vector<Table> p,String name) {
+		try {
+			//Vector<String> p = new Vector<String>();
+			//  {1,2,3,4,8}  { () , () }
+			
+			FileOutputStream fileOut = new FileOutputStream(name + ".bin");
+			ObjectOutputStream out = new ObjectOutputStream(fileOut);
+			out.writeObject(p);
+			out.close();
+			fileOut.close();
+			
+			
+		} catch (Exception i) {
+			i.printStackTrace();
+		}
+		
+		
+	}
+
+
+
 	{
 		/*//db.init();
 		Vector<Page> p = (Vector<Page>) deserialize("StudentPage1");
@@ -1483,5 +1504,221 @@ public class DBApp {
 		Page p22 = p2.get(0);
 		System.out.println(p22.getData());*/
 	}
+
+
+
+//begining  of delete
+	public static boolean searchAndDeleteNBString( String strTableName, Hashtable<String, Object> htblColNameValue) {
+		System.out.println("Ana gowa el delete non primary key");
+		Vector<Table> tables = (Vector<Table>) deserialize(strTableName);
+		Table table = tables.remove(0);
+		boolean found = true;
+		boolean firstFound = false;
+		Vector<Page> pages  = null;
+		int i = 0;
+		for(;i<table.getIds().size();i++) {
+			pages =  (Vector<Page>) deserialize(strTableName+"Page"+(i+1));
+			Page page = pages.get(0);
+		
+			pages.remove(page);
+			Vector<Hashtable<String,Object>> searchDomain = page.getData();
+			for(int j = 0 ;j<searchDomain.size();j++) {
+				Hashtable<String,Object> h = searchDomain.get(j);
+				Iterator<String> itr = htblColNameValue.keySet().iterator();
+				for(int k = 0;k < htblColNameValue.keySet().size();k++) {
+					String tmp = itr.next();
+					if(!(htblColNameValue.get(tmp).equals( h.get(tmp))))
+						found = false;
+					System.out.println("found: "+found);
+
+					System.out.println("Htbl: "+htblColNameValue.get(tmp));
+					System.out.println("tmp: "+h.get(tmp));
+					System.out.println(htblColNameValue.get(tmp).equals( h.get(tmp)));
+				}
+				
+				System.out.println("found1: "+found);
+				if(found) {
+					System.out.println("Ana gowa el found");
+					page.getData().remove(j);
+					page.setSize(page.getSize()-1);
+					firstFound = true;
+				}
+				else
+					found = true;
+			}
+			if(page.getSize() != 0)
+			{
+				pages.add(page);
+				serialize(pages,strTableName+"Page"+(i+1));
+				
+			}
+			else {
+				table.getIds().remove(i);
+				
+			}
+			
+
+			
+		}
+	
+		tables.add(table);
+		serializet(tables,strTableName);
+		return firstFound;
+	}
+
+	public static boolean searchForDeleteB(String tableName,String keyValue,String key ,
+	String keyDataType,Hashtable<String, Object> htblColNameValue){
+	   Vector<Table> tables = (Vector<Table>) deserialize(tableName);
+	   Table table = tables.remove(0);
+	   // Note : we won't edit sth. in the table so no need to remove it from the vector and re add it and reserialize it again
+	   Object o = null;
+	   SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+	   //Date date = dateFormat.parse(dateString);
+	   switch(keyDataType){
+		   case theInt : o = Integer.parseInt(keyValue);break;
+		   case theString : o = keyValue; break ;
+		   case theDouble : o = new Double(keyValue);break;
+		   case theDate : try {
+				   o = dateFormat.parse(keyValue);
+			   } catch (ParseException e) {
+				   // TODO Auto-generated catch block
+				   e.printStackTrace();
+			   } break;
+
+	   }
+
+	   int pageIndex = table.search(o, keyDataType);
+	   if(pageIndex==-1){ // row does't exist
+		   return false;
+	   }
+	   else{ // if the row exists it will be in this page , bec. the row is within its range
+		   
+		   Vector<Page> pages =  (Vector<Page>) deserialize(tableName+"Page"+(pageIndex+1));
+		   Page page = pages.get(0);
+		   pages.remove(page);
+		   Hashtable<String,Object> doesExist = null;
+		   switch(keyDataType){
+			   case theInt : 
+				   Integer iTMP = Integer.parseInt(keyValue) ;
+				   int iValue = iTMP.intValue();
+				   doesExist = page.binarySearchInteger(iValue, key);
+				   break;
+			   case theString : doesExist = page.binarySearchString(keyValue, key); break ;
+			   case theDouble : doesExist = page.binarySearchDouble(new Double(keyValue), key) ;break;
+			   case theDate : doesExist = page.binarySearchDate(keyValue, key); break;
+   
+		   }
+		   if (doesExist != null) { // we now have the row that will be updated
+			   // وصلنا بالسلامه الحمد الله
+		   
+			   page.getData().remove(page.getData().indexOf(doesExist));
+			   page.setSize(page.getSize()-1);
+			   if(page.getSize() != 0)
+			   {
+				   pages.add(page);
+				   
+				   
+			   }
+			   else {
+				   table.getIds().remove(pageIndex-1);
+				   
+			   }
+			   
+			   tables.add(table);
+			   serialize(pages,tableName+"Page"+(pageIndex+1));
+			   serializet(tables,tableName);
+			   return true; // تم عمل ابديت بنجاح   :)
+		   }
+		   else {
+			   return false;
+		   }
+		   
+		   
+	   }
+}
+
+
+public void deleteFromTable(String strTableName, Hashtable<String, Object> htblColNameValue) throws DBAppException {
+	if(!exists(strTableName)) {
+		throw new DBAppException("Table doesn't exist");
+	}
+	boolean isTypeCorrect = true;
+	try {
+		BufferedReader br = new BufferedReader(new FileReader("metadata.csv"));
+		String line = br.readLine();
+		String key = "";
+		String keyDataType = "";
+		String keyValue ="";
+		while ((line = br.readLine()) != null) {
+			String[] values = line.split(",");
+			if(values[0].equals(strTableName)) {
+				// we got the table
+				if(values[3].equals("True")) {
+					// we got the PK
+					key = values[1];
+					keyDataType = 	values[2];
+					keyValue =htblColNameValue.get(values[1])+"";
+					// Up till here we knew the following : 
+					// 1) The table exists
+					// 2) what is the table's Primary key
+					// 3) what is the table's Primary Key data type
+					}
+				for (int j = 0;j<htblColNameValue.keySet().size();j++) {//check if data is valid
+					String tmp = htblColNameValue.keySet().iterator().next();
+					if(values[1].equals(tmp)){ 
+					// we got the cloumn now we check if it is correct data type and within the range 
+						int variable = 1;
+						if(values[2] .equals(theInt)) {
+							if(!(htblColNameValue.get(values[1]) instanceof Integer) )
+								isTypeCorrect = false;
+
+
+						}
+						if(values[2].equals(theString)) {
+							if(!(htblColNameValue.get(values[1]) instanceof String) )
+								isTypeCorrect = false;
+
+						}
+						if(values[2].equals(theDate)) {
+							if(!(htblColNameValue.get(values[1]) instanceof Date) )
+								isTypeCorrect = false;
+
+						}
+						if(values[2].equals(theDouble)) {
+							if(!(htblColNameValue.get(values[1]) instanceof Double) )
+								isTypeCorrect = false;
+
+						}
+						
+					}
+				}
+		}
+		}
+			if(!isTypeCorrect) {
+				throw new DBAppException("The values of columns do not match the column datatypes");
+			}
+		
+			if(key != "") {
+				boolean x = searchForDeleteB(strTableName,keyValue,key,keyDataType, htblColNameValue);
+//					if(x == false) {
+//						throw new DBAppException("No row matches");
+//					}
+			}
+			else {
+				searchAndDeleteNBString(strTableName,htblColNameValue);
+			}
+	
+	
+	
+	
+
+}catch(Exception e) {
+	
+}
+}
+
+
+
+
 
 }

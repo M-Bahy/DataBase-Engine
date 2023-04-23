@@ -21,13 +21,34 @@ public class DBApp {
 	private final static String theInt = "java.lang.Integer";
 
 	public static void main(String[] args) throws Exception {
-		DBApp dbApp = new DBApp();
-		/*DBApp dbApp = new DBApp();
-        dbApp.init();
+		 DBApp dbApp = new DBApp();
+        //dbApp.init();
 
-        createTheTables(dbApp);
-		dbApp.insertStudentRecords(dbApp, 50);*/
-		/*Vector<Page> v1 = new Vector<Page>();
+
+
+		
+
+		// createTheTables(dbApp);
+		// dbApp.insertStudentRecords(dbApp, 4);
+
+		Hashtable<String,Object> Update = new Hashtable<>();
+		// int year = 1996;
+		// int month = 11;
+		// int day = 30;
+
+		// Date dob = new Date(year - 1900, month - 1, day);
+
+		// System.out.println(dob);
+		Update.put("gpa",1.08);
+	//	dbApp.updateTable("students", "46-3765", Update);
+
+
+    
+
+		
+		
+
+		Vector<Page> v1 = new Vector<Page>();
 		v1 = (Vector<Page>) deserialize("studentsPage1");
 		Page pv1 = v1.get(0);
 		System.out.println(pv1.getData()); // 40s
@@ -36,7 +57,33 @@ public class DBApp {
 		v11 = (Vector<Page>) deserialize("studentsPage2");
 		Page pv11 = v11.get(0);
 		System.out.println(pv11.getData()); // 60s
+		
+		dbApp.deleteFromTable("students", Update);
 
+
+		System.out.println("Updated Data:------------------------");
+		 v1 = new Vector<Page>();
+		v1 = (Vector<Page>) deserialize("studentsPage1");
+		 pv1 = v1.get(0);
+		System.out.println(pv1.getData()); // 40s
+
+		v11 = new Vector<Page>();
+		v11 = (Vector<Page>) deserialize("studentsPage2");
+		 pv11 = v11.get(0);
+		System.out.println(pv11.getData()); // 60s
+
+
+
+		//delete.put("id","45-2080");
+		//delete.put("gpa",1.98);
+		
+		//dbApp.deleteFromTable("students", delete);
+
+        
+
+
+
+/* 
 		Vector<Page> v111 = new Vector<Page>();
 		v111 = (Vector<Page>) deserialize("studentsPage3");
 		Page pv111 = v111.get(0);
@@ -50,7 +97,7 @@ public class DBApp {
 			System.out.println(pv.getData());
 		}*/
 		//{id=88-7707, gpa=2.69, dob=Sun Nov 29 00:00:00 EET 1992, first_name=Mariele, last_name=Sothena}
-		Hashtable<String, Object> row = new Hashtable<>();
+		/*Hashtable<String, Object> row = new Hashtable<>();
 		//row.put("id", "88-7707");
 		row.put("first_name", "Bahy");
 		row.put("last_name", "Omar");
@@ -65,6 +112,7 @@ public class DBApp {
 			System.out.println("Page "+(i+1)+" :");
 			System.out.println(pv.getData());
 		}
+		*/
 		
 		
 	}
@@ -443,7 +491,7 @@ public class DBApp {
 			in.close();
 
 		} catch (Exception i) {
-			i.printStackTrace();
+			
 			throw new DBAppException();
 		}
 
@@ -1551,9 +1599,23 @@ public class DBApp {
 				pages.add(page);
 				serialize(pages,strTableName+"Page"+(i+1));
 				
+
+
+
+
+
 			}
 			else {
 				table.getIds().remove(i);
+				String fileName = strTableName+"Page"+(i+1)+".bin";
+                   File file = new File(fileName);
+        
+                   if (file.delete()) {
+                    System.out.println("File " + fileName + " deleted successfully.");
+                  } else {
+                    System.out.println("Failed to delete file " + fileName);
+        }
+
 				
 			}
 			
@@ -1597,6 +1659,7 @@ public class DBApp {
 		   Page page = pages.get(0);
 		   pages.remove(page);
 		   Hashtable<String,Object> doesExist = null;
+		   System.out.println(keyValue);
 		   switch(keyDataType){
 			   case theInt : 
 				   Integer iTMP = Integer.parseInt(keyValue) ;
@@ -1608,24 +1671,61 @@ public class DBApp {
 			   case theDate : doesExist = page.binarySearchDate(keyValue, key); break;
    
 		   }
+		
 		   if (doesExist != null) { // we now have the row that will be updated
 			   // وصلنا بالسلامه الحمد الله
-		   
+		   System.out.println("To Be Deleted: "+ page.getData().get(page.getData().indexOf(doesExist)));
+		   if(page.getData().get(page.getData().indexOf(doesExist)).get("id").equals("45-2080")){
+		       System.out.println("Welcome to Egypt");
+		   }
+
+
+
+		   Iterator<String> itr = htblColNameValue.keySet().iterator();
+		   for(int k = 0;k < htblColNameValue.keySet().size();k++) {
+			   String tmp = itr.next();
+			   if(!(htblColNameValue.get(tmp).equals( doesExist.get(tmp))))
+			     	return false;
+			
+
+
+		   }
 			   page.getData().remove(page.getData().indexOf(doesExist));
 			   page.setSize(page.getSize()-1);
 			   if(page.getSize() != 0)
 			   {
 				   pages.add(page);
-				   
-				   
-			   }
-			   else {
-				   table.getIds().remove(pageIndex-1);
+				   serialize(pages,tableName+"Page"+(pageIndex+1));
+
 				   
 			   }
-			   
+			   if(page.getSize() == 0) {
+				   System.out.println("Table _ID:"+ table.getIds());
+				   System.out.println("page Index :"+pageIndex);
+				   table.getIds().remove(pageIndex);
+
+
+
+				   String fileName = tableName+"Page"+pageIndex+".bin";
+                   File file = new File(fileName);
+        
+                   if (file.delete()) {
+                    System.out.println("File " + fileName + " deleted successfully.");
+                  } else {
+                    System.out.println("Failed to delete file " + fileName);
+        }
+
+
+
+
+
+
+
+
+				   
+			   }
+			   System.out.println("Please esht8aly");
 			   tables.add(table);
-			   serialize(pages,tableName+"Page"+(pageIndex+1));
 			   serializet(tables,tableName);
 			   return true; // تم عمل ابديت بنجاح   :)
 		   }
@@ -1697,15 +1797,17 @@ public void deleteFromTable(String strTableName, Hashtable<String, Object> htblC
 			if(!isTypeCorrect) {
 				throw new DBAppException("The values of columns do not match the column datatypes");
 			}
-		
-			if(key != "") {
+		//I updated it to be keyValue != null because the hashtable may not include value for the pk 
+			if(!(keyValue .equals( "null"))) {
 				boolean x = searchForDeleteB(strTableName,keyValue,key,keyDataType, htblColNameValue);
+				fixTheRanges(strTableName, key);
 //					if(x == false) {
 //						throw new DBAppException("No row matches");
 //					}
 			}
 			else {
 				searchAndDeleteNBString(strTableName,htblColNameValue);
+				fixTheRanges(strTableName, key);
 			}
 	
 	
@@ -1713,7 +1815,7 @@ public void deleteFromTable(String strTableName, Hashtable<String, Object> htblC
 	
 
 }catch(Exception e) {
-	
+	System.out.println("Exception was thrown while deleting");
 }
 }
 

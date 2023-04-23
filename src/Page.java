@@ -193,15 +193,18 @@ public class Page implements Serializable {
 			Hashtable<String, Object> midHashtable = this.getData().get(mid);
 			String midKey = (String) midHashtable.get(pk);
 			//String key = (String) newHashtable.get(pk);
-			if (midKey.compareTo(key) == -1) {  // midKey < key
+			if (midKey.compareTo(key) < 0) {  // midKey < key
 				low = mid + 1;
-			} else if (midKey.compareTo(key) == 1) {   // midKey > key
+			} else if (midKey.compareTo(key) > 0) {   // midKey > key
 				high = mid - 1;
 			} else {
 				// Key already exists, do not insert new hashtable
 				return midHashtable;
 			}
 		}
+		if(this.getData().get(low).get(pk).equals(key))
+		  return this.getData().get(low);
+		
 		return null ;
 	}
 	public Hashtable<String,Object> binarySearchDate (String key,String pk){

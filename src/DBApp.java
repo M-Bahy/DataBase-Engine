@@ -22,97 +22,9 @@ public class DBApp {
 
 	public static void main(String[] args) throws Exception {
 		 DBApp dbApp = new DBApp();
-        //dbApp.init();
-
-
-
-		
-
-		// createTheTables(dbApp);
-		// dbApp.insertStudentRecords(dbApp, 4);
-
-		Hashtable<String,Object> Update = new Hashtable<>();
-		// int year = 1996;
-		// int month = 11;
-		// int day = 30;
-
-		// Date dob = new Date(year - 1900, month - 1, day);
-
-		// System.out.println(dob);
-		Update.put("gpa",1.08);
-	//	dbApp.updateTable("students", "46-3765", Update);
-
-
-    
-
-		
-		
-
-		Vector<Page> v1 = new Vector<Page>();
-		v1 = (Vector<Page>) deserialize("studentsPage1");
-		Page pv1 = v1.get(0);
-		System.out.println(pv1.getData()); // 40s
-
-		Vector<Page> v11 = new Vector<Page>();
-		v11 = (Vector<Page>) deserialize("studentsPage2");
-		Page pv11 = v11.get(0);
-		System.out.println(pv11.getData()); // 60s
-		
-		dbApp.deleteFromTable("students", Update);
-
-
-		System.out.println("Updated Data:------------------------");
-		 v1 = new Vector<Page>();
-		v1 = (Vector<Page>) deserialize("studentsPage1");
-		 pv1 = v1.get(0);
-		System.out.println(pv1.getData()); // 40s
-
-		v11 = new Vector<Page>();
-		v11 = (Vector<Page>) deserialize("studentsPage2");
-		 pv11 = v11.get(0);
-		System.out.println(pv11.getData()); // 60s
-
-
-
-		//delete.put("id","45-2080");
-		//delete.put("gpa",1.98);
-		
-		//dbApp.deleteFromTable("students", delete);
-
-        
-
-
-
-/* 
-		Vector<Page> v111 = new Vector<Page>();
-		v111 = (Vector<Page>) deserialize("studentsPage3");
-		Page pv111 = v111.get(0);
-		System.out.println(pv111.getData()); // 80s */
-
-		/*for (int i = 0;i<25;i++){
-			Vector<Page> v = new Vector<Page>();
-			v = (Vector<Page>) deserialize("studentsPage"+(i+1));
-			Page pv = v.get(0);
-			System.out.println("Page "+(i+1)+" :");
-			System.out.println(pv.getData());
-		}*/
-		//{id=88-7707, gpa=2.69, dob=Sun Nov 29 00:00:00 EET 1992, first_name=Mariele, last_name=Sothena}
-		/*Hashtable<String, Object> row = new Hashtable<>();
-		//row.put("id", "88-7707");
-		row.put("first_name", "Bahy");
-		row.put("last_name", "Omar");
-		row.put("dob", new Date(1992, 11, 25));
-		row.put("gpa",1.5);
-		dbApp.updateTable("students", "88-7707", row);
-
-		for (int i = 0;i<25;i++){
-			Vector<Page> v = new Vector<Page>();
-			v = (Vector<Page>) deserialize("studentsPage"+(i+1));
-			Page pv = v.get(0);
-			System.out.println("Page "+(i+1)+" :");
-			System.out.println(pv.getData());
-		}
-		*/
+		 dbApp.init();
+		 createTheTables(dbApp);
+		 dbApp.insertStudentRecords(dbApp, 6);
 		
 		
 	}
@@ -123,7 +35,7 @@ public class DBApp {
         createPCsTable(dbApp);
 	}
 	private void insertStudentRecords(DBApp dbApp, int limit) throws Exception {
-        BufferedReader studentsTable = new BufferedReader(new FileReader("students.csv"));
+        BufferedReader studentsTable = new BufferedReader(new FileReader("students_table.csv"));
         String record;
         int c = limit;
         if (limit == -1) {
@@ -442,7 +354,7 @@ public class DBApp {
 	}
 
 	public void init() {
-		this.setN(2);
+		this.setN(5);
 		
 		
 		try {
@@ -636,6 +548,7 @@ public class DBApp {
 			throw new DBAppException();
 		}
 		if(!tableNames.contains(strTableName)) {
+			System.out.println(strTableName);
 			throw new DBAppException("Table doesn't exit");
 		}
 		try {
@@ -777,7 +690,7 @@ public class DBApp {
         		t.getIds().add("1");
 				// System.out.println(t.getIds().get(0));
         		t.getRange().add(new Pair (htblColNameValue.get(pk),htblColNameValue.get(pk)));
-				
+				System.out.println("The min is : "+t.getRange().get(0).getMin()+" The max is : "+t.getRange().get(0).getMax());
 				try {
 					//Vector<String> p = new Vector<String>();
 					//  {1,2,3,4,8}  { () , () }
@@ -800,6 +713,9 @@ public class DBApp {
         	}
         	else {
 				//System.out.println(htblColNameValue.get(pk));
+				if(htblColNameValue.get(pk).equals("81-8976")){
+				System.out.println("00");
+				}
         		int index = t.search(htblColNameValue.get(pk), dataType); //kill
 				System.out.println("00000000000000000000000000000000");
 				System.out.println("THE PK : "+htblColNameValue.get(pk)+" THE INDEX FOUND : "+index);
@@ -871,14 +787,18 @@ public class DBApp {
 							System.out.println("THE SHIFTED ROW : "+shiftedRow);
 							System.out.println("++++++++++++++++++++++++++++++++++++++");
 							//serialize pp 
+							if(shiftedRow.get("id").equals("66-1766")){
+								System.out.println("AYWA ANA 66-1766");
+							}
 							String oldPID = pageID;
 						
 							try {
-								int i = 1;
+								int i = 0;
 								Object oldMAX = null;
 								Object oldMIN = null;
 								while(true){
-								pageID = t.getIds().get(index + i);
+								index = t.search(shiftedRow.get(pk), dataType);
+								pageID = t.getIds().get( index);
         						Vector <Page> v1 = (Vector <Page>) deserialize(strTableName+"Page"+pageID);
         						Page pp1 = v1.get(0);
 								
@@ -900,20 +820,24 @@ public class DBApp {
 										if(!pp1.getData().contains(shiftedRow)){
 											
 										pp1.insertHashTableString(shiftedRow, pk);
-										t.getRange().get(index).setMax(pp1.getData().get(pp.getData().size()-1).get(pk));
+										System.out.println(t.getRange().size());
+										index = t.search(shiftedRow.get(pk), dataType);
+										t.getRange().get(index).setMax(pp1.getData().get(pp1.getData().size()-1).get(pk));
 										t.getRange().get(index).setMin(pp1.getData().get(0).get(pk));
 										}
 									}
 									else {
 										if(dataType.compareTo(theDouble) == 0) {
+											index = t.search(shiftedRow.get(pk), dataType);
 											pp1.insertHashTableString(shiftedRow, pk);
-											t.getRange().get(index).setMax(pp1.getData().get(pp.getData().size()-1).get(pk));
+											t.getRange().get(index).setMax(pp1.getData().get(pp1.getData().size()-1).get(pk));
 											t.getRange().get(index).setMin(pp1.getData().get(0).get(pk));
 										}
 										else {
 											if(dataType.compareTo(theDate) == 0) {
+												index = t.search(shiftedRow.get(pk), dataType);
 												pp1.insertHashTableString(shiftedRow, pk);
-												t.getRange().get(index).setMax(pp1.getData().get(pp.getData().size()-1).get(pk));
+												t.getRange().get(index).setMax(pp1.getData().get(pp1.getData().size()-1).get(pk));
 												t.getRange().get(index).setMin(pp1.getData().get(0).get(pk));
 											}
 												
@@ -959,6 +883,9 @@ public class DBApp {
 								//else 
 								//shiftedRow = pp1.getData().get(shiftedindex);
 								shiftedRow = pp1.getData().remove(pp1.getData().size()-1);
+								if (shiftedRow.get("id").equals("82-8772")&&t.getIds().size()==3){
+									System.out.println("AYWA ANA 82-8772");
+								}
 								//pp1.setSize(pp.getSize() - 1);
 								t.getRange().get(index).setMax(pp1.getData().get(pp1.getData().size()-1).get(pk));
 								t.getRange().get(index).setMin(pp1.getData().get(0).get(pk));

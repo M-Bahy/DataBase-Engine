@@ -76,6 +76,9 @@ public class Table implements Serializable{
     	
     	case "java.lang.String" :   
     		String dataa = (String) o;
+			//System.out.println("The 1st range :    the min : "+this.getRange().get(0).getMin()+"   the max : "+this.getRange().get(0).getMax());
+			// do the same for the 2nd page
+			//System.out.println("The 2nd range :    the min : "+this.getRange().get(1).getMin()+"   the max : "+this.getRange().get(1).getMax());
         	 for (int i = 0;i<this.getRange().size();i++) {
         		 Pair p = this.getRange().get(i);
         		 String min = (String) p.getMin();

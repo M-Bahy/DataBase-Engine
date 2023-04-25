@@ -36,9 +36,9 @@ public class DBApp2 {
 	private final static String theInt = "java.lang.Integer";
 
 	public static void main(String[] args) throws Exception {
-		DBApp2 dbApp = new DBApp2();
-        dbApp.testRecordInsertions();
-        printData();
+	DBApp2 dbApp = new DBApp2();
+    dbApp.testRecordInsertions();
+     printData();
      
 	 
 	}
@@ -136,17 +136,17 @@ public class DBApp2 {
     public void testRecordInsertions() throws Exception {
         DBApp dbApp = new DBApp();
         dbApp.init();
-        dbApp.setN(5);
+        dbApp.setN(50);
         DBApp2 dbApp2 = new DBApp2();
         createTheTables(dbApp);
        // dbApp.createTheTables(dbApp);
-        int limit = 50;
+        int limit = 800;
 
-        insertStudentRecords(dbApp, limit);
-       /*  insertCoursesRecords(dbApp, limit);
+        //insertStudentRecords(dbApp, limit);
+      // insertCoursesRecords(dbApp, limit);
         insertTranscriptsRecords(dbApp, limit);
-        insertPCsRecords(dbApp, limit);*/
-        dbApp = null;
+        //insertPCsRecords(dbApp, limit);
+     dbApp = null;
     }
 
 
@@ -852,16 +852,17 @@ public class DBApp2 {
 	}
 
 	private static void printData() {
-		Vector<Table> tt = (Vector<Table>) deserialize("students");
+		Vector<Table> tt = (Vector<Table>) deserialize("transcripts");
 		Table t = tt.get(0);
 		System.out.println( "Total number of Pages : " + t.getIds().size());
 		System.out.println();
 		System.out.println(t.getIds());
 		for(String s:t.getIds()){
-			Vector<Page> pages = (Vector<Page>)  deserialize("studentsPage"+s);
+			Vector<Page> pages = (Vector<Page>)  deserialize("transcriptsPage"+s);
 			Page p1 = pages.get(0);
 			System.out.println("Page "+s+" Data : ");
-			System.out.println(p1.getData());
+			for(Hashtable<String,Object> h1:p1.getData())
+			System.out.println(h1.get("gpa"));
 			System.out.println();
 		}
 	}

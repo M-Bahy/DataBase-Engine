@@ -354,7 +354,7 @@ public class DBApp {
 	}
 
 	public void init() {
-		this.setN(5);
+		this.setN(50);
 		
 		
 		try {
@@ -740,9 +740,9 @@ public class DBApp {
 						System.out.println("*******************************************************************");
 						System.out.println(pp.getData());
 						System.out.println("*******************************************************************");
-						if((int) pp.getData().get(0).get("id") == 13){
-							System.out.println("Aywa ana 13");
-						}
+						// if((int) pp.getData().get(0).get("id") == 13){
+						// 	System.out.println("Aywa ana 13");
+						// }
 						}
 					else {
 						if(dataType.compareTo(theString) == 0) {
@@ -755,6 +755,10 @@ public class DBApp {
 						}
 						else {
 							if(dataType.compareTo(theDouble) == 0) {
+								if(htblColNameValue.get(pk) .equals( 3.7164)){
+									System.out.println("Ana hna ya rab n5las");
+
+								}
 								pp.insertHashTableDOUBLE(htblColNameValue, pk);
 								t.getRange().get(index).setMax(pp.getData().get(pp.getData().size()-1).get(pk));
 								t.getRange().get(index).setMin(pp.getData().get(0).get(pk));
@@ -787,9 +791,7 @@ public class DBApp {
 							System.out.println("THE SHIFTED ROW : "+shiftedRow);
 							System.out.println("++++++++++++++++++++++++++++++++++++++");
 							//serialize pp 
-							if(shiftedRow.get("id").equals("66-1766")){
-								System.out.println("AYWA ANA 66-1766");
-							}
+							
 							String oldPID = pageID;
 						
 							try {
@@ -828,15 +830,17 @@ public class DBApp {
 									}
 									else {
 										if(dataType.compareTo(theDouble) == 0) {
+											
+											pp1.insertHashTableDOUBLE(shiftedRow, pk);
 											index = t.search(shiftedRow.get(pk), dataType);
-											pp1.insertHashTableString(shiftedRow, pk);
 											t.getRange().get(index).setMax(pp1.getData().get(pp1.getData().size()-1).get(pk));
 											t.getRange().get(index).setMin(pp1.getData().get(0).get(pk));
 										}
 										else {
 											if(dataType.compareTo(theDate) == 0) {
+												pp1.insertHashTableDate(shiftedRow, pk);
 												index = t.search(shiftedRow.get(pk), dataType);
-												pp1.insertHashTableString(shiftedRow, pk);
+												
 												t.getRange().get(index).setMax(pp1.getData().get(pp1.getData().size()-1).get(pk));
 												t.getRange().get(index).setMin(pp1.getData().get(0).get(pk));
 											}
@@ -883,9 +887,7 @@ public class DBApp {
 								//else 
 								//shiftedRow = pp1.getData().get(shiftedindex);
 								shiftedRow = pp1.getData().remove(pp1.getData().size()-1);
-								if (shiftedRow.get("id").equals("82-8772")&&t.getIds().size()==3){
-									System.out.println("AYWA ANA 82-8772");
-								}
+								
 								//pp1.setSize(pp.getSize() - 1);
 								t.getRange().get(index).setMax(pp1.getData().get(pp1.getData().size()-1).get(pk));
 								t.getRange().get(index).setMin(pp1.getData().get(0).get(pk));

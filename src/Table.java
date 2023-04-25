@@ -98,7 +98,7 @@ public class Table implements Serializable{
         		 Pair p = this.getRange().get(i);
         		 double min = (double) p.getMin();
         		 double max = (double) p.getMax();
-        		 if (dataaa<= max && dataaa >= min) {
+        		 if ((dataaa<= max && dataaa >= min) || dataaa <= min) {
         			return i;
         		
         			 

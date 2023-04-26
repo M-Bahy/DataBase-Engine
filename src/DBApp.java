@@ -354,7 +354,7 @@ public class DBApp {
 	}
 
 	public void init() {
-		this.setN(50);
+		this.setN(10);
 		
 		
 		try {
@@ -713,9 +713,8 @@ public class DBApp {
         	}
         	else {
 				//System.out.println(htblColNameValue.get(pk));
-				if(htblColNameValue.get(pk).equals("81-8976")){
-				System.out.println("00");
-				}
+				
+
         		int index = t.search(htblColNameValue.get(pk), dataType); //kill
 				System.out.println("00000000000000000000000000000000");
 				System.out.println("THE PK : "+htblColNameValue.get(pk)+" THE INDEX FOUND : "+index);
@@ -791,6 +790,10 @@ public class DBApp {
 							System.out.println("THE SHIFTED ROW : "+shiftedRow);
 							System.out.println("++++++++++++++++++++++++++++++++++++++");
 							//serialize pp 
+							Date gg = (Date) shiftedRow.get("date_added");
+							if(gg.getYear()==107){
+								System.out.println("Yes");
+							}
 							
 							String oldPID = pageID;
 						

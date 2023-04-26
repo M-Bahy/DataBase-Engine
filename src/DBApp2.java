@@ -136,19 +136,19 @@ public class DBApp2 {
     public void testRecordInsertions() throws Exception {
         DBApp dbApp = new DBApp();
         dbApp.init();
-        dbApp.setN(50);
+        dbApp.setN(10);
         DBApp2 dbApp2 = new DBApp2();
         createTheTables(dbApp);
        // dbApp.createTheTables(dbApp);
-        int limit = 800;
+        int limit = 80;
 
         //insertStudentRecords(dbApp, limit);
-      // insertCoursesRecords(dbApp, limit);
-        insertTranscriptsRecords(dbApp, limit);
+       insertCoursesRecords(dbApp, limit);
+      //  insertTranscriptsRecords(dbApp, limit);
         //insertPCsRecords(dbApp, limit);
      dbApp = null;
     }
-
+	// 30-06-09
 
   
     public void testExtraStudentsInsertion() {
@@ -852,17 +852,17 @@ public class DBApp2 {
 	}
 
 	private static void printData() {
-		Vector<Table> tt = (Vector<Table>) deserialize("transcripts");
+		Vector<Table> tt = (Vector<Table>) deserialize("courses");
 		Table t = tt.get(0);
 		System.out.println( "Total number of Pages : " + t.getIds().size());
 		System.out.println();
 		System.out.println(t.getIds());
 		for(String s:t.getIds()){
-			Vector<Page> pages = (Vector<Page>)  deserialize("transcriptsPage"+s);
+			Vector<Page> pages = (Vector<Page>)  deserialize("coursesPage"+s);
 			Page p1 = pages.get(0);
 			System.out.println("Page "+s+" Data : ");
 			for(Hashtable<String,Object> h1:p1.getData())
-			System.out.println(h1.get("gpa"));
+			System.out.println(h1.get("date_added"));
 			System.out.println();
 		}
 	}

@@ -1,5 +1,6 @@
 import java.io.Serializable;
 import java.time.LocalDate;
+import java.util.Date;
 import java.util.Hashtable;
 import java.util.Vector;
 
@@ -106,6 +107,20 @@ public class Page implements Serializable {
 	        int insertIndex = low;
 	        this.getData().add(insertIndex, newHashtable);
 	    }
+		private String fixTheDate(Date test) {
+			String year = test.getYear()+1900+"";
+			String month = test.getMonth()+1+"";
+			if (month.length() == 1) {
+				month = "0"+month;
+			}
+			
+			String day = test.getDate()+"";
+			if (day.length() == 1) {
+				day = "0"+day;
+			}
+			String input = year+"-"+month+"-"+day;
+			return input;
+		}
 	
 	public void insertHashTableDate( Hashtable<String, Object> newHashtable,String pk) throws DBAppException{
 	      //  Hashtable<String, Object> newHashtable = new Hashtable<Integer, String>();
@@ -117,9 +132,10 @@ public class Page implements Serializable {
 	        while (low <= high) {
 	            int mid = (low + high) / 2;
 	            Hashtable<String, Object> midHashtable = this.getData().get(mid);
-	            String midKey = (String) midHashtable.get(pk);
-	            String key = (String) newHashtable.get(pk);
-	            
+	            String midKey =  fixTheDate((Date)midHashtable.get(pk));
+	            String key =  fixTheDate((Date)newHashtable.get(pk));
+				
+	          //  YYYY-MM-DD
 	            LocalDate mIDKEY = LocalDate.parse(midKey) ;
 				LocalDate kEY = LocalDate.parse(key) ;
 				/*a negative integer if the object being compared is less than the argument    // ely gowa > ely bara   ---> -ve

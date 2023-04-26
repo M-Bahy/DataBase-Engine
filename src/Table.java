@@ -108,18 +108,23 @@ public class Table implements Serializable{
     		
     		
     		break;
-    	case "java.util.Date" :   
-    		LocalDate theInput = LocalDate.parse(( (String) o   )) ;
+    	case "java.util.Date" :   //   25/4/2002
+			Date test = (Date) o ;
+			
+
+				String input = fixTheDate(test);
+    		LocalDate theInput = LocalDate.parse(( input   )) ;
+			//Date test = (Date) o ;
        	 for (int i = 0;i<this.getRange().size();i++) {
        		 Pair p = this.getRange().get(i);
-       		String x = (String) p.getMin();  // min
-			String y = (String) p.getMax(); //max
+       		String x = fixTheDate((Date) p.getMin());  // min
+			String y = fixTheDate((Date)p.getMax()); //max
 			//Object i = htblColNameValue.get(values[1]);
 			LocalDate dMIN = LocalDate.parse(x) ;
 			LocalDate dMAX = LocalDate.parse(y) ;
 			int notPos = dMIN.compareTo(theInput)  ;  // not +ve
 			int notNeg =  dMAX.compareTo(theInput)  ;  // not -ve
-			if(notPos<0 && notNeg>-1)
+			if(   (notPos<0 && notNeg>-1 )   ||  (notPos>0)   )
 				return i;
        		 
        		 
@@ -133,6 +138,21 @@ public class Table implements Serializable{
 		return -1;
 		
 		
+	}
+
+	private String fixTheDate(Date test) {
+		String year = test.getYear()+1900+"";
+		String month = test.getMonth()+1+"";
+		if (month.length() == 1) {
+			month = "0"+month;
+		}
+		
+		String day = test.getDate()+"";
+		if (day.length() == 1) {
+			day = "0"+day;
+		}
+		String input = year+"-"+month+"-"+day;
+		return input;
 	}
 
 	public int searchPageAccordingToMin(Object o, String dataType) {
@@ -206,12 +226,14 @@ public class Table implements Serializable{
 			 return this.getRange().size()-1;
     		
     		break;
-    	case "java.util.Date" :   
-    		LocalDate theInput = LocalDate.parse(( (String) o   )) ;
+    	case "java.util.Date" :  
+			Date test = (Date) o ;
+			String in = fixTheDate(test); 
+    		LocalDate theInput = LocalDate.parse(( in   )) ;
        	 for (int i = 0;i<this.getRange().size();i++) {
        		 Pair p = this.getRange().get(i);
-       		String x = (String) p.getMin();  // min
-			String y = (String) p.getMax(); //max
+       		String x = fixTheDate((Date) p.getMin());  // min
+			String y = fixTheDate((Date) p.getMax()); //max
 			//Object i = htblColNameValue.get(values[1]);
 			LocalDate dMIN = LocalDate.parse(x) ;
 			LocalDate dMAX = LocalDate.parse(y) ;

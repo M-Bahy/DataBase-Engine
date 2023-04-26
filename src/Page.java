@@ -230,7 +230,7 @@ public class Page implements Serializable {
 		while (low <= high) {
 			int mid = (low + high) / 2;
 			Hashtable<String, Object> midHashtable = this.getData().get(mid);
-			String midKey = (String) midHashtable.get(pk);
+			String midKey = fixTheDate((Date) midHashtable.get(pk));
 			//String key = (String) newHashtable.get(pk);
 			
 			LocalDate mIDKEY = LocalDate.parse(midKey) ;

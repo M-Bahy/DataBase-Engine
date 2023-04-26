@@ -124,7 +124,7 @@ public class Table implements Serializable{
 			LocalDate dMAX = LocalDate.parse(y) ;
 			int notPos = dMIN.compareTo(theInput)  ;  // not +ve
 			int notNeg =  dMAX.compareTo(theInput)  ;  // not -ve
-			if(   (notPos<0 && notNeg>-1 )   ||  (notPos>0)   )
+			if(   (notPos<0 && notNeg>-1 )   ||  (notPos>=0)   )
 				return i;
        		 
        		 

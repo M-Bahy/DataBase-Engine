@@ -36,14 +36,48 @@ public class DBApp2 {
 	private final static String theInt = "java.lang.Integer";
 
 	public static void main(String[] args) throws Exception {
-	DBApp2 dbApp = new DBApp2();
-    dbApp.testRecordInsertions();
-     printData();
+	DBApp2 test = new DBApp2();
+	DBApp dbApp = new DBApp();
+ // Student & PCS
+		
+		dbApp.init();
+		createTheTables(dbApp);
+
+	test.insertCoursesRecords(dbApp, 1);
+	printData();
+	test.testUpdateCourses();
+	printData();
+	 
+	 
+	 
      
 	 
 	}
 
+	public static void bahy() {
+        final DBApp dbApp = new DBApp();
+       // dbApp.init();
+		//createTheTables(dbApp);
+        String table = "students";
+        Hashtable<String, Object> row = new Hashtable();
+        row.put("id", "31-1235");
+        row.put("first_name", "foo");
+        row.put("middle_name", "bateekh");
+        row.put("last_name", "bar");
 
+
+        Date dob = new Date(1995 - 1900, 4 - 1, 1);
+        row.put("dob", dob);
+
+        row.put("gpa", 1.1);
+
+
+        Assertions.assertThrows(DBAppException.class, () -> {
+                    dbApp.insertIntoTable(table, row);
+                }
+        );
+
+    }
 
 
     public void testSetPageSize() throws Exception {
@@ -153,7 +187,7 @@ public class DBApp2 {
   
     public void testExtraStudentsInsertion() {
         final DBApp dbApp = new DBApp();
-        dbApp.init();
+       // dbApp.init();
 
         String table = "students";
         Hashtable<String, Object> row = new Hashtable();
@@ -179,7 +213,7 @@ public class DBApp2 {
     
     public void testExtraCoursesInsertion() {
         final DBApp dbApp = new DBApp();
-        dbApp.init();
+       // dbApp.init();
 
         String table = "courses";
         Hashtable<String, Object> row = new Hashtable();
@@ -202,7 +236,7 @@ public class DBApp2 {
    
     public void testExtraTranscriptsInsertion() {
         final DBApp dbApp = new DBApp();
-        dbApp.init();
+       // dbApp.init();
 
         String table = "transcripts";
         Hashtable<String, Object> row = new Hashtable();
@@ -226,7 +260,7 @@ public class DBApp2 {
     
     public void testExtraPCsInsertion() {
         final DBApp dbApp = new DBApp();
-        dbApp.init();
+       // dbApp.init();
 
         String table = "pcs";
         Hashtable<String, Object> row = new Hashtable();
@@ -243,10 +277,10 @@ public class DBApp2 {
     
     public void testUpdateStudents() throws Exception {
         DBApp dbApp = new DBApp();
-        dbApp.init();
+        //dbApp.init();
+		
 
-
-        BufferedReader studentsTable = new BufferedReader(new FileReader("src/main/resources/students_table.csv"));
+        BufferedReader studentsTable = new BufferedReader(new FileReader("students_table.csv"));
         String record;
         int c = 1;
 
@@ -275,11 +309,11 @@ public class DBApp2 {
     
     public void testUpdateCourses() throws Exception {
         DBApp dbApp = new DBApp();
-        dbApp.init();
+       // dbApp.init();
 
         String table = "courses";
 
-        BufferedReader coursesTable = new BufferedReader(new FileReader("src/main/resources/courses_table.csv"));
+        BufferedReader coursesTable = new BufferedReader(new FileReader("courses_table.csv"));
         String record;
         Hashtable<String, Object> row = new Hashtable<>();
         int c = 1;
@@ -341,13 +375,13 @@ public class DBApp2 {
     
     public void testUpdatePCs() throws Exception {
         final DBApp dbApp = new DBApp();
-        dbApp.init();
+       //dbApp.init();
 
         String table = "pcs";
         Hashtable<String, Object> row = new Hashtable();
         row.put("student_id", "51-3808");
 
-        BufferedReader pcsTable = new BufferedReader(new FileReader("src/main/resources/pcs_table.csv"));
+        BufferedReader pcsTable = new BufferedReader(new FileReader("pcs_table.csv"));
         String record;
 
         int c = 1;
@@ -862,7 +896,8 @@ public class DBApp2 {
 			Page p1 = pages.get(0);
 			System.out.println("Page "+s+" Data : ");
 			for(Hashtable<String,Object> h1:p1.getData())
-			System.out.println(h1.get("date_added"));
+			System.out.println(h1.get("course_id")+" "+h1.get("course_name")+" "+h1.get("hours")+" "+h1.get("date_added"));
+			//System.out.println(h1.get("first_name")+" "+h1.get("last_name")+" "+h1.get("dob")+" "+h1.get("gpa"));
 			System.out.println();
 		}
 	}

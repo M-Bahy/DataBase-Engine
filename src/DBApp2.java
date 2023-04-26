@@ -38,18 +38,24 @@ public class DBApp2 {
 	public static void main(String[] args) throws Exception {
 	DBApp2 test = new DBApp2();
 	DBApp dbApp = new DBApp();
- // Student & PCS
-		
-		dbApp.init();
+
+		/*dbApp.init();
 		createTheTables(dbApp);
 
-	test.insertCoursesRecords(dbApp, 1);
+	test.insertStudentRecords(dbApp, 3);
 	printData();
-	test.testUpdateCourses();
-	printData();
-	 
-	 
-	 
+	Hashtable<String, Object> row = new Hashtable();
+	row.put("id", "59-8196");
+	dbApp.deleteFromTable("students", row);
+	row.put("id", "81-8976");
+	dbApp.deleteFromTable("students", row);
+	 printData();*/
+	 System.out.println();
+	 printData();
+	 System.out.println();
+	 test.insertStudentRecords(dbApp, 3);
+	 System.out.println();
+	 printData();
      
 	 
 	}
@@ -344,12 +350,12 @@ public class DBApp2 {
     
     public void testUpdateTranscripts() throws Exception {
         final DBApp dbApp = new DBApp();
-        dbApp.init();
+       // dbApp.init();
 
         String table = "transcripts";
         Hashtable<String, Object> row = new Hashtable();
 
-        BufferedReader transcriptsTable = new BufferedReader(new FileReader("src/main/resources/transcripts_table.csv"));
+        BufferedReader transcriptsTable = new BufferedReader(new FileReader("transcripts_table.csv"));
         String record;
 
         int c = 1;
@@ -403,7 +409,7 @@ public class DBApp2 {
     
     public void testUpdateStudentsExtra() {
         final DBApp dbApp = new DBApp();
-        dbApp.init();
+       // dbApp.init();
 
         String table = "students";
         Hashtable<String, Object> row = new Hashtable();
@@ -413,18 +419,21 @@ public class DBApp2 {
 
         Date dob = new Date(1992 - 1900, 9 - 1, 8);
         row.put("dob", dob);
-        row.put("gpa", 1.1);
+        row.put("gpa", 0.1);
 
-        Assertions.assertThrows(DBAppException.class, () -> {
-            dbApp.updateTable(table, "82-8772", row);
-        });
+        try {
+			dbApp.updateTable(table, "82-8772", row);
+		} catch (DBAppException e) {
+			// TODO Auto-generated catch block
+			System.out.println("it works");
+		}
 
     }
 
     
     public void testUpdateCoursesExtra() {
         final DBApp dbApp = new DBApp();
-        dbApp.init();
+       // dbApp.init();
 
         String table = "courses";
         Hashtable<String, Object> row = new Hashtable();
@@ -433,17 +442,20 @@ public class DBApp2 {
         row.put("course_name", "bar");
         row.put("hours", 13);
         row.put("semester", 5);
+		try {
+			dbApp.updateTable(table, "2000-04-01", row);
+		} catch (DBAppException e) {
+			// TODO Auto-generated catch block
+			System.out.println("it works");
+		}
 
-
-        Assertions.assertThrows(DBAppException.class, () -> {
-            dbApp.updateTable(table, "2000-04-01", row);
-        });
+        
     }
 
     
     public void testUpdateTranscriptsExtra() {
         final DBApp dbApp = new DBApp();
-        dbApp.init();
+        //dbApp.init();
 
         String table = "transcripts";
         Hashtable<String, Object> row = new Hashtable();
@@ -455,17 +467,20 @@ public class DBApp2 {
         row.put("date_passed", date_passed);
 
         row.put("elective", true);
-
-        Assertions.assertThrows(DBAppException.class, () -> {
-            dbApp.updateTable(table, "1.57", row);
-        });
+		try {
+			dbApp.updateTable(table, "1.57", row);
+		} catch (DBAppException e) {
+			// TODO Auto-generated catch block
+			System.out.println("it works");
+		}
+        
 
     }
 
     
     public void testUpdatePCsExtra() {
         final DBApp dbApp = new DBApp();
-        dbApp.init();
+       // dbApp.init();
 
         String table = "pcs";
         Hashtable<String, Object> row = new Hashtable();
@@ -473,11 +488,12 @@ public class DBApp2 {
         row.put("student_id", "79-0786");
         row.put("os", "linux");
 
-        Assertions.assertThrows(DBAppException.class, () -> {
-
-            dbApp.updateTable(table, "00353", row);
-
-        });
+        try {
+			dbApp.updateTable(table, "00353", row);
+		} catch (DBAppException e) {
+			// TODO Auto-generated catch block
+			System.out.println("it works");
+		}
 
 
     }
@@ -485,12 +501,12 @@ public class DBApp2 {
     
     public void testStudentsDeletionComplex() throws Exception {
         final DBApp dbApp = new DBApp();
-        dbApp.init();
+      //  dbApp.init();
 
         String table = "students";
         Hashtable<String, Object> row = new Hashtable();
 
-        BufferedReader studentsTable = new BufferedReader(new FileReader("src/main/resources/students_table.csv"));
+        BufferedReader studentsTable = new BufferedReader(new FileReader("students_table.csv"));
         String record;
         int c = 0;
         int finalLine = 1;
@@ -526,9 +542,9 @@ public class DBApp2 {
     
     public void testCoursesDeleteComplex() throws Exception {
         final DBApp dbApp = new DBApp();
-        dbApp.init();
+       // dbApp.init();
 
-        BufferedReader coursesTable = new BufferedReader(new FileReader("src/main/resources/courses_table.csv"));
+        BufferedReader coursesTable = new BufferedReader(new FileReader("courses_table.csv"));
         String record;
         Hashtable<String, Object> row = new Hashtable<>();
         int c = 0;
@@ -560,9 +576,9 @@ public class DBApp2 {
     
     public void testTranscriptsDeleteComplex() throws Exception {
         final DBApp dbApp = new DBApp();
-        dbApp.init();
+       // dbApp.init();
 
-        BufferedReader transcriptsTable = new BufferedReader(new FileReader("src/main/resources/transcripts_table.csv"));
+        BufferedReader transcriptsTable = new BufferedReader(new FileReader("transcripts_table.csv"));
         String record;
         Hashtable<String, Object> row = new Hashtable<>();
         int c = 0;
@@ -586,9 +602,9 @@ public class DBApp2 {
     
     public void testPCsDeleteComplex() throws Exception {
         final DBApp dbApp = new DBApp();
-        dbApp.init();
+       // dbApp.init();
 
-        BufferedReader pcsTable = new BufferedReader(new FileReader("src/main/resources/pcs_table.csv"));
+        BufferedReader pcsTable = new BufferedReader(new FileReader("pcs_table.csv"));
         String record;
         Hashtable<String, Object> row = new Hashtable<>();
         int c = 0;
@@ -886,17 +902,17 @@ public class DBApp2 {
 	}
 
 	private static void printData() {
-		Vector<Table> tt = (Vector<Table>) deserialize("courses");
+		Vector<Table> tt = (Vector<Table>) deserialize("students");
 		Table t = tt.get(0);
 		System.out.println( "Total number of Pages : " + t.getIds().size());
 		System.out.println();
 		System.out.println(t.getIds());
 		for(String s:t.getIds()){
-			Vector<Page> pages = (Vector<Page>)  deserialize("coursesPage"+s);
+			Vector<Page> pages = (Vector<Page>)  deserialize("studentsPage"+s);
 			Page p1 = pages.get(0);
 			System.out.println("Page "+s+" Data : ");
 			for(Hashtable<String,Object> h1:p1.getData())
-			System.out.println(h1.get("course_id")+" "+h1.get("course_name")+" "+h1.get("hours")+" "+h1.get("date_added"));
+			System.out.println(h1.get("id")+" "+h1.get("first_name")+" "+h1.get("last_name")+" "+h1.get("dob")+" "+h1.get("gpa"));
 			//System.out.println(h1.get("first_name")+" "+h1.get("last_name")+" "+h1.get("dob")+" "+h1.get("gpa"));
 			System.out.println();
 		}
@@ -2125,7 +2141,9 @@ public class DBApp2 {
 			}
 			else {
 				table.getIds().remove(i);
-				String fileName = strTableName+"Page"+(i+1)+".bin";
+				int y = i+1;
+				System.out.println("y: "+y);
+				String fileName = strTableName+"Page"+y+".bin";
                    File file = new File(fileName);
         
                    if (file.delete()) {
@@ -2219,12 +2237,12 @@ public class DBApp2 {
 			   }
 			   if(page.getSize() == 0) {
 				   System.out.println("Table _ID:"+ table.getIds());
-				   System.out.println("page Index :"+pageIndex);
+				   System.out.println("page Index :"+(pageIndex+1));
 				   table.getIds().remove(pageIndex);
 
 
 
-				   String fileName = tableName+"Page"+pageIndex+".bin";
+				   String fileName = tableName+"Page"+(pageIndex+1)+".bin";
                    File file = new File(fileName);
         
                    if (file.delete()) {

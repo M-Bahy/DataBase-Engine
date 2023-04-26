@@ -354,7 +354,7 @@ public class DBApp {
 	}
 
 	public void init() {
-		this.setN(10);
+		this.setN(2);
 		
 		
 		try {
@@ -790,10 +790,8 @@ public class DBApp {
 							System.out.println("THE SHIFTED ROW : "+shiftedRow);
 							System.out.println("++++++++++++++++++++++++++++++++++++++");
 							//serialize pp 
-							Date gg = (Date) shiftedRow.get("date_added");
-							if(gg.getYear()==107){
-								System.out.println("Yes");
-							}
+							//Date gg = (Date) shiftedRow.get("date_added");
+							
 							
 							String oldPID = pageID;
 						
@@ -1560,6 +1558,23 @@ public class DBApp {
 		return firstFound;
 	}
 
+
+	private static String fixTheDate(Date test) {
+		String year = test.getYear()+1900+"";
+		String month = test.getMonth()+1+"";
+		if (month.length() == 1) {
+			month = "0"+month;
+		}
+		
+		String day = test.getDate()+"";
+		if (day.length() == 1) {
+			day = "0"+day;
+		}
+		String input = year+"-"+month+"-"+day;
+		return input;
+	}
+
+
 	public static boolean searchForDeleteB(String tableName,String keyValue,String key ,
 	String keyDataType,Hashtable<String, Object> htblColNameValue){
 	   Vector<Table> tables = (Vector<Table>) deserialize(tableName);
@@ -1572,16 +1587,20 @@ public class DBApp {
 		   case theInt : o = Integer.parseInt(keyValue);break;
 		   case theString : o = keyValue; break ;
 		   case theDouble : o = new Double(keyValue);break;
-		   case theDate : try {
-				   o = dateFormat.parse(keyValue);
-			   } catch (ParseException e) {
-				   // TODO Auto-generated catch block
-				   e.printStackTrace();
-			   } break;
+		   case theDate : 
+				//Date x = new Date(keyValue);
+				//System.out.println("IBRAHIIIIIIIIIIIIIIIM"+key);
+				//Date x = (Date) htblColNameValue.get(key);
+				//String in = "" ;
+
+
+				   o = (Date) htblColNameValue.get(key);
+			   break;
 
 	   }
 
 	   int pageIndex = table.search(o, keyDataType);
+	   System.out.println("page index : "+pageIndex);
 	   if(pageIndex==-1){ // row does't exist
 		   return false;
 	   }
@@ -1600,16 +1619,19 @@ public class DBApp {
 				   break;
 			   case theString : doesExist = page.binarySearchString(keyValue, key); break ;
 			   case theDouble : doesExist = page.binarySearchDouble(new Double(keyValue), key) ;break;
-			   case theDate : doesExist = page.binarySearchDate(keyValue, key); break;
+			   case theDate : 
+			   	Date y = (Date) htblColNameValue.get(key);
+				
+			 
+			 
+			   doesExist = page.binarySearchDate(fixTheDate(y), key); break;
    
 		   }
 		
 		   if (doesExist != null) { // we now have the row that will be updated
 			   // وصلنا بالسلامه الحمد الله
 		   System.out.println("To Be Deleted: "+ page.getData().get(page.getData().indexOf(doesExist)));
-		   if(page.getData().get(page.getData().indexOf(doesExist)).get("id").equals("45-2080")){
-		       System.out.println("Welcome to Egypt");
-		   }
+		   
 
 
 
@@ -1638,7 +1660,7 @@ public class DBApp {
 
 
 
-				   String fileName = tableName+"Page"+pageIndex+".bin";
+				   String fileName = tableName+"Page"+(pageIndex+1)+".bin";
                    File file = new File(fileName);
         
                    if (file.delete()) {
@@ -1690,6 +1712,7 @@ public void deleteFromTable(String strTableName, Hashtable<String, Object> htblC
 					key = values[1];
 					keyDataType = 	values[2];
 					keyValue =htblColNameValue.get(values[1])+"";
+					System.out.println("mmmmmmmmmmmmmmmmmmmmmmmm"+keyValue);
 					// Up till here we knew the following : 
 					// 1) The table exists
 					// 2) what is the table's Primary key

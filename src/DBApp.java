@@ -2,6 +2,7 @@ import java.io.*;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Hashtable;
 import java.util.Iterator;
@@ -9,11 +10,13 @@ import java.util.Locale;
 import java.util.Set;
 import java.util.Vector;
 import java.time.LocalDate;
-
+import java.lang.reflect.Array;
+import java.util.Properties;
 
 public class DBApp {
 	private boolean firstTable = false;
 	private int n;
+	private int m;
 	private static String thePK = "";
 	private final static String theString = "java.lang.String";
 	private final static String theDouble = "java.lang.Double";
@@ -353,9 +356,43 @@ public class DBApp {
 		this.n = n;
 	}
 
+	public int getM() {
+		return m;
+	}
+
+	public void setM(int m) {
+		this.m = m;
+	}
+
 	public void init() {
 		this.setN(2);
-		
+		this.setM(2);
+		Properties prop = new Properties();
+        OutputStream output = null;
+		try {
+		output = new FileOutputStream("src/resources/DBApp.config");
+
+            // set the properties value
+            prop.setProperty("MaximumRowsCountinTablePage", (this.getN()+""));
+            prop.setProperty("MaximumEntriesinOctreeNode", (this.getM()+""));
+            
+
+            // save properties to project root folder
+            prop.store(output, null);
+
+            System.out.println("Config file created successfully.");
+
+        } catch (IOException io) {
+            io.printStackTrace();
+        } finally {
+            if (output != null) {
+                try {
+                    output.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
 		
 		try {
 			FileWriter csvWriter = new FileWriter("metadata.csv");
@@ -674,6 +711,9 @@ public class DBApp {
             if(!condition[condition.length-1]) {
             	throw new DBAppException("An extra invalid column was entered");
             }
+
+
+			addTheNulls(htblColNameValue,strTableName);
             
 			// change1
         	Vector<Table> p = (Vector<Table>) deserialize(strTableName); // without + ".bin
@@ -681,6 +721,13 @@ public class DBApp {
 			p.remove(t);
         	if(t.getIds().isEmpty()) {
         		Page p1 = new Page();
+				
+
+				// put it here
+
+
+
+
         		p1.getData().add(htblColNameValue);
         		p1.setSize(p1.getSize()+1);
         		Vector<Page> v = new Vector<Page>();
@@ -1131,6 +1178,38 @@ public class DBApp {
 		// here we should serialize the "insert 13" probllem
 	}
 
+	private static void addTheNulls(Hashtable<String, Object> htblColNameValue, String strTableName) {
+		Set x = htblColNameValue.keySet();
+		ArrayList<String> htblNames = new ArrayList<String>();
+		ArrayList<String> allNames = new ArrayList<String>();
+		for (Object o :x.toArray()){
+			htblNames.add((String) o);
+		}
+		try {
+			BufferedReader br = new BufferedReader(new FileReader("metadata.csv"));
+			String line = br.readLine();
+			int N = Integer.parseInt(line);
+			String pk = "";
+			String dataType = "";
+			boolean isClustering = false;
+            while ((line = br.readLine()) != null) {
+                String[] values = line.split(",");
+				if(values[0].equals(strTableName)){
+					allNames.add(values[1]);
+				}
+			}
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		for (String n : allNames){
+			if(!htblNames.contains(n)){
+				htblColNameValue.put(n, new Null());
+			}
+
+		}
+		
+	}
 	public void updateTable(String strTableName, String strClusteringKeyValue,
 			Hashtable<String, Object> htblColNameValue) throws DBAppException {
 				// following method updates one row only

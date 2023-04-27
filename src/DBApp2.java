@@ -36,27 +36,36 @@ public class DBApp2 {
 	private final static String theInt = "java.lang.Integer";
 
 	public static void main(String[] args) throws Exception {
-	DBApp2 test = new DBApp2();
 	DBApp dbApp = new DBApp();
+	dbApp.init();
+	/*createTheTables(dbApp);
+	Hashtable<String, Object> htblColNameType = new Hashtable<String, Object>();
+	htblColNameType.put("pc_id", 750);
+    dbApp.insertIntoTable("pcs", htblColNameType);
 
-		/*dbApp.init();
-		createTheTables(dbApp);
+	Vector<Page> pp = (Vector<Page>) deserialize("pcsPage1");
+	Page p = pp.get(0);
+	System.out.println(p.getData());*/
 
-	test.insertStudentRecords(dbApp, 3);
-	printData();
-	Hashtable<String, Object> row = new Hashtable();
-	row.put("id", "59-8196");
-	dbApp.deleteFromTable("students", row);
-	row.put("id", "81-8976");
-	dbApp.deleteFromTable("students", row);
-	 printData();*/
-	 System.out.println();
-	 printData();
-	 System.out.println();
-	 test.insertStudentRecords(dbApp, 3);
-	 System.out.println();
-	 printData();
-     
+	/*Hashtable<String, Object> htblColNameType3 = new Hashtable<String, Object>();
+	htblColNameType3.put("student_id", "52-1096");	
+	dbApp.updateTable("pcs", "750", htblColNameType3);
+
+
+	Hashtable<String, Object> htblColNameType2 = new Hashtable<String, Object>();
+	htblColNameType2.put("student_id", "52-1096");
+	dbApp.deleteFromTable("pcs", htblColNameType2);*/
+
+	/*Vector<Page> mm = (Vector<Page>) deserialize("pcsPage1");
+	Page m = mm.get(0);
+	System.out.println(m.getData());*/
+	
+
+
+
+
+	
+
 	 
 	}
 

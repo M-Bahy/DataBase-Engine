@@ -24,10 +24,11 @@ public class DBApp {
 	private final static String theInt = "java.lang.Integer";
 
 	public static void main(String[] args) throws Exception {
-		 DBApp dbApp = new DBApp();
-		 dbApp.init();
-		 createTheTables(dbApp);
-		 dbApp.insertStudentRecords(dbApp, 6);
+		//  DBApp dbApp = new DBApp();
+		//  dbApp.init();
+		//  createTheTables(dbApp);
+		//  dbApp.insertStudentRecords(dbApp, 6);
+
 		
 		
 	}
@@ -1567,6 +1568,7 @@ public class DBApp {
 //begining  of delete
 	public static boolean searchAndDeleteNBString( String strTableName, Hashtable<String, Object> htblColNameValue) {
 		System.out.println("Ana gowa el delete non primary key");
+		System.out.println("The hashtable : " +htblColNameValue);
 		Vector<Table> tables = (Vector<Table>) deserialize(strTableName);
 		Table table = tables.remove(0);
 		boolean found = true;
@@ -1574,13 +1576,14 @@ public class DBApp {
 		Vector<Page> pages  = null;
 		int i = 0;
 		for(;i<table.getIds().size();i++) {
-			pages =  (Vector<Page>) deserialize(strTableName+"Page"+(i+1));
+			pages =  (Vector<Page>) deserialize(strTableName+"Page"+table.getIds().get(i));
 			Page page = pages.get(0);
 		
 			pages.remove(page);
 			Vector<Hashtable<String,Object>> searchDomain = page.getData();
 			for(int j = 0 ;j<searchDomain.size();j++) {
 				Hashtable<String,Object> h = searchDomain.get(j);
+				System.out.println("Current hash_table: "+h);
 				Iterator<String> itr = htblColNameValue.keySet().iterator();
 				for(int k = 0;k < htblColNameValue.keySet().size();k++) {
 					String tmp = itr.next();
@@ -1589,7 +1592,8 @@ public class DBApp {
 					System.out.println("found: "+found);
 
 					System.out.println("Htbl: "+htblColNameValue.get(tmp));
-					System.out.println("tmp: "+h.get(tmp));
+					System.out.println("h.get(tmp): "+h.get(tmp));
+					System.out.println("tmp "+tmp);
 					System.out.println(htblColNameValue.get(tmp).equals( h.get(tmp)));
 				}
 				
@@ -1606,7 +1610,7 @@ public class DBApp {
 			if(page.getSize() != 0)
 			{
 				pages.add(page);
-				serialize(pages,strTableName+"Page"+(i+1));
+				serialize(pages,strTableName+"Page"+(table.getIds().get(i)));
 				
 
 
@@ -1615,8 +1619,10 @@ public class DBApp {
 
 			}
 			else {
+				System.out.println("i: "+i);
+				System.out.println("table.getIDs.get(): "+table.getIds().get(i));
+				String fileName = strTableName+"Page"+(table.getIds().get(i))+".bin";
 				table.getIds().remove(i);
-				String fileName = strTableName+"Page"+(i+1)+".bin";
                    File file = new File(fileName);
         
                    if (file.delete()) {
@@ -1679,13 +1685,13 @@ public class DBApp {
 	   }
 
 	   int pageIndex = table.search(o, keyDataType);
-	   System.out.println("page index : "+pageIndex);
+	   System.out.println("page index hna fe getIDs() : "+table.getIds().get(pageIndex));
 	   if(pageIndex==-1){ // row does't exist
 		   return false;
 	   }
 	   else{ // if the row exists it will be in this page , bec. the row is within its range
 		   
-		   Vector<Page> pages =  (Vector<Page>) deserialize(tableName+"Page"+(pageIndex+1));
+		   Vector<Page> pages =  (Vector<Page>) deserialize(tableName+"Page"+(table.getIds().get(pageIndex)));
 		   Page page = pages.get(0);
 		   pages.remove(page);
 		   Hashtable<String,Object> doesExist = null;
@@ -1728,18 +1734,21 @@ public class DBApp {
 			   if(page.getSize() != 0)
 			   {
 				   pages.add(page);
-				   serialize(pages,tableName+"Page"+(pageIndex+1));
+				   serialize(pages,tableName+"Page"+(table.getIds().get(pageIndex)));
 
 				   
 			   }
 			   if(page.getSize() == 0) {
 				   System.out.println("Table _ID:"+ table.getIds());
-				   System.out.println("page Index :"+pageIndex);
+				   System.out.println("page Index hna mfish.getIds() :"+pageIndex);
+				 
+
+
+				  
+
+
+				   String fileName = tableName+"Page"+(table.getIds().get(pageIndex))+".bin";
 				   table.getIds().remove(pageIndex);
-
-
-
-				   String fileName = tableName+"Page"+(pageIndex+1)+".bin";
                    File file = new File(fileName);
         
                    if (file.delete()) {
@@ -1774,6 +1783,25 @@ public class DBApp {
 public void deleteFromTable(String strTableName, Hashtable<String, Object> htblColNameValue) throws DBAppException {
 	if(!exists(strTableName)) {
 		throw new DBAppException("Table doesn't exist");
+	}
+
+	if(htblColNameValue.isEmpty()){
+		Vector<Table> thetables = (Vector<Table>)deserialize(strTableName);
+		Table thetable = thetables.get(0);
+		while(!(thetable.getIds().isEmpty())){
+			String fileName = strTableName+"Page"+(thetable.getIds().get(0))+".bin";
+			thetable.getIds().remove(0);
+			File file = new File(fileName);
+ 
+			if (file.delete()) {
+			 System.out.println("File " + fileName + " deleted successfully.");
+		   } else {
+			 System.out.println("Failed to delete file " + fileName);
+		}
+	}
+
+	serializeTable(thetables, strTableName);
+	return;
 	}
 	boolean isTypeCorrect = true;
 	try {

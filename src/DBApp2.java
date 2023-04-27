@@ -37,9 +37,49 @@ public class DBApp2 {
 
 	public static void main(String[] args) throws Exception {
 	DBApp dbApp = new DBApp();
-	dbApp.init();
-	/*createTheTables(dbApp);
-	Hashtable<String, Object> htblColNameType = new Hashtable<String, Object>();
+//	dbApp.init();
+	//createTheTables(dbApp);
+ 
+	DBApp2 dpApp2 = new DBApp2();
+	//dpApp2.testRecordInsertions();
+ 
+	//printData();
+	// Hashtable<String,Object> h1 = new Hashtable<>();
+	//h1.put("id","59-8196");
+	// Hashtable<String,Object> h2 = new Hashtable<>();
+	// h2.put("id","50-7952");
+
+	// dbApp.insertIntoTable("students",h1);
+	// dbApp.insertIntoTable("students",h2);
+
+
+	//printData();
+ //Hashtable<String,Object> h1  = new Hashtable<>();
+
+  //h1.put("first_name","wYRCIH");
+ // h1.put("last_name","ExpTgL");
+
+
+Hashtable<String,Object> h2 = new Hashtable<>();
+	//h2.put("first_name","ZiDDlx");
+	//h2.put("last_name","SLOOaW");
+
+	//dbApp.deleteFromTable("students", h2);
+	dbApp.deleteFromTable("students", h2);
+	//printData();
+
+
+
+//  	h1.put("id","73-3694");
+// 	h2.put("id","74-3694");
+//  	dbApp.insertIntoTable("students",h1);
+//  dbApp.insertIntoTable("students",h2);
+
+  //printData();
+
+
+
+	/*Hashtable<String, Object> htblColNameType = new Hashtable<String, Object>();
 	htblColNameType.put("pc_id", 750);
     dbApp.insertIntoTable("pcs", htblColNameType);
 
@@ -184,15 +224,15 @@ public class DBApp2 {
     
     public void testRecordInsertions() throws Exception {
         DBApp dbApp = new DBApp();
-        dbApp.init();
-        dbApp.setN(10);
+        //dbApp.init();
+        dbApp.setN(2);
         DBApp2 dbApp2 = new DBApp2();
-        createTheTables(dbApp);
+        //createTheTables(dbApp);
        // dbApp.createTheTables(dbApp);
-        int limit = 80;
+        int limit = 6;
 
-        //insertStudentRecords(dbApp, limit);
-       insertCoursesRecords(dbApp, limit);
+        insertStudentRecords(dbApp, limit);
+      // insertCoursesRecords(dbApp, limit);
       //  insertTranscriptsRecords(dbApp, limit);
         //insertPCsRecords(dbApp, limit);
      dbApp = null;

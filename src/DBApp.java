@@ -15,8 +15,8 @@ import java.util.Properties;
 
 public class DBApp {
 	private boolean firstTable = false;
-	private int n;
-	private int m;
+	private static int n;
+	private static int m;
 	private static String thePK = "";
 	private final static String theString = "java.lang.String";
 	private final static String theDouble = "java.lang.Double";
@@ -348,20 +348,53 @@ public class DBApp {
 		db.createTable("dumbTable", "id", h1, h2, h3);
 	}
 
-	public int getN() {
+	public static int getN() {
+		//return n;
+
+		Properties props = new Properties();
+        FileInputStream fis = null;
+
+        try {
+            fis = new FileInputStream("src/resources/DBApp.config");
+            props.load(fis);
+
+            // Access properties by key
+            
+            int n = Integer.parseInt(props.getProperty("MaximumRowsCountinTablePage"));
+			int m = Integer.parseInt(props.getProperty("MaximumEntriesinOctreeNode"));
+            // Do something with properties
+           setM(m);
+		   setN(n);
+		   System.out.println("Config file read successfully.");
+		   // print m and n 
+		   System.out.println("M : " + getM());
+		   System.out.println("N : " + getN());
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            if (fis != null) {
+                try {
+                    fis.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
 		return n;
+
 	}
 
-	public void setN(int n) {
-		this.n = n;
+	public static void setN(int k) {
+		n = k;
 	}
 
-	public int getM() {
+	public static int getM() {
 		return m;
 	}
 
-	public void setM(int m) {
-		this.m = m;
+	public static void setM(int k) {
+		m = k;
 	}
 
 	public void init() {
@@ -626,7 +659,7 @@ public class DBApp {
 		try {
 			BufferedReader br = new BufferedReader(new FileReader("metadata.csv"));
 			String line = br.readLine();
-			int N = Integer.parseInt(line);
+			int N = getN();
 			String pk = "";
 			String dataType = "";
 			boolean isClustering = false;
@@ -1223,7 +1256,7 @@ public class DBApp {
 		try {
 			BufferedReader br = new BufferedReader(new FileReader("metadata.csv"));
 			String line = br.readLine();
-			int N = Integer.parseInt(line);
+			int N = getN() ;
 			String pk = "";
 			String dataType = "";
 			boolean isClustering = false;

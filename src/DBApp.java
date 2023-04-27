@@ -24,10 +24,9 @@ public class DBApp {
 	private final static String theInt = "java.lang.Integer";
 
 	public static void main(String[] args) throws Exception {
-		//  DBApp dbApp = new DBApp();
-		//  dbApp.init();
-		//  createTheTables(dbApp);
-		//  dbApp.insertStudentRecords(dbApp, 6);
+		 DBApp dbApp = new DBApp();
+		  dbApp.init();
+		
 
 		
 		
@@ -366,16 +365,16 @@ public class DBApp {
 	}
 
 	public void init() {
-		this.setN(2);
-		this.setM(2);
+		//this.setN(2);
+		//this.setM(2);
 		Properties prop = new Properties();
         OutputStream output = null;
 		try {
 		output = new FileOutputStream("src/resources/DBApp.config");
 
             // set the properties value
-            prop.setProperty("MaximumRowsCountinTablePage", (this.getN()+""));
-            prop.setProperty("MaximumEntriesinOctreeNode", (this.getM()+""));
+            prop.setProperty("MaximumRowsCountinTablePage", "2");
+            prop.setProperty("MaximumEntriesinOctreeNode", "2");
             
 
             // save properties to project root folder
@@ -394,6 +393,41 @@ public class DBApp {
                 }
             }
         }
+
+		Properties props = new Properties();
+        FileInputStream fis = null;
+
+        try {
+            fis = new FileInputStream("src/resources/DBApp.config");
+            props.load(fis);
+
+            // Access properties by key
+            
+            int n = Integer.parseInt(props.getProperty("MaximumRowsCountinTablePage"));
+			int m = Integer.parseInt(props.getProperty("MaximumEntriesinOctreeNode"));
+            // Do something with properties
+           this.setM(m);
+		   this.setN(n);
+		   System.out.println("Config file read successfully.");
+		   // print m and n 
+		   System.out.println("M : " + this.getM());
+		   System.out.println("N : " + this.getN());
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            if (fis != null) {
+                try {
+                    fis.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+
+
+
+		
 		
 		try {
 			FileWriter csvWriter = new FileWriter("metadata.csv");

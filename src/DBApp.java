@@ -24,42 +24,9 @@ public class DBApp {
 	private final static String theInt = "java.lang.Integer";
 
 	public static void main(String[] args) throws Exception {
-		DBApp dbApp = new DBApp();
-		dbApp.init();
-		// createTheTables(dbApp);
-		// dbApp.insertStudentRecords(dbApp, 6);
-		Hashtable htblColNameType = new Hashtable();
-
-		Hashtable<String, String> htblColNameMin = new Hashtable<>();
-		Hashtable<String, String> htblColNameMax = new Hashtable<>();
-
-		htblColNameType.put("id", "java.lang.Integer");
-		htblColNameType.put("name", "java.lang.String");
-		htblColNameType.put("gpa", "java.lang.Double");
-
-		htblColNameMin.put("id", "1");
-		htblColNameMin.put("name", "a");
-		htblColNameMin.put("gpa", "0");
-
-		htblColNameMax.put("id", "15");
-		htblColNameMax.put("name", "z");
-		htblColNameMax.put("gpa", "4");
-
-		htblColNameType.put("id", "java.lang.Integer");
-		htblColNameType.put("name", "java.lang.String");
-		htblColNameType.put("gpa", "java.lang.Double");
-		dbApp.createTable("strTableName", "id", htblColNameType, htblColNameMin,
-		htblColNameMax);
-		// dbApp.createIndex("strTableName", new String[] { "gpa" });
-		Hashtable htblColNameValue = new Hashtable();
-		htblColNameValue.put("id", new Integer(2));
-		htblColNameValue.put("name", new String("Ahmed Noor"));
-		htblColNameValue.put("gpa", new Double(1.95));
-		dbApp.insertIntoTable("strTableName", htblColNameValue);
-
-		printData();
 		
-
+		
+	
 		
 		
 	}
@@ -308,13 +275,21 @@ public class DBApp {
 	public static void fixTheRanges (String tableName,String pk) throws DBAppException{
 		Vector<Table> tables = (Vector<Table>) deserialize(tableName);
 		Table t = tables.get(0);
+		Vector<Page> pp;
+		Page p;
 		for (int i =0 ;i<t.getIds().size();i++){
-			Vector<Page> pp = (Vector<Page>) deserialize(tableName+"Page"+t.getIds().get(i));
-			Page p = pp.get(0);
+			 pp = (Vector<Page>) deserialize(tableName+"Page"+t.getIds().get(i));
+			 p = pp.get(0);
 			t.getRange().get(i).setMin(p.getData().get(0).get(pk));
 			t.getRange().get(i).setMax(p.getData().get(p.getData().size()-1).get(pk));
 		}
 		serializeTable(tables, tableName);
+		tables=null;
+		t=null;
+		pp=null;
+	
+		p=null;
+		//System.gc();
 	}
 
 	private static void printData() throws DBAppException {
@@ -399,8 +374,8 @@ public class DBApp {
 		   setN(n);
 		   System.out.println("Config file read successfully.");
 		   // print m and n 
-		   System.out.println("M : " + getM());
-		   System.out.println("N : " + n);
+		   //System.out.println("M : " + getM());
+		  // System.out.println("N : " + n);
         } catch (IOException e) {
 			throw new DBAppException();
 		} finally {
@@ -412,7 +387,7 @@ public class DBApp {
                 }
             }
         }
-
+		fis=null;
 		return n;
 
 	}
@@ -421,7 +396,37 @@ public class DBApp {
 		n = k;
 	}
 
-	public static int getM() {
+	public static int getM() throws DBAppException {
+		Properties props = new Properties();
+        FileInputStream fis = null;
+
+        try {
+            fis = new FileInputStream("src/resources/DBApp.config");
+            props.load(fis);
+
+            // Access properties by key
+            
+            int n = Integer.parseInt(props.getProperty("MaximumRowsCountinTablePage"));
+			int m = Integer.parseInt(props.getProperty("MaximumEntriesinOctreeNode"));
+            // Do something with properties
+           setM(m);
+		   setN(n);
+		   System.out.println("Config file read successfully.");
+		   // print m and n 
+		   //System.out.println("M : " + getM());
+		  // System.out.println("N : " + n);
+        } catch (IOException e) {
+			throw new DBAppException();
+		} finally {
+            if (fis != null) {
+                try {
+                    fis.close();
+                } catch (IOException e) {
+                    throw new DBAppException();
+                }
+            }
+        }
+		fis=null;
 		return m;
 	}
 
@@ -458,7 +463,7 @@ public class DBApp {
                 }
             }
         }
-
+		output=null;
 		Properties props = new Properties();
         FileInputStream fis = null;
 
@@ -488,14 +493,14 @@ public class DBApp {
                 }
             }
         }
-
+		fis=null;
 
 
 
 		
-		
+		FileWriter csvWriter;
 		try {
-			FileWriter csvWriter = new FileWriter("metadata.csv");
+			 csvWriter = new FileWriter("metadata.csv");
 			// Close the writer to save the changes
 			csvWriter.close();
 			System.out.println("metadata.csv created successfully!");
@@ -503,7 +508,7 @@ public class DBApp {
 			System.out.println("An error occurred: " + e.getMessage());
 			throw new DBAppException();
 		}
-		
+		csvWriter=null;
 		
 		try {
 			this.createTableNamesVector();
@@ -515,13 +520,15 @@ public class DBApp {
 		
 		// write n in csv
 		try {
-			FileWriter csvWriter = new FileWriter("metadata.csv", true);
+			 csvWriter = new FileWriter("metadata.csv", true);
 			csvWriter.write(Integer.toString(this.getN()) + "\n");
 			csvWriter.flush();
 			csvWriter.close();
 		} catch (Exception e) {
 			throw new DBAppException();
 		}
+		csvWriter=null;
+		System.gc();
 
 	}
 
@@ -532,10 +539,10 @@ public class DBApp {
 		boolean isGood = false;
 		boolean isNew = false;
 		Vector<String> tableNames = new Vector<String>();
-
+		ObjectInputStream in;
 		try {
 
-			ObjectInputStream in = new ObjectInputStream(new FileInputStream("tableNames.bin"));
+			 in = new ObjectInputStream(new FileInputStream("tableNames.bin"));
 			tableNames = (Vector<String>) in.readObject();
 			in.close();
 
@@ -543,6 +550,7 @@ public class DBApp {
 			
 			throw new DBAppException();
 		}
+		in=null;
 
 		if (tableNames.contains(strTableName)) {
 			throw new DBAppException("Table already exists");
@@ -590,34 +598,37 @@ public class DBApp {
 			// 1 : add table name to table names list
 			
 			tableNames.add(strTableName);
-
+			FileOutputStream fileOut;
+			ObjectOutputStream out;
 			// Serialize table containing names of tables again
 			try {
-				FileOutputStream fileOut = new FileOutputStream("tableNames.bin");
+				 fileOut = new FileOutputStream("tableNames.bin");
 
-				ObjectOutputStream out = new ObjectOutputStream(fileOut);
+				 out = new ObjectOutputStream(fileOut);
 				out.writeObject(tableNames);
 				out.close();
 				fileOut.close();
 			} catch (Exception i) {
 				throw new DBAppException("moshkela fe table names");
 			}
-			
+			tableNames=null;
+			fileOut=null;
+			out=null;
 			
 			
 			
 			// 2 : create {tableName}.bin file
-			
-			
+			Vector<Table> p;
+			Table t;
 			// Serialize table again
 			try {
 				//Vector<String> p = new Vector<String>();
 				//  {1,2,3,4,8}  { () , () }
-				Vector<Table> p = new Vector<Table>();
-				Table t = new Table (strTableName);
+				 p = new Vector<Table>();
+				 t = new Table (strTableName);
 				p.add(t);
-				FileOutputStream fileOut = new FileOutputStream(strTableName + ".bin");
-				ObjectOutputStream out = new ObjectOutputStream(fileOut);
+				 fileOut = new FileOutputStream(strTableName + ".bin");
+				 out = new ObjectOutputStream(fileOut);
 				out.writeObject(p);
 				out.close();
 				fileOut.close();
@@ -626,14 +637,17 @@ public class DBApp {
 			} catch (Exception i) {
 				throw new DBAppException("moshkela fe table object");
 			}
-			
+			p=null;
+			t=null;
+			fileOut=null;
+			out=null;
 			
 			
 			
 			// 3 : final stage , writing data is csv
-
+			FileWriter csvWriter;
 		try {
-			FileWriter csvWriter = new FileWriter("metadata.csv", true);
+			 csvWriter = new FileWriter("metadata.csv", true);
 			csvWriter.write(ans);
 			csvWriter.flush();
 			csvWriter.close();
@@ -641,29 +655,33 @@ public class DBApp {
 			throw new DBAppException("Moshkela fe csv");
 		}
 		
-		
+		csvWriter=null;
 		
 		
 		
 		}
 		
 		
-
+		System.gc();
 	}
 
 	public void createTableNamesVector() throws DBAppException {
 		Vector<String> tableNames = new Vector<String>();
-
+		FileOutputStream fileOut;
+		ObjectOutputStream out;
 		try {
-			FileOutputStream fileOut = new FileOutputStream("tableNames.bin");
+			 fileOut = new FileOutputStream("tableNames.bin");
 
-			ObjectOutputStream out = new ObjectOutputStream(fileOut);
+			 out = new ObjectOutputStream(fileOut);
 			out.writeObject(tableNames);
 			out.close();
 			fileOut.close();
 		} catch (Exception i) {
 			throw new DBAppException("Moshkela fe table names method");
 		}
+		fileOut=null;
+		out=null;
+		System.gc();
 	}
 
 	public void createIndex(String strTableName, String[] strarrColName) throws DBAppException {
@@ -674,22 +692,25 @@ public class DBApp {
 		Vector<String> tableNames = new Vector<String>();
 		boolean [] condition = new boolean [htblColNameValue.keySet().size()];
 		int count = 0;
-
+		ObjectInputStream in;
 		try {
 
-			ObjectInputStream in = new ObjectInputStream(new FileInputStream("tableNames.bin"));
+			 in = new ObjectInputStream(new FileInputStream("tableNames.bin"));
 			tableNames = (Vector<String>) in.readObject();
 			in.close();
 
 		} catch (Exception i) {
 			throw new DBAppException();
 		}
+		in=null;
 		if(!tableNames.contains(strTableName)) {
 			System.out.println(strTableName);
 			throw new DBAppException("Table doesn't exit");
 		}
+		tableNames=null;
+		BufferedReader br;
 		try {
-			BufferedReader br = new BufferedReader(new FileReader("metadata.csv"));
+			 br = new BufferedReader(new FileReader("metadata.csv"));
 			String line = br.readLine();
 			int N = getN();
 			String pk = "";
@@ -838,14 +859,16 @@ public class DBApp {
 				// System.out.println(t.getIds().get(0));
         		t.getRange().add(new Pair (htblColNameValue.get(pk),htblColNameValue.get(pk)));
 				System.out.println("The min is : "+t.getRange().get(0).getMin()+" The max is : "+t.getRange().get(0).getMax());
+				FileOutputStream fileOut;
+				ObjectOutputStream out;
 				try {
 					//Vector<String> p = new Vector<String>();
 					//  {1,2,3,4,8}  { () , () }
 					p = new Vector<Table>();
 					//Table t = new Table (strTableName);
 					p.add(t);
-					FileOutputStream fileOut = new FileOutputStream(strTableName + ".bin");
-					ObjectOutputStream out = new ObjectOutputStream(fileOut);
+					 fileOut = new FileOutputStream(strTableName + ".bin");
+					 out = new ObjectOutputStream(fileOut);
 					out.writeObject(p);
 					out.close();
 					fileOut.close();
@@ -855,7 +878,11 @@ public class DBApp {
 					i.printStackTrace();
 					throw new DBAppException("moshkela fe table object");
 				}
-        	    
+				p=null;
+        	    p1=null;
+				v=null;
+				fileOut=null;
+				out=null;
         		
         	}
         	else {
@@ -947,10 +974,10 @@ public class DBApp {
 								Object oldMAX = null;
 								Object oldMIN = null;
 								while(true){
-								index = t.search(shiftedRow.get(pk), dataType);
-								pageID = t.getIds().get( index);
-        						Vector <Page> v1 = (Vector <Page>) deserialize(strTableName+"Page"+pageID);
-        						Page pp1 = v1.get(0);
+										index = t.search(shiftedRow.get(pk), dataType);
+										pageID = t.getIds().get( index);
+        								Vector <Page> v1 = (Vector <Page>) deserialize(strTableName+"Page"+pageID);
+        							Page pp1 = v1.get(0);
 								
 								if(dataType.toLowerCase().compareTo(theInt.toLowerCase()) == 0) {
 									if(!pp1.getData().contains(shiftedRow)){
@@ -1011,24 +1038,27 @@ public class DBApp {
 								ser.add(pp);
 								System.out.println("The old PID : "+oldPID);
 								serialize(ser, strTableName+"Page"+oldPID);
-								
+								FileOutputStream fileOut;
+								ObjectOutputStream out;
 								// 2. serialize the table
 								try {
 									Vector<Table> tableV = new Vector<Table>();
 									tableV.add(t);
-									FileOutputStream fileOut = new FileOutputStream(strTableName + ".bin");
-									ObjectOutputStream out = new ObjectOutputStream(fileOut);
+									 fileOut = new FileOutputStream(strTableName + ".bin");
+									 out = new ObjectOutputStream(fileOut);
 									out.writeObject(tableV);
 									out.close();
 									fileOut.close();
 									
 									
 								} catch (Exception e) {
-									e.printStackTrace();
+									//e.printStackTrace();
 									throw new DBAppException("moshkela fe table object");
 								}
+								fileOut = null;
+								out = null;
 
-
+								ser=null;
 									return;
 								} 
 								
@@ -1056,21 +1086,32 @@ public class DBApp {
 								serialize(v1, strTableName+"Page"+pageID);
 								
 								// 2. serialize the table
+								FileOutputStream fileOut;
+								ObjectOutputStream out;
+								Vector<Table> tableV;
 								try {
-									Vector<Table> tableV = new Vector<Table>();
+									 tableV = new Vector<Table>();
 									tableV.add(t);
-									FileOutputStream fileOut = new FileOutputStream(strTableName + ".bin");
-									ObjectOutputStream out = new ObjectOutputStream(fileOut);
+									 fileOut = new FileOutputStream(strTableName + ".bin");
+									 out = new ObjectOutputStream(fileOut);
 									out.writeObject(tableV);
 									out.close();
 									fileOut.close();
 									
 									
 								} catch (Exception e) {
-									e.printStackTrace();
+									//e.printStackTrace();
 									throw new DBAppException("moshkela fe table object");
 								}
+
+								tableV=null;
+								//hena aho
+								v1=null;
+								pp1=null;
+								ser=null;
 									}
+
+								//pp1=null;
 							} 
 
 							catch (ArrayIndexOutOfBoundsException e) { 
@@ -1099,22 +1140,31 @@ public class DBApp {
 							// 2. serialize the table
 							t.getIds().add(pageID);
 							t.getRange().add(new Pair(shiftedRow.get(pk), shiftedRow.get(pk)));
+							Vector<Table> tableV;
+							FileOutputStream fileOut;
+							ObjectOutputStream out;
 							try {
-								Vector<Table> tableV = new Vector<Table>();
+								 tableV = new Vector<Table>();
 								tableV.add(t);
-								FileOutputStream fileOut = new FileOutputStream(strTableName + ".bin");
-								ObjectOutputStream out = new ObjectOutputStream(fileOut);
+								 fileOut = new FileOutputStream(strTableName + ".bin");
+								 out = new ObjectOutputStream(fileOut);
 								out.writeObject(tableV);
 								out.close();
 								fileOut.close();
 								
 								
 							} catch (Exception i) {
-								i.printStackTrace();
+								//i.printStackTrace();
 								throw new DBAppException("moshkela fe table object");
 							}
 							
-
+							//hena aho
+							newPage=null;
+							v1=null;
+							ser=null;
+							tableV=null;
+							fileOut=null;
+							out=null;
 							}
 							return;
 							
@@ -1131,14 +1181,18 @@ public class DBApp {
 							out.writeObject(tableV);
 							out.close();
 							fileOut.close();
-							
+							tableV=null;
+							fileOut=null;
+							out=null;
 							
 						} catch (Exception e) {
-							e.printStackTrace();
+							//e.printStackTrace();
 							throw new DBAppException("moshkela fe table object");
 						}
 
-        			
+        			v=null;
+					pp=null;
+					sol=null;
         		}
         		else {
         			// WE didnt find the page using the range :( 
@@ -1153,6 +1207,7 @@ public class DBApp {
 					String pageID = t.getIds().get(ind);
 					Vector <Page> v = (Vector <Page>) deserialize(strTableName+"Page"+pageID);
         			Page pp = v.get(0);
+					v=null;
 					// if index is != -1 then page is found
 					if(ind != -1){
 						
@@ -1211,8 +1266,9 @@ public class DBApp {
 							//1. serialize page
 							Vector<Page> v1 = new Vector<>();
 							v1.add(pp);
+							pp=null;
 							serialize(v1, (strTableName+"Page"+pageID));
-								
+							v1=null;
 							// 2. serialize the table
 							try {
 								Vector<Table> tableV = new Vector<Table>();
@@ -1222,10 +1278,12 @@ public class DBApp {
 								out.writeObject(tableV);
 								out.close();
 								fileOut.close();
-									
+								tableV=null;
+								fileOut=null;
+								out=null;	
 									
 							} catch (Exception e) {
-								e.printStackTrace();
+								//e.printStackTrace();
 								throw new DBAppException("moshkela fe table object");
 							}
 					}
@@ -1255,26 +1313,32 @@ public class DBApp {
 							out.writeObject(tableV);
 							out.close();
 							fileOut.close();
-								
+							tableV=null;
+								fileOut=null;
+								out=null;	
 								
 						} catch (Exception i) {
-							i.printStackTrace();
+							//i.printStackTrace();
 							throw new DBAppException("moshkela fe table object");
 						}
+						newPage=null;
+						v1=null;
 					}
         			
         		}
         		
      
         	}
-            
-            
+            p=null;
+            t=null;
             
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 			throw new DBAppException();
 		}
+		br=null;
+		
 		
 		// here we should serialize the "insert 13" probllem
 	}
@@ -1299,6 +1363,9 @@ public class DBApp {
 					allNames.add(values[1]);
 				}
 			}
+
+			br=null;
+
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -1320,7 +1387,7 @@ public class DBApp {
 				// strClusteringKeyValue is the value to look for to find the row to update.
 				if(!found(strTableName, strClusteringKeyValue, htblColNameValue))
 					throw new DBAppException();
-				
+				System.gc();
 	}
 
 	public static boolean found(String tableName,String keyValue,Hashtable<String, Object> htblColNameValue) throws DBAppException{
@@ -1433,6 +1500,7 @@ public class DBApp {
 			}
 			//System.out.println(line);
 		}
+		br=null;
 		} catch (Exception e) {
 			System.out.println(e.getCause());
 			throw new DBAppException();
@@ -1501,10 +1569,17 @@ public class DBApp {
 			if (doesExist != null) { // we now have the row that will be updated
 				// وصلنا بالسلامه الحمد الله
 				update(tableName, htblColNameValue, pageIndex, pages, page, doesExist);
-
+				tables=null;
+				table=null;
+				pages=null;
+				page=null;
 				return true; // تم عمل ابديت بنجاح   :)
 			}
 			else {
+				tables=null;
+				table=null;
+				pages=null;
+				page=null;
 				return false;
 			}
 			
@@ -1513,7 +1588,7 @@ public class DBApp {
 
 
 
-
+		//tables=null;
 
 		//return false ;
 	}
@@ -1553,12 +1628,15 @@ public class DBApp {
 			ObjectInputStream in = new ObjectInputStream(new FileInputStream("tableNames.bin"));
 			 tableNames = (Vector<String>) in.readObject();
 			in.close();
-
+			in=null;
 		} catch (Exception i) {
 			i.printStackTrace();
 			throw new DBAppException();
 		}
-		return tableNames.contains(tableName);
+		//tableNames=null;
+		boolean x = tableNames.contains(tableName);
+		tableNames=null;
+		return x;
 	}
 	public static Object deserialize (String name) throws DBAppException {
 		Object r =null;
@@ -1576,12 +1654,14 @@ public class DBApp {
 		
 	}
 	public static void serialize (Vector<Page> p,String name) throws DBAppException {
+		FileOutputStream fileOut;
+		ObjectOutputStream out;
 		try {
 			//Vector<String> p = new Vector<String>();
 			//  {1,2,3,4,8}  { () , () }
 			
-			FileOutputStream fileOut = new FileOutputStream(name + ".bin");
-			ObjectOutputStream out = new ObjectOutputStream(fileOut);
+			 fileOut = new FileOutputStream(name + ".bin");
+			 out = new ObjectOutputStream(fileOut);
 			out.writeObject(p);
 			out.close();
 			fileOut.close();
@@ -1603,7 +1683,7 @@ public class DBApp {
 	public void insertIntoTable(String strTableName, Hashtable<String, Object> htblColNameValue) throws DBAppException {
 		insertIntoTable2(strTableName, htblColNameValue);
 		fixTheRanges(strTableName, thePK);
-
+		System.gc();
 	}
 	
 	public static void serializeTable (Vector<Table> p,String name) throws DBAppException {
@@ -1649,43 +1729,23 @@ public class DBApp {
 
 
 
-	{
-		/*//db.init();
-		Vector<Page> p = (Vector<Page>) deserialize("StudentPage1");
-		//System.out.println(p.toString());
-		Hashtable<String,Object> htblColNameValue = new Hashtable<String,Object> ();
-		htblColNameValue.put("name", "nour");
-		htblColNameValue.put("gpa", new Double("2"));
-		Page p1 = p.get(0);
-		System.out.println();
-		System.out.println("old : ");
-		System.out.println();
-		System.out.println(p1.getData());
-		System.out.println();
-		System.out.println("Output : ");
-		System.out.println();
-		db.updateTable("Student", "10", htblColNameValue);
-		System.out.println();
-		Vector<Page> p2 = (Vector<Page>) deserialize("StudentPage1");
-		Page p22 = p2.get(0);
-		System.out.println(p22.getData());*/
-	}
-
-
+	
 
 //begining  of delete
-	public static boolean searchAndDeleteNBString( String strTableName, Hashtable<String, Object> htblColNameValue) throws DBAppException {
+	public static boolean searchAndDeleteNBString( String strTableName, Hashtable<String, Object> htblColNameValue)
+	 throws DBAppException {
 		System.out.println("Ana gowa el delete non primary key");
 		System.out.println("The hashtable : " +htblColNameValue);
 		Vector<Table> tables = (Vector<Table>) deserialize(strTableName);
 		Table table = tables.remove(0);
 		boolean found = true;
 		boolean firstFound = false;
-		Vector<Page> pages  = null;
+		Vector<Page> pages = null  ;
+		Page page = null ;
 		int i = 0;
 		for(;i<table.getIds().size();i++) {
 			pages =  (Vector<Page>) deserialize(strTableName+"Page"+table.getIds().get(i));
-			Page page = pages.get(0);
+			 page = pages.get(0);
 		
 			pages.remove(page);
 			Vector<Hashtable<String,Object>> searchDomain = page.getData();
@@ -1748,6 +1808,11 @@ public class DBApp {
 	
 		tables.add(table);
 		serializet(tables,strTableName);
+		tables=null;
+		table=null;
+		pages=null;
+		page=null;
+		//System.gc();
 		return firstFound;
 	}
 
@@ -1877,9 +1942,18 @@ public class DBApp {
 			   System.out.println("Please esht8aly");
 			   tables.add(table);
 			   serializet(tables,tableName);
+			   tables=null;
+			   table=null;
+			   pages=null;
+			   page=null;
+			   //System.gc();
 			   return true; // تم عمل ابديت بنجاح   :)
 		   }
 		   else {
+			tables=null;
+			   table=null;
+			   pages=null;
+			   page=null;
 			   return false;
 		   }
 		   
@@ -1909,6 +1983,9 @@ public void deleteFromTable(String strTableName, Hashtable<String, Object> htblC
 	}
 
 	serializeTable(thetables, strTableName);
+	thetables=null;
+	thetable=null;
+
 	return;
 	}
 	boolean isTypeCorrect = true;
@@ -1983,10 +2060,12 @@ public void deleteFromTable(String strTableName, Hashtable<String, Object> htblC
 	
 	
 	
-
+			br.close();
+			
 }catch(Exception e) {
 	throw new DBAppException("Exception was thrown while deleting");
 }
+System.gc();
 }
 
 

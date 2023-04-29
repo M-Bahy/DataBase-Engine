@@ -92,13 +92,13 @@ public class Page implements Serializable {
 	            Hashtable<String, Object> midHashtable = this.getData().get(mid);
 	            String midKey = (String) midHashtable.get(pk);
 	            String key = (String) newHashtable.get(pk);
-	            if (midKey.compareTo(key) < 0) {  // midKey < key
+	            if (midKey.toLowerCase().compareTo(key.toLowerCase()) < 0) {  // midKey < key
 	                low = mid + 1;
-	            } else if (midKey.compareTo(key) > 0) {   // midKey > key
+	            } else if (midKey.toLowerCase().compareTo(key.toLowerCase()) > 0) {   // midKey > key
 	                high = mid - 1;
 	            } else {
 	                // Key already exists, do not insert new hashtable
-					System.out.println(midKey.compareTo(key));
+					System.out.println(midKey.toLowerCase().compareTo(key.toLowerCase()));
 					throw new DBAppException("Record with same primary key already exists");
 	            }
 	        }
@@ -209,9 +209,9 @@ public class Page implements Serializable {
 			Hashtable<String, Object> midHashtable = this.getData().get(mid);
 			String midKey = (String) midHashtable.get(pk);
 			//String key = (String) newHashtable.get(pk);
-			if (midKey.compareTo(key) < 0) {  // midKey < key
+			if (midKey.toLowerCase().compareTo(key.toLowerCase()) < 0) {  // midKey < key
 				low = mid + 1;
-			} else if (midKey.compareTo(key) > 0) {   // midKey > key
+			} else if (midKey.toLowerCase().compareTo(key.toLowerCase()) > 0) {   // midKey > key
 				high = mid - 1;
 			} else {
 				// Key already exists, do not insert new hashtable

@@ -83,7 +83,8 @@ public class Table implements Serializable{
         		 Pair p = this.getRange().get(i);
         		 String min = (String) p.getMin();
         		 String max = (String) p.getMax();
-        		 if (   (  max.compareTo(dataa) >= 0  && min.compareTo(dataa) <= 0 )   ||  (min.compareTo(dataa) >= 0)   ) {
+        		 if (   (  max.toLowerCase().compareTo(dataa.toLowerCase()) >= 0  && min.toLowerCase().compareTo(dataa.toLowerCase()) <= 0 )   
+				 ||  (min.toLowerCase().compareTo(dataa.toLowerCase()) >= 0)   ) {
         			return i;
         		
         			 
@@ -194,7 +195,7 @@ public class Table implements Serializable{
         		 Pair p = this.getRange().get(i);
         		 String min = (String) p.getMin();
         		 String max = (String) p.getMax();
-        		 if (min.compareTo(dataa) == 1 ) {
+        		 if (min.toLowerCase().compareTo(dataa.toLowerCase()) == 1 ) {
 					if(i==0)
 						return 0;
         			return i - 1;

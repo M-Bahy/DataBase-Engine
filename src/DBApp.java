@@ -24,8 +24,40 @@ public class DBApp {
 	private final static String theInt = "java.lang.Integer";
 
 	public static void main(String[] args) throws Exception {
-		 DBApp dbApp = new DBApp();
-		  dbApp.init();
+		DBApp dbApp = new DBApp();
+		dbApp.init();
+		// createTheTables(dbApp);
+		// dbApp.insertStudentRecords(dbApp, 6);
+		Hashtable htblColNameType = new Hashtable();
+
+		Hashtable<String, String> htblColNameMin = new Hashtable<>();
+		Hashtable<String, String> htblColNameMax = new Hashtable<>();
+
+		htblColNameType.put("id", "java.lang.Integer");
+		htblColNameType.put("name", "java.lang.String");
+		htblColNameType.put("gpa", "java.lang.Double");
+
+		htblColNameMin.put("id", "1");
+		htblColNameMin.put("name", "a");
+		htblColNameMin.put("gpa", "0");
+
+		htblColNameMax.put("id", "15");
+		htblColNameMax.put("name", "z");
+		htblColNameMax.put("gpa", "4");
+
+		htblColNameType.put("id", "java.lang.Integer");
+		htblColNameType.put("name", "java.lang.String");
+		htblColNameType.put("gpa", "java.lang.Double");
+		dbApp.createTable("strTableName", "id", htblColNameType, htblColNameMin,
+		htblColNameMax);
+		// dbApp.createIndex("strTableName", new String[] { "gpa" });
+		Hashtable htblColNameValue = new Hashtable();
+		htblColNameValue.put("id", new Integer(2));
+		htblColNameValue.put("name", new String("Ahmed Noor"));
+		htblColNameValue.put("gpa", new Double(1.95));
+		dbApp.insertIntoTable("strTableName", htblColNameValue);
+
+		printData();
 		
 
 		
@@ -273,7 +305,7 @@ public class DBApp {
 
         dbApp.createTable(tableName, "pc_id", htblColNameType, minValues, maxValues);
     }
-	public static void fixTheRanges (String tableName,String pk){
+	public static void fixTheRanges (String tableName,String pk) throws DBAppException{
 		Vector<Table> tables = (Vector<Table>) deserialize(tableName);
 		Table t = tables.get(0);
 		for (int i =0 ;i<t.getIds().size();i++){
@@ -285,13 +317,13 @@ public class DBApp {
 		serializeTable(tables, tableName);
 	}
 
-	private static void printData() {
-		Vector<Table> tt = (Vector<Table>) deserialize("dumbTable");
+	private static void printData() throws DBAppException {
+		Vector<Table> tt = (Vector<Table>) deserialize("strTableName");
 		Table t = tt.get(0);
 		System.out.println( "Total number of Pages : " + t.getIds().size());
 		System.out.println();
 		for(String s:t.getIds()){
-			Vector<Page> pages = (Vector<Page>)  deserialize("dumbTablePage"+s);
+			Vector<Page> pages = (Vector<Page>)  deserialize("strTableNamePage"+s);
 			Page p1 = pages.get(0);
 			System.out.println("Page "+s+" Data : ");
 			System.out.println(p1.getData());
@@ -299,7 +331,7 @@ public class DBApp {
 		}
 	}
 
-	private static void displayThe2Pages() {
+	private static void displayThe2Pages() throws DBAppException {
 		Vector<Page> pages = (Vector<Page>)  deserialize("dumbTablePage1");
 		Page p1 = pages.get(0);
 		System.out.println(p1.getData());
@@ -348,7 +380,7 @@ public class DBApp {
 		db.createTable("dumbTable", "id", h1, h2, h3);
 	}
 
-	public static int getN() {
+	public static int getN() throws DBAppException {
 		//return n;
 
 		Properties props = new Properties();
@@ -368,15 +400,15 @@ public class DBApp {
 		   System.out.println("Config file read successfully.");
 		   // print m and n 
 		   System.out.println("M : " + getM());
-		   System.out.println("N : " + getN());
+		   System.out.println("N : " + n);
         } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
+			throw new DBAppException();
+		} finally {
             if (fis != null) {
                 try {
                     fis.close();
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    throw new DBAppException();
                 }
             }
         }
@@ -397,7 +429,7 @@ public class DBApp {
 		m = k;
 	}
 
-	public void init() {
+	public void init() throws DBAppException {
 		//this.setN(2);
 		//this.setM(2);
 		Properties prop = new Properties();
@@ -416,13 +448,13 @@ public class DBApp {
             System.out.println("Config file created successfully.");
 
         } catch (IOException io) {
-            io.printStackTrace();
+            throw new DBAppException();
         } finally {
             if (output != null) {
                 try {
                     output.close();
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    throw new DBAppException();
                 }
             }
         }
@@ -446,13 +478,13 @@ public class DBApp {
 		   System.out.println("M : " + this.getM());
 		   System.out.println("N : " + this.getN());
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new DBAppException();
         } finally {
             if (fis != null) {
                 try {
                     fis.close();
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    throw new DBAppException();
                 }
             }
         }
@@ -469,7 +501,7 @@ public class DBApp {
 			System.out.println("metadata.csv created successfully!");
 		} catch (IOException e) {
 			System.out.println("An error occurred: " + e.getMessage());
-			e.printStackTrace();
+			throw new DBAppException();
 		}
 		
 		
@@ -477,7 +509,7 @@ public class DBApp {
 			this.createTableNamesVector();
 		} catch (DBAppException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			throw new DBAppException();
 		}
 		
 		
@@ -488,7 +520,7 @@ public class DBApp {
 			csvWriter.flush();
 			csvWriter.close();
 		} catch (Exception e) {
-			e.printStackTrace();
+			throw new DBAppException();
 		}
 
 	}
@@ -532,12 +564,12 @@ public class DBApp {
 			if (htblColNameMin.containsKey(s) != true || htblColNameMax.containsKey(s) != true) {
 				throw new DBAppException("There is no min and max specified for Column: " + s);
 			}
-			if ((htblColNameType.get(s)).compareTo(theInt) != 0 && (htblColNameType.get(s)).compareTo(theString) != 0
-					&& (htblColNameType.get(s)).compareTo(theDouble) != 0 && (htblColNameType.get(s)).compareTo(theDate) != 0){
+			if ((htblColNameType.get(s).toLowerCase()).compareTo(theInt.toLowerCase()) != 0 && (htblColNameType.get(s).toLowerCase()).compareTo(theString.toLowerCase()) != 0
+					&& (htblColNameType.get(s).toLowerCase()).compareTo(theDouble.toLowerCase()) != 0 && (htblColNameType.get(s).toLowerCase()).compareTo(theDate.toLowerCase()) != 0){
 						System.out.println(htblColNameType.get(s));
 				throw new DBAppException("This is data type is not supported");
 					}
-			if (htblColNameMin.get(s).compareTo(htblColNameMax.get(s)) > 0)
+			if (htblColNameMin.get(s).toLowerCase().compareTo(htblColNameMax.get(s).toLowerCase()) > 0)
 				throw new DBAppException("Min greater than max");
 			if (strClusteringKeyColumn == null || strClusteringKeyColumn.compareTo("") == 0)
 				throw new DBAppException("Primary key equals null or Empty");
@@ -695,8 +727,8 @@ public class DBApp {
                 		if(  (htblColNameValue.get(values[1]) ) instanceof  String ) {
                 			variable = 0;
                 			
-                			if(    (  values[6].compareTo( ( (String)     htblColNameValue.get(values[1])       ) )     == 1         
-                        			||   values[7].compareTo(((String)htblColNameValue.get(values[1])))   == -1     )  )
+                			if(    (  values[6].toLowerCase().compareTo( ( (String)     htblColNameValue.get(values[1])       ).toLowerCase() )     == 1         
+                        			||   values[7].toLowerCase().compareTo(((String)htblColNameValue.get(values[1])).toLowerCase())   == -1     )  )
                         		throw new DBAppException("Data is not within the domain of the coloumn !");
                 			
                 		}
@@ -846,7 +878,7 @@ public class DBApp {
         			Page pp = v.get(0);
         			
         				
-					if(dataType.compareTo(theInt) == 0) {
+					if(dataType.toLowerCase().compareTo(theInt.toLowerCase()) == 0) {
 						pp.insertHashTableINT(htblColNameValue, pk);
 						t.getRange().get(index).setMax(pp.getData().get(pp.getData().size()-1).get(pk));
 						t.getRange().get(index).setMin(pp.getData().get(0).get(pk));
@@ -859,7 +891,7 @@ public class DBApp {
 						// }
 						}
 					else {
-						if(dataType.compareTo(theString) == 0) {
+						if(dataType.toLowerCase().compareTo(theString.toLowerCase()) == 0) {
 							System.out.println("OMAAAAAAAAAAAAAAAAAAAAAAAAAAAAAR");
 							System.out.println(pp.getData());
 							System.out.println("OMAAAAAAAAAAAAAAAAAAAAAAAAAAAAAR");
@@ -868,7 +900,7 @@ public class DBApp {
 							t.getRange().get(index).setMin(pp.getData().get(0).get(pk));
 						}
 						else {
-							if(dataType.compareTo(theDouble) == 0) {
+							if(dataType.toLowerCase().compareTo(theDouble.toLowerCase()) == 0) {
 								if(htblColNameValue.get(pk) .equals( 3.7164)){
 									System.out.println("Ana hna ya rab n5las");
 
@@ -878,7 +910,7 @@ public class DBApp {
 								t.getRange().get(index).setMin(pp.getData().get(0).get(pk));
 							}
 							else {
-								if(dataType.compareTo(theDate) == 0) {
+								if(dataType.toLowerCase().compareTo(theDate.toLowerCase()) == 0) {
 									pp.insertHashTableDate(htblColNameValue, pk);
 									t.getRange().get(index).setMax(pp.getData().get(pp.getData().size()-1).get(pk));
 									t.getRange().get(index).setMin(pp.getData().get(0).get(pk));
@@ -920,7 +952,7 @@ public class DBApp {
         						Vector <Page> v1 = (Vector <Page>) deserialize(strTableName+"Page"+pageID);
         						Page pp1 = v1.get(0);
 								
-								if(dataType.compareTo(theInt) == 0) {
+								if(dataType.toLowerCase().compareTo(theInt.toLowerCase()) == 0) {
 									if(!pp1.getData().contains(shiftedRow)){
 										pp1.insertHashTableINT(shiftedRow, pk);
 										System.out.println("4444444444444444444444444444444444444");
@@ -934,7 +966,7 @@ public class DBApp {
 									
 									}
 								else {
-									if(dataType.compareTo(theString) == 0) {
+									if(dataType.toLowerCase().compareTo(theString.toLowerCase()) == 0) {
 										if(!pp1.getData().contains(shiftedRow)){
 											
 										pp1.insertHashTableString(shiftedRow, pk);
@@ -945,7 +977,7 @@ public class DBApp {
 										}
 									}
 									else {
-										if(dataType.compareTo(theDouble) == 0) {
+										if(dataType.toLowerCase().compareTo(theDouble.toLowerCase()) == 0) {
 											
 											pp1.insertHashTableDOUBLE(shiftedRow, pk);
 											index = t.search(shiftedRow.get(pk), dataType);
@@ -953,7 +985,7 @@ public class DBApp {
 											t.getRange().get(index).setMin(pp1.getData().get(0).get(pk));
 										}
 										else {
-											if(dataType.compareTo(theDate) == 0) {
+											if(dataType.toLowerCase().compareTo(theDate.toLowerCase()) == 0) {
 												pp1.insertHashTableDate(shiftedRow, pk);
 												index = t.search(shiftedRow.get(pk), dataType);
 												
@@ -1144,25 +1176,25 @@ public class DBApp {
 					
 					// change 3: compareto instead of ==
 					if(!addPage){
-						if(dataType.compareTo(theInt) == 0) {
+						if(dataType.toLowerCase().compareTo(theInt.toLowerCase()) == 0) {
 							pp.insertHashTableINT(htblColNameValue, pk);
 							t.getRange().get(ind).setMax(pp.getData().get(pp.getData().size()-1).get(pk));
 							t.getRange().get(ind).setMin(pp.getData().get(0).get(pk));
 							}
 						else {
-							if(dataType.compareTo(theString) == 0) {
+							if(dataType.toLowerCase().compareTo(theString.toLowerCase()) == 0) {
 								pp.insertHashTableString(htblColNameValue, pk);
 								t.getRange().get(ind).setMax(pp.getData().get(pp.getData().size()-1).get(pk));
 								t.getRange().get(ind).setMin(pp.getData().get(0).get(pk));
 							}
 							else {
-								if(dataType.compareTo(theDouble) == 0) {
+								if(dataType.toLowerCase().compareTo(theDouble.toLowerCase()) == 0) {
 									pp.insertHashTableDOUBLE(htblColNameValue, pk);
 									t.getRange().get(ind).setMax(pp.getData().get(pp.getData().size()-1).get(pk));
 									t.getRange().get(ind).setMin(pp.getData().get(0).get(pk));
 								}
 								else {
-									if(dataType.compareTo(theDate) == 0) {
+									if(dataType.toLowerCase().compareTo(theDate.toLowerCase()) == 0) {
 										pp.insertHashTableDate(htblColNameValue, pk);
 										t.getRange().get(ind).setMax(pp.getData().get(pp.getData().size()-1).get(pk));
 										t.getRange().get(ind).setMin(pp.getData().get(0).get(pk));
@@ -1241,12 +1273,13 @@ public class DBApp {
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+			throw new DBAppException();
 		}
 		
 		// here we should serialize the "insert 13" probllem
 	}
 
-	private static void addTheNulls(Hashtable<String, Object> htblColNameValue, String strTableName) {
+	private static void addTheNulls(Hashtable<String, Object> htblColNameValue, String strTableName) throws DBAppException {
 		Set x = htblColNameValue.keySet();
 		ArrayList<String> htblNames = new ArrayList<String>();
 		ArrayList<String> allNames = new ArrayList<String>();
@@ -1269,6 +1302,7 @@ public class DBApp {
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+			throw new DBAppException();
 		}
 		for (String n : allNames){
 			if(!htblNames.contains(n)){
@@ -1337,8 +1371,8 @@ public class DBApp {
                 		if(  (htblColNameValue.get(values[1]) ) instanceof  String ) {
                 			variable = 0;
                 			
-                			if(    (  values[6].compareTo( ( (String)     htblColNameValue.get(values[1])       ) )     == 1         
-                        			||   values[7].compareTo(((String)htblColNameValue.get(values[1])))   == -1     )  )
+                			if(    (  values[6].toLowerCase().compareTo( ( (String)     htblColNameValue.get(values[1])       ).toLowerCase() )     == 1         
+                        			||   values[7].toLowerCase().compareTo(((String)htblColNameValue.get(values[1])).toLowerCase())   == -1     )  )
                         		throw new DBAppException("Data is not within the domain of the coloumn !");
                 			
                 		}
@@ -1401,6 +1435,7 @@ public class DBApp {
 		}
 		} catch (Exception e) {
 			System.out.println(e.getCause());
+			throw new DBAppException();
 			//e.getCause()
 		}
 
@@ -1418,7 +1453,7 @@ public class DBApp {
 		//return returnValue;
 	}
 	public static boolean rowExists(String tableName,String keyValue,String key ,
-	 String keyDataType,Hashtable<String, Object> htblColNameValue){
+	 String keyDataType,Hashtable<String, Object> htblColNameValue) throws DBAppException{
 		Vector<Table> tables = (Vector<Table>) deserialize(tableName);
 		Table table = tables.get(0);
 		// Note : we won't edit sth. in the table so no need to remove it from the vector and re add it and reserialize it again
@@ -1434,6 +1469,7 @@ public class DBApp {
 				} catch (ParseException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
+					throw new DBAppException();
 				} break;
 
 		}
@@ -1483,7 +1519,7 @@ public class DBApp {
 	}
 
 	public static void update(String tableName, Hashtable<String, Object> htblColNameValue, int pageIndex,
-			Vector<Page> pages, Page page, Hashtable<String, Object> doesExist) {
+			Vector<Page> pages, Page page, Hashtable<String, Object> doesExist) throws DBAppException {
 		//System.out.println(htblColNameValue.keySet().size());
 		Iterator<String> it = htblColNameValue.keySet().iterator();
 		for (int k = 0;k<htblColNameValue.keySet().size();k++){
@@ -1510,7 +1546,7 @@ public class DBApp {
 		pages.add(page); // tableName+"Page"+(pageIndex+1
 		serialize(pages, tableName+"Page"+(pageIndex+1));
 	}			
-	public static boolean exists (String tableName){
+	public static boolean exists (String tableName) throws DBAppException{
 		Vector<String> tableNames = new Vector<String> ();
 		try {
 
@@ -1520,10 +1556,11 @@ public class DBApp {
 
 		} catch (Exception i) {
 			i.printStackTrace();
+			throw new DBAppException();
 		}
 		return tableNames.contains(tableName);
 	}
-	public static Object deserialize (String name) {
+	public static Object deserialize (String name) throws DBAppException {
 		Object r =null;
 		try {
 
@@ -1533,11 +1570,12 @@ public class DBApp {
 
 		} catch (Exception i) {
 			i.printStackTrace();
+			throw new DBAppException();
 		}
 		return r;
 		
 	}
-	public static void serialize (Vector<Page> p,String name) {
+	public static void serialize (Vector<Page> p,String name) throws DBAppException {
 		try {
 			//Vector<String> p = new Vector<String>();
 			//  {1,2,3,4,8}  { () , () }
@@ -1551,6 +1589,7 @@ public class DBApp {
 			
 		} catch (Exception i) {
 			i.printStackTrace();
+			throw new DBAppException();
 		}
 		
 		
@@ -1567,7 +1606,7 @@ public class DBApp {
 
 	}
 	
-	public static void serializeTable (Vector<Table> p,String name) {
+	public static void serializeTable (Vector<Table> p,String name) throws DBAppException {
 		try {
 			//Vector<String> p = new Vector<String>();
 			//  {1,2,3,4,8}  { () , () }
@@ -1581,13 +1620,14 @@ public class DBApp {
 			
 		} catch (Exception i) {
 			i.printStackTrace();
+			throw new DBAppException();
 		}
 		
 		
 	}
 
 
-	public static void serializet (Vector<Table> p,String name) {
+	public static void serializet (Vector<Table> p,String name) throws DBAppException {
 		try {
 			//Vector<String> p = new Vector<String>();
 			//  {1,2,3,4,8}  { () , () }
@@ -1601,6 +1641,7 @@ public class DBApp {
 			
 		} catch (Exception i) {
 			i.printStackTrace();
+			throw new DBAppException();
 		}
 		
 		
@@ -1633,7 +1674,7 @@ public class DBApp {
 
 
 //begining  of delete
-	public static boolean searchAndDeleteNBString( String strTableName, Hashtable<String, Object> htblColNameValue) {
+	public static boolean searchAndDeleteNBString( String strTableName, Hashtable<String, Object> htblColNameValue) throws DBAppException {
 		System.out.println("Ana gowa el delete non primary key");
 		System.out.println("The hashtable : " +htblColNameValue);
 		Vector<Table> tables = (Vector<Table>) deserialize(strTableName);
@@ -1728,7 +1769,7 @@ public class DBApp {
 
 
 	public static boolean searchForDeleteB(String tableName,String keyValue,String key ,
-	String keyDataType,Hashtable<String, Object> htblColNameValue){
+	String keyDataType,Hashtable<String, Object> htblColNameValue) throws DBAppException{
 	   Vector<Table> tables = (Vector<Table>) deserialize(tableName);
 	   Table table = tables.remove(0);
 	   // Note : we won't edit sth. in the table so no need to remove it from the vector and re add it and reserialize it again
@@ -1944,7 +1985,7 @@ public void deleteFromTable(String strTableName, Hashtable<String, Object> htblC
 	
 
 }catch(Exception e) {
-	System.out.println("Exception was thrown while deleting");
+	throw new DBAppException("Exception was thrown while deleting");
 }
 }
 

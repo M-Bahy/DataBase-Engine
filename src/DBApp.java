@@ -24,8 +24,19 @@ public class DBApp {
 	private final static String theInt = "java.lang.Integer";
 
 	public static void main(String[] args) throws Exception {
-		
-		
+		DBApp db = new DBApp();
+		/*db.init();
+		createTheTables(db);
+		db.insertStudentRecords(db, 2);
+		db.insertCoursesRecords(db, 2);
+		db.insertTranscriptsRecords(db, 2);
+		db.insertPCsRecords(db, 2);*/
+		printData();
+		Hashtable<String, Object> row = new Hashtable<>();
+		row.put("student_id", "52-8527");
+		db.updateTable("pcs", "3631", row);
+		printData();
+
 	
 		
 		
@@ -78,7 +89,7 @@ public class DBApp {
     }
 
     private void insertCoursesRecords(DBApp dbApp, int limit) throws Exception {
-        BufferedReader coursesTable = new BufferedReader(new FileReader("src/main/resources/courses_table.csv"));
+        BufferedReader coursesTable = new BufferedReader(new FileReader("courses_table.csv"));
         String record;
         Hashtable<String, Object> row = new Hashtable<>();
         int c = limit;
@@ -113,7 +124,7 @@ public class DBApp {
     }
 
     private void insertTranscriptsRecords(DBApp dbApp, int limit) throws Exception {
-        BufferedReader transcriptsTable = new BufferedReader(new FileReader("src/main/resources/transcripts_table.csv"));
+        BufferedReader transcriptsTable = new BufferedReader(new FileReader("transcripts_table.csv"));
         String record;
         Hashtable<String, Object> row = new Hashtable<>();
         int c = limit;
@@ -147,7 +158,7 @@ public class DBApp {
     }
 
     private void insertPCsRecords(DBApp dbApp, int limit) throws Exception {
-        BufferedReader pcsTable = new BufferedReader(new FileReader("src/main/resources/pcs_table.csv"));
+        BufferedReader pcsTable = new BufferedReader(new FileReader("pcs_table.csv"));
         String record;
         Hashtable<String, Object> row = new Hashtable<>();
         int c = limit;
@@ -293,12 +304,12 @@ public class DBApp {
 	}
 
 	private static void printData() throws DBAppException {
-		Vector<Table> tt = (Vector<Table>) deserialize("strTableName");
+		Vector<Table> tt = (Vector<Table>) deserialize("pcs");
 		Table t = tt.get(0);
 		System.out.println( "Total number of Pages : " + t.getIds().size());
 		System.out.println();
 		for(String s:t.getIds()){
-			Vector<Page> pages = (Vector<Page>)  deserialize("strTableNamePage"+s);
+			Vector<Page> pages = (Vector<Page>)  deserialize("pcsPage"+s);
 			Page p1 = pages.get(0);
 			System.out.println("Page "+s+" Data : ");
 			System.out.println(p1.getData());
@@ -1544,7 +1555,7 @@ public class DBApp {
 
 		int pageIndex = table.search(o, keyDataType);
 		if(pageIndex==-1){ // row does't exist
-			return false;
+			return true;
 		}
 		else{ // if the row exists it will be in this page , bec. the row is within its range
 			
@@ -1580,7 +1591,7 @@ public class DBApp {
 				table=null;
 				pages=null;
 				page=null;
-				return false;
+				return true;
 			}
 			
 			

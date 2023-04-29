@@ -505,7 +505,7 @@ public class DBApp {
 			csvWriter.close();
 			System.out.println("metadata.csv created successfully!");
 		} catch (IOException e) {
-			System.out.println("An error occurred: " + e.getMessage());
+			//System.out.println("An error occurred: " + e.getMessage());
 			throw new DBAppException();
 		}
 		csvWriter=null;
@@ -875,7 +875,7 @@ public class DBApp {
 					
 					
 				} catch (Exception i) {
-					i.printStackTrace();
+					//i.printStackTrace();
 					throw new DBAppException("moshkela fe table object");
 				}
 				p=null;
@@ -1334,7 +1334,7 @@ public class DBApp {
             
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			//e.printStackTrace();
 			throw new DBAppException();
 		}
 		br=null;
@@ -1368,7 +1368,7 @@ public class DBApp {
 
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			//e.printStackTrace();
 			throw new DBAppException();
 		}
 		for (String n : allNames){
@@ -1502,7 +1502,7 @@ public class DBApp {
 		}
 		br=null;
 		} catch (Exception e) {
-			System.out.println(e.getCause());
+			//System.out.println(e.getCause());
 			throw new DBAppException();
 			//e.getCause()
 		}
@@ -1536,7 +1536,7 @@ public class DBApp {
 					o = dateFormat.parse(keyValue);
 				} catch (ParseException e) {
 					// TODO Auto-generated catch block
-					e.printStackTrace();
+					//e.printStackTrace();
 					throw new DBAppException();
 				} break;
 
@@ -1630,7 +1630,7 @@ public class DBApp {
 			in.close();
 			in=null;
 		} catch (Exception i) {
-			i.printStackTrace();
+			//i.printStackTrace();
 			throw new DBAppException();
 		}
 		//tableNames=null;
@@ -1647,7 +1647,7 @@ public class DBApp {
 			in.close();
 
 		} catch (Exception i) {
-			i.printStackTrace();
+			//i.printStackTrace();
 			throw new DBAppException();
 		}
 		return r;
@@ -1668,7 +1668,7 @@ public class DBApp {
 			
 			
 		} catch (Exception i) {
-			i.printStackTrace();
+			//i.printStackTrace();
 			throw new DBAppException();
 		}
 		
@@ -1699,7 +1699,7 @@ public class DBApp {
 			
 			
 		} catch (Exception i) {
-			i.printStackTrace();
+			//i.printStackTrace();
 			throw new DBAppException();
 		}
 		
@@ -1720,7 +1720,7 @@ public class DBApp {
 			
 			
 		} catch (Exception i) {
-			i.printStackTrace();
+			//i.printStackTrace();
 			throw new DBAppException();
 		}
 		
@@ -2061,7 +2061,7 @@ public void deleteFromTable(String strTableName, Hashtable<String, Object> htblC
 	
 	
 			br.close();
-			
+
 }catch(Exception e) {
 	throw new DBAppException("Exception was thrown while deleting");
 }

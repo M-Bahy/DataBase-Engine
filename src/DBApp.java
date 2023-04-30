@@ -24,18 +24,6 @@ public class DBApp {
 	private final static String theInt = "java.lang.Integer";
 
 	public static void main(String[] args) throws Exception {
-		DBApp db = new DBApp();
-		/*db.init();
-		createTheTables(db);
-		db.insertStudentRecords(db, 2);
-		db.insertCoursesRecords(db, 2);
-		db.insertTranscriptsRecords(db, 2);
-		db.insertPCsRecords(db, 2);*/
-		printData();
-		Hashtable<String, Object> row = new Hashtable<>();
-		row.put("student_id", "52-8527");
-		db.updateTable("pcs", "3631", row);
-		printData();
 
 	
 		
@@ -309,12 +297,14 @@ public class DBApp {
 		System.out.println( "Total number of Pages : " + t.getIds().size());
 		System.out.println();
 		for(String s:t.getIds()){
+			System.out.println("The ID: "+ s);
 			Vector<Page> pages = (Vector<Page>)  deserialize("pcsPage"+s);
 			Page p1 = pages.get(0);
 			System.out.println("Page "+s+" Data : ");
 			System.out.println(p1.getData());
 			System.out.println();
 		}
+		System.out.println("n5las");
 	}
 
 	private static void displayThe2Pages() throws DBAppException {
@@ -1558,8 +1548,9 @@ public class DBApp {
 			return true;
 		}
 		else{ // if the row exists it will be in this page , bec. the row is within its range
-			
-			Vector<Page> pages =  (Vector<Page>) deserialize(tableName+"Page"+(pageIndex+1));
+			System.out.println(table.getIds());
+			System.out.println(pageIndex);
+			Vector<Page> pages =  (Vector<Page>) deserialize(tableName+"Page"+table.getIds().get(pageIndex));
 			Page page = pages.get(0);
 			pages.remove(page);
 			Hashtable<String,Object> doesExist = null;
@@ -1628,9 +1619,11 @@ public class DBApp {
 			}
 			System.out.println(updatedColumn);
 		}
+		Vector<Table> t = (Vector<Table>)deserialize(tableName);
+		Table t2 = t.get(0);
 		System.out.println(page.getData());
 		pages.add(page); // tableName+"Page"+(pageIndex+1
-		serialize(pages, tableName+"Page"+(pageIndex+1));
+		serialize(pages, tableName+"Page"+t2.getIds().get(pageIndex));
 	}			
 	public static boolean exists (String tableName) throws DBAppException{
 		Vector<String> tableNames = new Vector<String> ();

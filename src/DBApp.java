@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Hashtable;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 import java.util.Vector;
@@ -24,7 +25,11 @@ public class DBApp {
 	private final static String theInt = "java.lang.Integer";
 
 	public static void main(String[] args) throws Exception {
-
+		DBApp db=new DBApp();
+		//db.init();
+		//createTheTables(db);
+		String [] arr = {"course_name","date_added","course_id"};
+		db.createIndex("courses", arr);
 	
 		
 		
@@ -685,7 +690,153 @@ public class DBApp {
 		System.gc();
 	}
 
+	public static void updateMetaData( int rowIndexToEdit , String indexName) {
+        String csvFile = "metadata.csv";
+        String line = "";
+        String delimiter = ",";
+        List<String[]> rows = new ArrayList<>();
+
+        // Step 1: Read the CSV file and store its contents in a list
+        try (BufferedReader br = new BufferedReader(new FileReader(csvFile))) {
+            while ((line = br.readLine()) != null) {
+                String[] row = line.split(delimiter);
+                rows.add(row);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        // Step 2: Locate the row that needs to be edited
+       /* int rowIndexToEdit = -1;
+        for (int i = 0; i < rows.size(); i++) {
+            String[] row = rows.get(i);
+            if (row[0].equals("id123")) {
+                rowIndexToEdit = i;
+                break;
+            }
+        }
+
+        if (rowIndexToEdit == -1) {
+            System.out.println("Row not found");
+            return;
+        }*/
+
+        // Step 3: Edit the row's values
+        String[] rowToEdit = rows.get(rowIndexToEdit);
+        /*rowToEdit[1] = "new value 1";
+        rowToEdit[2] = "new value 2";*/
+		rowToEdit[4] = indexName;
+		rowToEdit[5]= "Octree"; 
+        // ...
+
+        // Step 4: Write the updated data structure back to the CSV file
+        try (BufferedWriter bw = new BufferedWriter(new FileWriter(csvFile))) {
+            for (String[] row : rows) {
+                String rowString = String.join(delimiter, row);
+                bw.write(rowString);
+                bw.newLine();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+
+
 	public void createIndex(String strTableName, String[] strarrColName) throws DBAppException {
+		if(strarrColName.length != 3) {
+			throw new DBAppException("You can only index 3 columns");
+		}
+		String [] col1 = new String[4];
+		String [] col2 = new String[4];
+		String [] col3 = new String[4];
+		col1[0]=strarrColName[0];
+		col2[0]=strarrColName[1];
+		col3[0]=strarrColName[2];
+		String indexName = col1[0] +  col2[0]  + col3[0]+"Index";
+		//BufferedReader br;
+		try {
+			 BufferedReader br;
+			String line;
+			checkIfValidOctree(strTableName, strarrColName, col1, col2, col3, indexName);
+			writeToMetaData(strTableName, col1, col2, col3, indexName);
+
+		}
+		catch(Exception e) {
+			throw new DBAppException(e.getMessage());
+		}
+		// create the Octree
+
+	}
+	public void writeToMetaData(String strTableName, String[] col1, String[] col2, String[] col3, String indexName)
+			throws FileNotFoundException, IOException {
+		BufferedReader br;
+		String line;
+		br = new BufferedReader(new FileReader("metadata.csv"));
+		line = br.readLine();
+		int i = 0 ;
+		while ((line = br.readLine()) != null) {
+			//Table Name, Column Name, Column Type, ClusteringKey, IndexName,IndexType, min, max
+			String[] values = line.split(",");
+			i++;
+			if(values[0].equals(strTableName)){
+				if(values[1].equals(col1[0]) || values[1].equals(col2[0]) || values[1].equals(col3[0])){
+					
+				updateMetaData(i, indexName);
+
+				}
+			}
+		
+		}
+	}
+	public void checkIfValidOctree(String strTableName, String[] strarrColName, String[] col1, String[] col2, String[] col3,
+			String indexName) throws FileNotFoundException, IOException, DBAppException {
+		BufferedReader br = new BufferedReader(new FileReader("metadata.csv"));
+		String line = br.readLine();
+		int numberOfCorrectData = 0;
+		while ((line = br.readLine()) != null) {
+			//Table Name, Column Name, Column Type, ClusteringKey, IndexName,IndexType, min, max
+			String[] values = line.split(",");
+			if(values[0].equals(strTableName)){
+				
+				String colName = values[1];
+				for(int i = 0; i < strarrColName.length; i++) {
+					if(strarrColName[i].equals(colName)) {
+						if(colName.equals(col1[0])){
+							col1[1] = values[2];
+							col1[2]=values[6];
+							col1[3]=values[7];
+							if(!values[4].equals("null")){
+								throw new DBAppException("Index already exists");
+							}
+						}
+						if(colName.equals(col2[0])){
+							col2[1] = values[2];
+							col2[2]=values[6];
+							col2[3]=values[7];
+							if(!values[4].equals("null")){
+								throw new DBAppException("Index already exists");
+							}
+						}
+						if(colName.equals(col3[0])){
+							col3[1] = values[2];
+							col3[2]=values[6];
+							col3[3]=values[7];
+							if(!values[4].equals("null")){
+								throw new DBAppException("Index already exists");
+							}
+						}
+						numberOfCorrectData++;
+					}
+				}
+			}
+
+		}
+		if (numberOfCorrectData != 3){
+			throw new DBAppException("Columns");
+		}
+		br.close();
 	}
 
 	public void insertIntoTable2(String strTableName, Hashtable<String, Object> htblColNameValue) throws DBAppException {     

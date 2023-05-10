@@ -761,13 +761,14 @@ public class DBApp {
 			String line;
 			checkIfValidOctree(strTableName, strarrColName, col1, col2, col3, indexName);
 			writeToMetaData(strTableName, col1, col2, col3, indexName);
-
+			// Name , Type , Min , Max
 		}
 		catch(Exception e) {
 			throw new DBAppException(e.getMessage());
 		}
 		// create the Octree
-
+		//Octree octree = new Octree(col1[2], col2[2], col3[2], col1[3], col2[3],col3[3]);
+		//Octree octree = new Octree(1, 1, 1, 3, 3,3);
 	}
 	public void writeToMetaData(String strTableName, String[] col1, String[] col2, String[] col3, String indexName)
 			throws FileNotFoundException, IOException {

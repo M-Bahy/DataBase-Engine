@@ -1,11 +1,11 @@
 import java.util.ArrayList;
 
-public class Data {
+public class Tuple {
     Object x;
     Object y;
     Object z;
     ArrayList<Reference> references= new ArrayList<>();
-    public Data(Object x, Object y, Object z , Reference references) {
+    public Tuple(Object x, Object y, Object z , Reference references) {
         this.x = x;
         this.y = y;
         this.z = z;
@@ -38,4 +38,36 @@ public class Data {
     public String toString() {
         return "X: " + x + " Y: " + y + " Z: " + z + " References: " + references;
     }
+
+
+
+
+public static void  main(String[]args){
+    String  x = "abc";
+    String y = "d";
+   x = equateString(x, y);
+   y = equateString(x, y);
+    System.out.println(x);
+    System.out.println(y);
+}
+
+
+
+public static String equateString(String x,String y){
+ 
+    if(x.length() > y.length()){
+        for(int i = y.length();i<x.length();i++ ){
+            y+=x.charAt(i);
+        }
+        return y;
+    }
+  
+    else{
+    for(int i = x.length();i<y.length();i++ ){
+        x+=y.charAt(i);
+    }
+    return x;
+    }
+}
+
 }

@@ -224,9 +224,82 @@ public  class OctreeNode {
             Date xI = (Date) x;
             Date startdate = xI;
             Date enddate = widthI;
-            var middate = new Date(((startdate.getTime() + enddate.getTime()) / 2));
+            Date middate = new Date(((startdate.getTime() + enddate.getTime()) / 2));
 
             subWidth = middate;
+        }
+        // repeat the above 4 ifs for y and z
+        
+
+        if(y instanceof Integer){
+            int heightI =(int)height;
+            int yI = (int) y;
+             subHeight = heightI-yI/2;
+        }
+        if(y instanceof Double){
+            double widthI =(double)height;
+            double xI = (double) y;
+             subHeight = widthI-xI/2;
+        }
+
+        if(y instanceof String){
+            String widthI =(String)height;
+            String xI = (String) y;
+           if(widthI.length() > xI.length()){
+            xI = equateString(xI, widthI);
+           }
+           else {
+            
+            if(widthI.length() < xI.length()){
+                xI = equateString(xI, widthI);
+               }
+           }
+            subHeight = middleString(xI, widthI, xI.length());
+
+        }
+        if(y instanceof Date){
+            Date widthI =(Date)height;
+            Date xI = (Date) y;
+            Date startdate = xI;
+            Date enddate = widthI;
+            Date middate = new Date(((startdate.getTime() + enddate.getTime()) / 2));
+
+            subHeight = middate;
+        }
+        // repeat the above 4 ifs for z
+        if(z instanceof Integer){
+            int heightI =(int)depth;
+            int yI = (int) z;
+             subDepth = heightI-yI/2;
+        }
+        if(z instanceof Double){
+            double widthI =(double)depth;
+            double xI = (double) z;
+             subDepth = widthI-xI/2;
+        }
+        if(z instanceof String){
+            String widthI =(String)depth;
+            String xI = (String) z;
+           if(widthI.length() > xI.length()){
+            xI = equateString(xI, widthI);
+           }
+           else {
+            
+            if(widthI.length() < xI.length()){
+                xI = equateString(xI, widthI);
+               }
+           }
+            subDepth = middleString(xI, widthI, xI.length());
+
+        }
+        if(z instanceof Date){
+            Date widthI =(Date)depth;
+            Date xI = (Date) z;
+            Date startdate = xI;
+            Date enddate = widthI;
+            Date middate = new Date(((startdate.getTime() + enddate.getTime()) / 2));
+
+            subDepth = middate;
         }
 
 
@@ -424,7 +497,7 @@ private boolean compareDate(Date x2) {
 
     Date enddate = (Date)this.width;
 
-    var middate = new Date(((startdate.getTime() + enddate.getTime()) / 2));
+    Date middate = new Date(((startdate.getTime() + enddate.getTime()) / 2));
 
     return x2.compareTo(middate) < 0;
     }

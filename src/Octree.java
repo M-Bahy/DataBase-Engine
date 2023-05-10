@@ -17,11 +17,7 @@ public class Octree {
         this.root.insert(x, y, z, data);
     }
     
-    public List<Object> query(double x, double y, double z, double radius) {
-        List<Object> result = new ArrayList<>();
-        this.root.query(x, y, z, radius, result);
-        return result;
-    }
+   
     
     
    

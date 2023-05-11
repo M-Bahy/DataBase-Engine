@@ -1,6 +1,7 @@
+import java.io.Serializable;
 import java.util.ArrayList;
 
-public class Tuple {
+public class Tuple  implements Serializable  {
     Object x;
     Object y;
     Object z;
@@ -43,12 +44,7 @@ public class Tuple {
 
 
 public static void  main(String[]args){
-    String  x = "abc";
-    String y = "d";
-   x = equateString(x, y);
-   y = equateString(x, y);
-    System.out.println(x);
-    System.out.println(y);
+    
 }
 
 

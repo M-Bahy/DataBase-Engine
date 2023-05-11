@@ -1,4 +1,6 @@
-public class Reference {
+import java.io.Serializable;
+
+public class Reference   implements Serializable {
     int pageNumber;
     int rowNumber;
     public Reference(int pageNumber, int rowNumber) {

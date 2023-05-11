@@ -1,11 +1,13 @@
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Properties;
 
-public  class OctreeNode {
+public  class OctreeNode  implements Serializable  {
     private Object x, y, z, width, height, depth;
     private List<Tuple> data;
     private OctreeNode[] children;
@@ -20,6 +22,7 @@ public  class OctreeNode {
         this.depth = depth;
         this.data = new ArrayList<>();
         this.children = new OctreeNode[8];
+        maxObjects = this.getMaxObjects();
     }
 
 
@@ -58,36 +61,69 @@ public  class OctreeNode {
     return m;
     }
     
- 
-    // public void insertInt(int x, int y, int z, Tuple tuple) {
-    //     if (this.children[0] != null) {
-    //         int index = getIndex(x, y, z);
-    //         if (index != -1) {
-    //             this.children[index].insertInt(x, y, z, tuple);
-    //             return;
-    //         }
-    //     }
-    //     this.data.add(tuple);
-    //     if (this.data.size() > this.getMaxObjects()) {
-    //         if (this.children[0] == null) {
-    //             split();
-    //         }
-    //         int i = 0;
-    //         while (i < this.data.size()) {
-    //             Tuple obj = this.data.get(i);
-    //             int index = getIndex(x, y, z);
-    //             if (index != -1) {
-    //                 this.children[index].insertInt(x, y, z, obj);
-    //                 this.data.remove(i);
-    //             } else {
-    //                 i++;
-    //             }
-    //         }
-    //     }
-    // }
+  
+    public void insert( Tuple tuple) {
+        Object x = tuple.getX();
+        Object y = tuple.getY();
+        Object z = tuple.getZ();
+        if (this.children[0] != null) {
+            int index = getIndex(x, y, z);
+            if (index != -1) {
+                boolean n = true;
+
+                for(int i = 0 ; i < this.children[index].data.size();i++){
+                    if(this.children[index].data.get(i).getX().equals(x) && this.children[index].data.get(i).getY().equals(y) && this.children[index].data.get(i).getZ().equals(z)){
+                        this.children[index].data.get(i).getReferences().add(tuple.getReferences().get(0));
+                        n = false;
+                        return;
+                    }
+                }
+
+                if(n){
+                    this.children[index].insert( tuple);
+                }
+               
+                return;
+            }
+        }
+        boolean n = true;
+        for(int i = 0 ; i < this.data.size();i++){
+            if(this.data.get(i).getX().equals(x) && this.data.get(i).getY().equals(y) && this.data.get(i).getZ().equals(z)){
+                this.data.get(i).getReferences().add(tuple.getReferences().get(0));
+                n = false;
+                return;
+            }
+        }
+
+        if(n){
+            this.data.add(tuple);
+            
+        }
+        
+        if (this.data.size() > this.getMaxObjects()) {
+            if (this.children[0] == null) {
+                split();
+            }
+            int i = 0;
+            while (i < this.data.size() && !this.data.isEmpty()) {
+                System.out.println("i : "+i);
+                System.out.println("data size : "+this.data.size());
+                Tuple obj = this.data.get(i);
+                System.out.println("obj : "+obj);
+                int index = getIndex(obj.getX(), obj.getY(), obj.getZ());
+                if (index != -1) {
+                    this.children[index].insert( obj);
+                   // this.data.remove(i);
+                } //else {
+                    i++;
+               // }
+            }
+            this.data=new ArrayList<>();;
+        }
+    }
 
 
-    public void insertDouble(double x, double y, double z, Tuple tuple) {
+/*    public void insertDouble(double x, double y, double z, Tuple tuple) {
         if (this.children[0] != null) {
             int index = getIndexDouble(x, y, z);
             if (index != -1) {
@@ -114,7 +150,7 @@ public  class OctreeNode {
         }
     }
 
-
+*/ 
 
     
     // public void insertString(String x, String y, String z, Tuple tuple) {
@@ -143,6 +179,37 @@ public  class OctreeNode {
     //         }
     //     }
     // }
+
+        
+    // public void insertDate(Date x, Date y, Date z, Tuple tuple) {
+    //     if (this.children[0] != null) {
+    //         int index = getIndex(x, y, z);
+    //         if (index != -1) {
+    //             this.children[index].insertDate(x, y, z, tuple);
+    //             return;
+    //         }
+    //     }
+    //     this.data.add(tuple);
+    //     if (this.data.size() > this.getMaxObjects()) {
+    //         if (this.children[0] == null) {
+    //             split();
+    //         }
+    //         int i = 0;
+    //         while (i < this.data.size()) {
+    //             Tuple obj = this.data.get(i);
+    //             int index = getIndex(x, y, z);
+    //             if (index != -1) {
+    //                 this.children[index].insertDate(x, y, z, obj);
+    //                 this.data.remove(i);
+    //             } else {
+    //                 i++;
+    //             }
+    //         }
+    //     }
+    // }
+
+
+
 
 
 
@@ -381,6 +448,7 @@ public  class OctreeNode {
         boolean s =  false;
         boolean v = false;
         if(x instanceof Integer ){
+            System.out.println((int)x);
             r = compareInt((int)x);
         }
         if(x instanceof String){
@@ -448,7 +516,7 @@ int index =-1;
         boolean rightQuadrant =  !r ;          //(x >= verticalMidpoint);
         boolean frontQuadrant =v;
         boolean backQuadrant = !v;
-        
+        System.out.println("X : "+x+" Y : "+y+" Z : "+z+" R : "+r+" S : "+s+" V : "+v);
         if (leftQuadrant) {
             if (topQuadrant) {
                 if (frontQuadrant) {
@@ -486,7 +554,7 @@ private boolean compareDouble(double x2) {
 
     double x1 = (double)this.x;
     double width =  (double)this.width;
-    double verticalMidpoint =x1 + ( width/ 2);
+    double verticalMidpoint =       (width-x1)/2;       //x1 + ( width/ 2);
     return x2 < verticalMidpoint;
 
     }
@@ -524,7 +592,7 @@ private boolean compareInt(int x2) {
 
     int x1 = (int)this.x;
     int width =  (int)this.width;
-    int verticalMidpoint =x1 + ( width/ 2);
+    int verticalMidpoint =   (width-x1)/2 ; //24    //x1 + ( width/ 2);
  return x2 < verticalMidpoint;
 
     }
@@ -594,7 +662,16 @@ static String middleString(String S, String T, int N)
 
 
 
+@Override
+public String toString() {
+    return "OctreeNode [x=" + x + ", y=" + y + ", z=" + z + ", width=" + width + ", height=" + height + ", depth="
+            + depth + ", data=" + data + ", children=" + Arrays.toString(children) + ", maxObjects=" + maxObjects + "]";
+}
 
+
+
+
+// write a main method to test the class
 
 
 

@@ -25,14 +25,18 @@ public class DBApp {
 	private final static String theInt = "java.lang.Integer";
 
 	public static void main(String[] args) throws Exception {
-		DBApp db=new DBApp();
-		//db.init();
-		//createTheTables(db);
-		String [] arr = {"course_name","date_added","course_id"};
-		db.createIndex("courses", arr);
-	
+		DBApp dbApp = new DBApp();
+		//dbApp.init();
+		//createTheTables(dbApp);
+		/*String [] arr = new String[3];
+		arr[0]="id";
+		arr[1]="first_name";
+		arr[2]="last_name";
+		dbApp.createIndex("students", arr);*/
 		
-		
+
+
+
 	}
 	private static void createTheTables(DBApp dbApp) throws Exception {
 		createStudentTable(dbApp);
@@ -769,6 +773,8 @@ public class DBApp {
 		// create the Octree
 		//Octree octree = new Octree(col1[2], col2[2], col3[2], col1[3], col2[3],col3[3]);
 		//Octree octree = new Octree(1, 1, 1, 3, 3,3);
+		Octree octree = new Octree(col1[2], col2[2], col3[2], col1[3], col2[3],col3[3],indexName);
+		serializeOctree(octree);
 	}
 	public void writeToMetaData(String strTableName, String[] col1, String[] col2, String[] col3, String indexName)
 			throws FileNotFoundException, IOException {
@@ -1827,6 +1833,80 @@ public class DBApp {
 			//i.printStackTrace();
 			throw new DBAppException();
 		}
+		
+		
+	}
+	public static void serializeOctree (Octree o) throws DBAppException {
+		FileOutputStream fileOut;
+		ObjectOutputStream out;
+		Vector<Octree> ocs = null;
+		boolean exists = false;
+		try{
+		ocs = (Vector<Octree>)	deserialize("Octrees");
+		exists = true;
+		}
+		catch(Exception e) {
+			exists = false;
+		}
+		if(exists){
+			ocs.add(o);
+			// serialize the ocs
+			//FileOutputStream fileOut;
+		//ObjectOutputStream out;
+		try {
+			//Vector<String> p = new Vector<String>();
+			//  {1,2,3,4,8}  { () , () }
+			
+			 fileOut = new FileOutputStream("Octrees.bin");
+			 out = new ObjectOutputStream(fileOut);
+			out.writeObject(ocs);
+			out.close();
+			fileOut.close();
+			
+			
+		} catch (Exception i) {
+			//i.printStackTrace();
+			throw new DBAppException();
+		}
+
+		}
+		else {
+			// create the ocs
+			ocs = new Vector<Octree>();
+			ocs.add(o);
+			try {
+				//Vector<String> p = new Vector<String>();
+				//  {1,2,3,4,8}  { () , () }
+				
+				 fileOut = new FileOutputStream("Octrees.bin");
+				 out = new ObjectOutputStream(fileOut);
+				out.writeObject(ocs);
+				out.close();
+				fileOut.close();
+				
+				
+			} catch (Exception i) {
+				//i.printStackTrace();
+				throw new DBAppException();
+			}
+		}
+
+
+		/*try {
+			//Vector<String> p = new Vector<String>();
+			//  {1,2,3,4,8}  { () , () }
+			
+			 fileOut = new FileOutputStream(name + ".bin");
+			 out = new ObjectOutputStream(fileOut);
+			out.writeObject(o);
+			out.close();
+			fileOut.close();
+			
+			
+		} catch (Exception i) {
+			//i.printStackTrace();
+			throw new DBAppException();
+		}*/
 		
 		
 	}

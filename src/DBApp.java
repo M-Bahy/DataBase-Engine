@@ -23,17 +23,19 @@ public class DBApp {
 	private final static String theDouble = "java.lang.Double";
 	private final static String theDate = "java.util.Date";
 	private final static String theInt = "java.lang.Integer";
-
+	private Vector<Octree> ocs = new Vector<Octree>();
 	public static void main(String[] args) throws Exception {
 		DBApp dbApp = new DBApp();
-		//dbApp.init();
+		dbApp.init();
 		//createTheTables(dbApp);
 		/*String [] arr = new String[3];
 		arr[0]="id";
 		arr[1]="first_name";
 		arr[2]="last_name";
 		dbApp.createIndex("students", arr);*/
-		
+		/*Vector<Octree> ocs = (Vector<Octree>) deserialize("Octrees");
+		Octree o = ocs.get(0);*/
+		System.out.println(dbApp.ocs);
 
 
 
@@ -537,6 +539,25 @@ public class DBApp {
 		} catch (Exception e) {
 			throw new DBAppException();
 		}
+		
+		
+		
+	
+		try{
+		ocs = (Vector<Octree>)	deserialize("Octrees");
+		
+		}
+		catch(Exception e) {
+			
+		}
+		
+		
+		
+		
+		
+		
+		
+		
 		csvWriter=null;
 		System.gc();
 

@@ -43,11 +43,14 @@ public class LeafNode implements Node {
     public void deleteReference(Reference reference) {
         references.remove(reference);
     }
-    public Object getMax() {
-        return max;
-    }
+   
+
+    
     public Object getMin() {
         return min;
+    }
+    public Object getMax() {
+        return max;
     }
     public void setMax(Object max) {
         this.max = max;

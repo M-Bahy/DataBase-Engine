@@ -9,8 +9,10 @@ public class Octree implements Serializable {
     private OctreeNode root;
    // occurrences number ? 
     private String name;
-    public Octree(Object x, Object y, Object z, Object width, Object height, Object depth, String name) {
+    private String [] colNames;
+    public Octree(Object x, Object y, Object z, Object width, Object height, Object depth, String name, String [] colNames) {
         this.name = name;
+        this.colNames = colNames;
         this.root = new OctreeNode(x, y, z, width, height, depth);
     }
    
@@ -23,6 +25,16 @@ public class Octree implements Serializable {
     @Override
     public String toString() {
         return "Octree [root=" + root.toString() + "]";
+    }
+
+
+    public String getName() {
+        return name;
+    }
+
+
+    public String[] getColNames() {
+        return colNames;
     }
     
    

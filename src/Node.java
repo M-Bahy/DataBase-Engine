@@ -1,7 +1,7 @@
 public interface Node {
 
-    int getMax();
+    Object getMax();
 
-    int getMin();
+    Object getMin();
     
 }

@@ -15,6 +15,22 @@ public class NonLeafNode implements Node {
     public void setChildren(Node[] children) {
         this.children = children;
     }
+
+    public Object getMin() {
+        return min;
+    }
+
+    public void setMin(Object min) {
+        this.min = min;
+    }
+
+    public Object getMax() {
+        return max;
+    }
+
+    public void setMax(Object max) {
+        this.max = max;
+    }
     
     /*public void insert(Object data, String dataType, Reference reference) {
      if(children == null){

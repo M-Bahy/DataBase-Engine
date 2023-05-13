@@ -8,6 +8,13 @@ import java.util.List;
 import java.util.Properties;
 
 public  class OctreeNode  implements Serializable  {
+
+    // Problem: compare methods ONLY compared this.x and this.width
+    
+    // Solution: all compare methods (ex. compareDouble) have now 3 parameters
+    // now it compares whatever is inserted according to x y or z (check line 475)
+
+    
     private Object x, y, z, width, height, depth;
     private List<Tuple> data;
     private OctreeNode[] children;
@@ -449,59 +456,59 @@ public  class OctreeNode  implements Serializable  {
         boolean v = false;
         if(x instanceof Integer ){
             System.out.println((int)x);
-            r = compareInt((int)x);
+            r = compareInt((int)x, this.x, this.width);
         }
         if(x instanceof String){
-           r =  compareString((String)x);
+           r =  compareString((String)x, this.x, this.width);
         }
 
         if(x instanceof Date){
-           r =  compareDate((Date)x);
+           r =  compareDate((Date)x, this.x, this.width);
         }
         
 
         if(x instanceof Double){
-           r =  compareDouble((double)x);
+           r =  compareDouble((double)x, this.x, this.width);
         }
 // ////
 
-if(y instanceof Integer ){
-    s = compareInt((int)y);
-}
-if(y instanceof String){
-   s =  compareString((String)y);
-}
+        if(y instanceof Integer ){
+            s = compareInt((int)y, this.y, this.height);
+        }
+        if(y instanceof String){
+        s =  compareString((String)y, this.y, this.height);
+        }
 
-if(y instanceof Date){
-   s =  compareDate((Date)y);
-}
-
-
-if(y instanceof Double){
-   s =  compareDouble((double)y);
-}
+        if(y instanceof Date){
+        s =  compareDate((Date)y, this.y, this.height);
+        }
 
 
-/////
-if(z instanceof Integer ){
-    v = compareInt((int)z);
-}
-if(z instanceof String){
-   v =  compareString((String)z);
-}
-
-if(z instanceof Date){
-   v =  compareDate((Date)z);
-}
+        if(y instanceof Double){
+        s =  compareDouble((double)y, this.y, this.height);
+        }
 
 
-if(z instanceof Double){
-   v =  compareDouble((double)z);
-}
+        /////
+        if(z instanceof Integer ){
+            v = compareInt((int)z, this.z, this.depth);
+        }
+        if(z instanceof String){
+        v =  compareString((String)z, this.z, this.depth);
+        }
+
+        if(z instanceof Date){
+        v =  compareDate((Date)z, this.z, this.depth);
+        }
+
+
+        if(z instanceof Double){
+        v =  compareDouble((double)z, this.z, this.depth);
+        }
 
 
 
-int index =-1;
+        int index =-1;
 
 
 
@@ -550,31 +557,33 @@ int index =-1;
     }
 
 
-private boolean compareDouble(double x2) {
+private boolean compareDouble(double x2, Object x, Object dimension) {
 
-    double x1 = (double)this.x;
-    double width =  (double)this.width;
+    double x1 = (double)x;
+    double width =  (double)dimension;
+    // double x1 = (double)x;
+    // double width =  (double)dimension;
     double verticalMidpoint =       (width-x1)/2;       //x1 + ( width/ 2);
     return x2 < verticalMidpoint;
 
     }
 
-private boolean compareDate(Date x2) {
+private boolean compareDate(Date x2, Object x, Object dimension) {
 
-    Date startdate = (Date)this.x;
+    Date startdate = (Date)x;
 
-    Date enddate = (Date)this.width;
+    Date enddate = (Date)dimension;
 
     Date middate = new Date(((startdate.getTime() + enddate.getTime()) / 2));
 
     return x2.compareTo(middate) < 0;
     }
 
-private boolean compareString(String x2) {
+private boolean compareString(String x2, Object x, Object dimension) {
 
-    String x1 = (String)this.x;
+    String x1 = (String)x;
 
-    String width  = (String)this.width;
+    String width  = (String)dimension;
    if(x1.length() > width.length())
     width = equateString(width, x1);
     else if(x1.length() < width.length()){
@@ -587,11 +596,11 @@ private boolean compareString(String x2) {
    return (x2.compareTo(mid) <0);
     }
 
-private boolean compareInt(int x2) {
+private boolean compareInt(int x2, Object x, Object dimension) {
 
 
-    int x1 = (int)this.x;
-    int width =  (int)this.width;
+    int x1 = (int)x;
+    int width =  (int)dimension;
     int verticalMidpoint =   (width-x1)/2 ; //24    //x1 + ( width/ 2);
  return x2 < verticalMidpoint;
 

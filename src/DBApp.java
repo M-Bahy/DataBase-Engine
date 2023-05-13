@@ -10,11 +10,24 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 import java.util.Vector;
+import java.util.regex.Pattern;
 import java.time.LocalDate;
 import java.lang.reflect.Array;
 import java.util.Properties;
 
 public class DBApp {
+
+	// We worked on creating an index for a populated table.
+
+	// Problem: all Objects used when creating the Octree where Strings since they came 
+	// from the serialized data (Doubles were considered String causing the split() method to malfunction (instance of))
+
+	// Solution: added method checkStringType to return the right type of Object to use in the Octree Creation.
+
+	// To Be Fixed: the checkStringType method MISSING Date checking 
+
+	// Check OctreeNode Class for more changes
+
 	private boolean firstTable = false;
 	private static int n;
 	private static int m;
@@ -24,33 +37,44 @@ public class DBApp {
 	private final static String theDate = "java.util.Date";
 	private final static String theInt = "java.lang.Integer";
 	private Vector<Octree> ocs = new Vector<Octree>();
+
+
 	public static void main(String[] args) throws Exception {
 		DBApp dbApp = new DBApp();
-		//dbApp.init();
-		//createTheTables(dbApp);
-		//dbApp.insertStudentRecords(dbApp, 25);
+		dbApp.init();
+		createTheTables(dbApp);
+		dbApp.insertStudentRecords(dbApp, 6);
 		printData();
+		String[] index = new String[3];
+		index[0] = "id";
+		index[1] = "gpa";
+		index[2] = "first_name";
+		dbApp.createIndex("students", index);
+
+		Vector<Octree> ocs = (Vector<Octree>)	deserialize("Octrees");
+		System.out.println(ocs.get(0));
+		
 		// gpa > 3
 		//and gpa < 4
-		System.out.println();
-		System.out.println();
-		System.out.println();
-		System.out.println();
-		System.out.println();
-		System.out.println();
-		SQLTerm s1 = new SQLTerm("students", "gpa", ">", new Double(3));
-		SQLTerm s2 = new SQLTerm("students", "gpa", "<", new Double(4));
-		SQLTerm[] arrSQLTerms = new SQLTerm[2];
-		arrSQLTerms[0] = s1;
-		arrSQLTerms[1] = s2;
-		String[] strarrOperators = new String[1];
-		strarrOperators[0] = "AND";
-		Iterator resultSet = dbApp.selectFromTable(arrSQLTerms, strarrOperators);
-		System.out.println("Printing the result set : ");
-		while (resultSet.hasNext()) {
-			Hashtable<String, Object> row = (Hashtable<String, Object>) resultSet.next();
-			System.out.println(row);
-		}
+		// System.out.println();
+		// System.out.println();
+		// System.out.println();
+		// System.out.println();
+		// System.out.println();
+		// System.out.println();
+		// SQLTerm s1 = new SQLTerm("students", "gpa", ">", new Double(3));
+		// SQLTerm s2 = new SQLTerm("students", "gpa", "<", new Double(4));
+		// SQLTerm[] arrSQLTerms = new SQLTerm[2];
+		// arrSQLTerms[0] = s1;
+		// arrSQLTerms[1] = s2;
+		// String[] strarrOperators = new String[1];
+		// strarrOperators[0] = "AND";
+		// Iterator resultSet = dbApp.selectFromTable(arrSQLTerms, strarrOperators);
+		// System.out.println("Printing the result set : ");
+		// while (resultSet.hasNext()) {
+		// 	Hashtable<String, Object> row = (Hashtable<String, Object>) resultSet.next();
+		// 	System.out.println(row);
+		// }
 
 	}
 	private static void createTheTables(DBApp dbApp) throws Exception {
@@ -786,6 +810,7 @@ public class DBApp {
 		if(strarrColName.length != 3) {
 			throw new DBAppException("You can only index 3 columns");
 		}
+
 		String [] col1 = new String[4];
 		String [] col2 = new String[4];
 		String [] col3 = new String[4];
@@ -795,7 +820,7 @@ public class DBApp {
 		String indexName = col1[0] +  col2[0]  + col3[0]+"Index";
 		//BufferedReader br;
 		try {
-			 BufferedReader br;
+			BufferedReader br;
 			String line;
 			checkIfValidOctree(strTableName, strarrColName, col1, col2, col3, indexName);
 			writeToMetaData(strTableName, col1, col2, col3, indexName);
@@ -811,9 +836,69 @@ public class DBApp {
 		colNames[0] = col1[0];
 		colNames[1] = col2[0];
 		colNames[2] = col3[0];
-		Octree octree = new Octree(col1[2], col2[2], col3[2], col1[3], col2[3],col3[3],indexName,colNames);
-		serializeOctree(octree);
+		
+		Object x = checkStringType(col1[2]);
+		Object width = checkStringType(col1[3]);
+		
+		Object y = checkStringType(col2[2]);
+		Object height = checkStringType(col2[3]);
+
+		Object z = checkStringType(col3[2]);
+		Object depth = checkStringType(col3[3]);		
+		
+		Octree octree = new Octree(x, y, z, width, height, depth, indexName, colNames);
+		
+		
+		// Sadwat, Ibrahim, Nour code starts here
+		Vector<Table> tables = (Vector<Table>) deserialize(strTableName);
+		if(tables.isEmpty()) {
+			serializeOctree(octree);
+			return;
+		};
+
+		Table table = tables.get(0);
+		Vector<String> ids = table.getIds();
+		
+		for(int i = 0; i < ids.size(); i++){
+		String pageId = ids.get(i);
+		Vector<Page> pages =  (Vector<Page>) deserialize(strTableName+"Page"+ pageId);
+		Page page = pages.get(0);
+		Vector<   Hashtable<String,Object>   > data = page.getData();
+		for(int j = 0; j < data.size(); j++){
+			Object x1 = data.get(j).get(col1[0]);
+			Object y1 = data.get(j).get(col2[0]);
+			Object z1 = data.get(j).get(col3[0]);
+			Reference reference = new Reference(Integer.parseInt(pageId));
+
+			Tuple OctTuple = new Tuple(x1, y1, z1, reference);
+			octree.insert(OctTuple);
+		}
 	}
+	serializeOctree(octree);
+
+	}
+
+	private Object checkStringType(String theString){
+
+		// Check Date is missing
+		
+		Object x = theString;
+		try {
+			x = Integer.parseInt(theString);
+		} catch (NumberFormatException e) {
+			try{
+			x = Double.parseDouble(theString);
+			return x;
+			}
+			catch(NumberFormatException e1){
+				return x;
+			}
+		}
+
+		return x;
+	}
+
+
 	public void writeToMetaData(String strTableName, String[] col1, String[] col2, String[] col3, String indexName)
 			throws FileNotFoundException, IOException {
 		BufferedReader br;

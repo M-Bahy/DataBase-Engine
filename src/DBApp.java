@@ -2073,6 +2073,35 @@ public class DBApp {
 
 	
 	public Iterator selectFromTable(SQLTerm[] arrSQLTerms, String[] strarrOperators) throws DBAppException {
+// 3la ndfa
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 		String tableName = arrSQLTerms[0].getStrTableName();
 		ArrayList<String> octreeNames = new ArrayList<String>();
 		// ArrayList<String> tmpNames = new ArrayList<String>();
@@ -2207,18 +2236,102 @@ public class DBApp {
 		}
 		else{
 			// Using Octree
-			Vector<Octree> indexOctrees = new Vector<Octree>();
-			for(int i = 0;i<toBeUsed.size();i++){
-				indexOctrees.add(ocs.get(i));
-
-			} 
 			
 
 
 
 
 
-		}
+
+
+			String line = "";
+			String splitBy = ",";
+			
+			Vector<String[]> Data =new Vector<String[]>();
+			try{
+				BufferedReader br = new BufferedReader(new FileReader("metadata.csv"));
+				while ((line = br.readLine()) != null)   //returns a Boolean value
+				{
+					String[] array= line.split(splitBy);
+					Data.add(array);
+	
+				}
+			}
+			catch (IOException e)
+			{
+				e.printStackTrace();
+			}
+	
+
+
+			String[] columns = new String[arrSQLTerms.length]; // columns that is included in the condition array(sqlTerms)
+			int noOfConditions = arrSQLTerms.length;
+			//getting the column names that are in the sqlterms array
+			for (int i = 0; i<arrSQLTerms.length; i++){
+				columns[i] = arrSQLTerms[i].getStrColumnName();}
+
+
+
+
+	
+	
+	
+			Vector<SQLTerm>  conditionsOfIndexedColumns= new Vector<SQLTerm>();
+	
+			Vector<String> indexedColumns = new Vector<String>();
+					Vector<String> nonIndexedColumns = new Vector<String>();
+	
+					//checking which columns are indexed and which are not (from the metadata)
+					Vector<SQLTerm> conditionsOfNonIndexedColumns=new Vector<SQLTerm>();
+					conditionsOfIndexedColumns=new Vector<SQLTerm>();
+	
+					for (int j = 0; j<columns.length; j++){
+						for (int k = 0; k<Data.size();k++){
+							if ((Data.get(k)[0]).equals(tableName)){
+								if (Data.get(k)[1].equals(columns[j])){
+									if (!(Data.get(k)[4].equals("null"))) {
+										indexedColumns.add(columns[j]);
+										for (int h = 0; h < arrSQLTerms.length; h++) {
+											if (arrSQLTerms[h].getStrColumnName().equals(columns[j])) {
+												conditionsOfIndexedColumns.add(arrSQLTerms[h]);
+												break;
+											}
+										}
+									}
+									else
+										nonIndexedColumns.add(columns[j]);
+									for(int h=0;h<arrSQLTerms.length;h++){
+										if(arrSQLTerms[h].getStrColumnName().equals(columns[j])){
+											conditionsOfNonIndexedColumns.add(arrSQLTerms[h]);
+											break;
+										}
+									}
+								}
+							}
+						}
+	}
+
+	Vector<Octree> indexOctrees = new Vector<Octree>();
+	for(int i = 0;i<toBeUsed.size();i++){
+		indexOctrees.add(ocs.get(i));
+	} 
+	for(int i = 0;i<indexOctrees.size();i++){
+		Octree o = indexOctrees.get(i);
+		
+
+
+
+	}
+
+
+
+			
+
+
+
+
+
+		}//end of else
 		
 
 

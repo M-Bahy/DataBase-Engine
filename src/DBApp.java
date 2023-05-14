@@ -53,12 +53,14 @@ public class DBApp {
 		// dbApp.init();
 		// createTheTables(dbApp);
 		// dbApp.insertStudentRecords(dbApp, 6);
-		// printData();
+		// //printData();
 		// String[] index = new String[3];
 		// index[0] = "id";
 		// index[1] = "gpa";
 		// index[2] = "first_name";
 		// dbApp.createIndex("students", index);
+		// printData();
+		// System.out.println(ocs.get(0));
 
 		// Vector<Octree> ocs = (Vector<Octree>)	deserialize("Octrees");
 	//	System.out.println(ocs.get(0));
@@ -66,10 +68,10 @@ public class DBApp {
 		// X: 81-8976 Y: 3.19 Z: hWknCP
 		//System.out.println(ocs.size());
 
-
-		SQLTerm s1 = new SQLTerm("students", "id", "!=", "81-8976");
-		SQLTerm s2 = new SQLTerm("students", "gpa", "!=", 3.19);
-		SQLTerm s3 = new SQLTerm("students", "first_name", "!=", "hWknCP");
+		//X: 50-7952 Y: 3.12 Z: ZiDDlx
+		SQLTerm s1 = new SQLTerm("students", "id", "!=", "67-5025");
+		SQLTerm s2 = new SQLTerm("students", "gpa", "!=", 1.71);
+		SQLTerm s3 = new SQLTerm("students", "first_name", "!=", "gTFAWy");
 		SQLTerm[] arrSQLTerms = new SQLTerm[3];
 		arrSQLTerms[0] = s1;
 		arrSQLTerms[1] = s2;
@@ -87,7 +89,7 @@ public class DBApp {
 		}
 		System.out.println("ANA HENA 555555555555555555555555555555555");
 
-
+		//printData();
 
 			//System.out.println(ocs.size());
 
@@ -854,7 +856,7 @@ public class DBApp {
 		
 		// Object x = checkStringType(col1[2]);
 		// Object width = checkStringType(col1[3]);
-		
+		// ("id",5)
 		// Object y = checkStringType(col2[2]);
 		// Object height = checkStringType(col2[3]);
 
@@ -950,7 +952,31 @@ public class DBApp {
 			Object x1 = data.get(j).get(col1[0]);
 			Object y1 = data.get(j).get(col2[0]);
 			Object z1 = data.get(j).get(col3[0]);
-			Reference reference = new Reference(Integer.parseInt(pageId));
+			String pkName = "";
+			Object pkValue = "";
+
+			try {
+				BufferedReader	br = new BufferedReader(new FileReader("metadata.csv"));
+				String line = br.readLine();
+
+				while ((line = br.readLine()) != null) {
+					String[] values = line.split(",");
+					if (values[0].equals(strTableName)) {
+						// Table Name, Column Name, Column Type, ClusteringKey, IndexName,IndexType, min, max
+						if (values[3].equals("True")) {
+							pkName = values[1];
+							
+						}
+					}
+				}
+			} catch (Exception e) {
+				
+			}
+
+			pkValue = data.get(j).get(pkName);
+
+
+			Reference reference = new Reference(Integer.parseInt(pageId), pkName, pkValue);
 
 			Tuple OctTuple = new Tuple(x1, y1, z1, reference);
 			octree.insert(OctTuple);
@@ -1728,22 +1754,22 @@ public class DBApp {
 		
 		// here we should serialize the "insert 13" probllem
 	}
-	private void insertIntoIndex(Hashtable<String, Object> htblColNameValue, boolean octreeExists, String octreeName,int pageNumber) {
-		if(octreeExists){
-			Octree oct = null;
-			for(Octree o : this.ocs){
-				if(o.getName().equals(octreeName)){
-					oct = o;
-					break;
-				}
-			}
-			String [] colNames = oct.getColNames();
-			Reference r = new Reference(pageNumber);
-			Tuple t = new Tuple(htblColNameValue.get(colNames[0]),htblColNameValue.get(colNames[1]),htblColNameValue.get(colNames[2]),r);
+	// private void insertIntoIndex(Hashtable<String, Object> htblColNameValue, boolean octreeExists, String octreeName,int pageNumber) {
+	// 	if(octreeExists){
+	// 		Octree oct = null;
+	// 		for(Octree o : this.ocs){
+	// 			if(o.getName().equals(octreeName)){
+	// 				oct = o;
+	// 				break;
+	// 			}
+	// 		}
+	// 		String [] colNames = oct.getColNames();
+	// 		Reference r = new Reference(pageNumber);
+	// 		Tuple t = new Tuple(htblColNameValue.get(colNames[0]),htblColNameValue.get(colNames[1]),htblColNameValue.get(colNames[2]),r);
 			
 
-		}
-	}
+	// 	}
+	// }
 
 	private static void addTheNulls(Hashtable<String, Object> htblColNameValue, String strTableName) throws DBAppException {
 		Set x = htblColNameValue.keySet();
@@ -2158,7 +2184,13 @@ public class DBApp {
 	public Iterator selectFromTable(SQLTerm[] arrSQLTerms, String[] strarrOperators) throws DBAppException {
 // 3la ndfa
 	
-
+		boolean isNotEqual = false;
+		for(int y = 0 ;y<arrSQLTerms.length;y++){
+			if(arrSQLTerms[y].getStrOperator().equals("!=")){
+				isNotEqual = true;
+				break;
+			}
+		}
 
 
 
@@ -2191,6 +2223,8 @@ public class DBApp {
 		// boolean linearOR = false;
 		addTheNames(tableName, octreeNames);
 		boolean noOctrees = octreeNames.size() == 0;
+		System.out.println("arr "+arrSQLTerms.length);
+		System.out.println("star "+strarrOperators.length);
 		if(       !(arrSQLTerms.length == strarrOperators.length + 1)                   ) {
 			throw new DBAppException();
 		}
@@ -2251,7 +2285,7 @@ public class DBApp {
 		//}
 			System.out.println( "Should be false : " +  toBeUsed.isEmpty());
 		
-		if(toBeUsed.isEmpty()){
+		if(toBeUsed.isEmpty() || isNotEqual){
 			// linear
    //56468484			1 2 3    45564654   1 4 1 2 3 
 			Vector<Vector<Hashtable<String,Object>>> results = new Vector<Vector<Hashtable<String,Object>>>();
@@ -2261,6 +2295,13 @@ public class DBApp {
 			//System.out.println(results.get(0));
 			//System.out.println(results.get(1));
 			Vector<Hashtable<String,Object>> finalResultSet = new Vector<Hashtable<String,Object>>();
+			if(results.size()==1){
+				finalResultSet = results.get(0);
+				it = finalResultSet.iterator();
+				return it;
+			}
+			System.out.println("results size "+results.size());
+			
 			for(int i = 0 ;i<results.size()-1;i++){
 				Vector<Hashtable<String,Object>> set1 = results.get(i);
 				Vector<Hashtable<String,Object>> set2 = results.get(i+1);
@@ -2325,6 +2366,7 @@ public class DBApp {
 			}
 			
 			it = finalResultSet.iterator();
+			return it;
 		}
 		else{
 			// Using Octree
@@ -2449,12 +2491,13 @@ public class DBApp {
 
 
 		 rs.addAll( o.search(operator1, value1, operator2, value2, operator3, value3));
+		// System.out.println("rs size: "+rs.size());
 
 		//System.out.println("ANA DA5ALT HENA YA RAB");
 
 	}
 
-
+    //  
 
 			
 	it = rs.iterator();
@@ -2463,10 +2506,38 @@ public class DBApp {
 
 
 		}//end of else
-		
+		Vector<Hashtable<String, Object>> fr = new Vector<Hashtable<String, Object>>();
+		while(it.hasNext()){
+			Tuple t = (Tuple) it.next();
+			Hashtable<String, Object> h = new Hashtable<String, Object>();
+			ArrayList<Reference> r = t.getReferences();
+			for(int i = 0;i<r.size();i++){
+				Reference ref = r.get(i);
+				int indexOfPage = ref.getPageNumber();
+				String pk = ref.getPkName();
+				Object pkValue = ref.getPkValue();
+				// Vector<Table> tables = (Vector<Table>) deserialize(tableName);
+				// Table table = tables.get(0);
+				// Vector<String> ids = table.getIds();
+				// for(int j = 0 ;j<ids.size();j++){
 
+				// }
+				Vector<Page> ps = (Vector<Page>) deserialize(tableName+"Page"+indexOfPage);
+				Page p = ps.get(0);
+				for(int j = 0;j<p.getData().size();j++){
+					Hashtable<String, Object> h1 = p.getData().get(j);
+					if(h1.get(pk).equals(pkValue)){
+						h = h1;
+						break;
+				}
 
-		return it;
+				}
+		 	}
+
+			fr.addElement(h);
+		}
+
+		return fr.iterator();
 	}
 	private void evaluateConditionsIndividually(SQLTerm[] arrSQLTerms, String tableName, Vector<Vector<Hashtable<String, Object>>> results) throws DBAppException {
 		
@@ -2491,9 +2562,9 @@ public class DBApp {
 				for(int k = 0;k<tuples.size();k++){
 					Hashtable<String,Object> tuple = tuples.get(k);
 					//System.out.println(tuple);
-					if(tuple.get("gpa").equals(0.85)){
-						System.out.println("here");
-					}
+					// if(tuple.get("gpa").equals(0.85)){
+					// 	System.out.println("here");
+					// }
 					// A'  B  or   B'  A 
 					switch(operator){
 						 case ">":

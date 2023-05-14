@@ -9,6 +9,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
+import java.util.StringTokenizer;
 import java.util.Vector;
 import java.util.regex.Pattern;
 import java.time.LocalDate;
@@ -851,7 +852,7 @@ public class DBApp {
 		
 		// Sadwat, Ibrahim, Nour code starts here
 		Vector<Table> tables = (Vector<Table>) deserialize(strTableName);
-		if(tables.isEmpty()) {
+		if(tables.get(0).getIds().isEmpty()) {
 			serializeOctree(octree);
 			return;
 		};
@@ -925,6 +926,10 @@ public class DBApp {
 		BufferedReader br = new BufferedReader(new FileReader("metadata.csv"));
 		String line = br.readLine();
 		int numberOfCorrectData = 0;
+
+		if(!exists(strTableName))
+		     throw new DBAppException();
+		    
 		while ((line = br.readLine()) != null) {
 			//Table Name, Column Name, Column Type, ClusteringKey, IndexName,IndexType, min, max
 			String[] values = line.split(",");
@@ -2070,6 +2075,8 @@ public class DBApp {
 	public Iterator selectFromTable(SQLTerm[] arrSQLTerms, String[] strarrOperators) throws DBAppException {
 		String tableName = arrSQLTerms[0].getStrTableName();
 		ArrayList<String> octreeNames = new ArrayList<String>();
+		// ArrayList<String> tmpNames = new ArrayList<String>();
+		// boolean linearOR = false;
 		addTheNames(tableName, octreeNames);
 		boolean noOctrees = octreeNames.size() == 0;
 		if(       !(arrSQLTerms.length == strarrOperators.length + 1)                   ) {
@@ -2091,13 +2098,38 @@ public class DBApp {
 			if(ocs.get(i).getName().equals(tableName)){
 				//AND
 				String and = "AND";
-				String name = ocs.get(i).getColNames()[0]+and+ocs.get(i).getColNames()[1]+and+ocs.get(i).getColNames()[2];
-				if(term.contains(name)){
+				String name1 = ocs.get(i).getColNames()[0]+and+ocs.get(i).getColNames()[1]+and+ocs.get(i).getColNames()[2];
+				String name2 = ocs.get(i).getColNames()[0]+and+ocs.get(i).getColNames()[2]+and+ocs.get(i).getColNames()[1];
+				String name3 = ocs.get(i).getColNames()[1]+and+ocs.get(i).getColNames()[0]+and+ocs.get(i).getColNames()[2];
+				String name4 = ocs.get(i).getColNames()[1]+and+ocs.get(i).getColNames()[2]+and+ocs.get(i).getColNames()[0];
+				String name5 = ocs.get(i).getColNames()[2]+and+ocs.get(i).getColNames()[0]+and+ocs.get(i).getColNames()[1];
+				String name6 = ocs.get(i).getColNames()[2]+and+ocs.get(i).getColNames()[1]+and+ocs.get(i).getColNames()[0];
+				if(term.contains(name1) ||term.contains(name2) ||term.contains(name3) ||term.contains(name4) ||term.contains(name5) ||term.contains(name6) ){
 					toBeUsed.add(i);
+
 				}
+				// tmpNames.add(name1);
+				// tmpNames.add(name2);
+				// tmpNames.add(name3);
+				// tmpNames.add(name4);
+				// tmpNames.add(name5);
+				// tmpNames.add(name6);
 			}
 		}
 		Iterator it = null;
+		// StringTokenizer ST = new StringTokenizer(term,"OR");
+		// while(ST.hasMoreTokens()){
+		// 	String s = ST.nextToken();
+		// 	if(!tmpNames.contains(s)){
+		// 		linearOR = true;
+
+		// 	}
+			 
+
+
+		//}
+
+		
 		if(toBeUsed.isEmpty()){
 			// linear
    //56468484			1 2 3    45564654   1 4 1 2 3 
@@ -2175,6 +2207,17 @@ public class DBApp {
 		}
 		else{
 			// Using Octree
+			Vector<Octree> indexOctrees = new Vector<Octree>();
+			for(int i = 0;i<toBeUsed.size();i++){
+				indexOctrees.add(ocs.get(i));
+
+			} 
+			
+
+
+
+
+
 		}
 		
 

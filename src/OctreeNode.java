@@ -32,7 +32,7 @@ public  class OctreeNode  implements Serializable  {
         maxObjects = this.getMaxObjects();
     }
 
-
+    
 
     public int getMaxObjects()  {
         Properties props = new Properties();
@@ -68,7 +68,80 @@ public  class OctreeNode  implements Serializable  {
     return m;
     }
     
+    
   
+    public Object getX() {
+        return x;
+    }
+
+
+
+    public void setX(Object x) {
+        this.x = x;
+    }
+
+
+
+    public Object getY() {
+        return y;
+    }
+
+
+
+    public void setY(Object y) {
+        this.y = y;
+    }
+
+
+
+    public Object getZ() {
+        return z;
+    }
+
+
+
+    public void setZ(Object z) {
+        this.z = z;
+    }
+
+
+
+    public Object getWidth() {
+        return width;
+    }
+
+
+
+    public void setWidth(Object width) {
+        this.width = width;
+    }
+
+
+
+    public Object getHeight() {
+        return height;
+    }
+
+
+
+    public void setHeight(Object height) {
+        this.height = height;
+    }
+
+
+
+    public Object getDepth() {
+        return depth;
+    }
+
+
+
+    public void setDepth(Object depth) {
+        this.depth = depth;
+    }
+
+
+
     public void insert( Tuple tuple) {
         Object x = tuple.getX();
         Object y = tuple.getY();
@@ -747,7 +820,161 @@ public String toString() {
 
 
 
+// public List<Tuple> search(String op1, Object val1, String op2, Object val2, String op3, Object val3) {
+//     List<Tuple> result = new ArrayList<>();
+//     Range range1 = getRange(op1, val1, x, (Comparable) width);
+//     Range range2 = getRange(op2, val2, y, (Comparable) height);
+//     Range range3 = getRange(op3, val3, z, (Comparable) depth);
+//     Range[] ranges = {range1, range2, range3};
+//     searchHelper(ranges, root, result);
+//     return result;
+// }
 
+public void searchHelper(Range[] ranges, OctreeNode node, List<Tuple> result) {
+    if (node == null) {
+        return;
+    }
+    if (node.children[0]==null) {
+        for (Tuple tuple : node.data) {
+            if (tupleInRange(tuple, ranges)) {
+                result.add(tuple);
+            }
+        }
+    } else {
+        for (OctreeNode child : node.children) {
+            if (childInRange(child, ranges)) {
+                searchHelper(ranges, child, result);
+            }
+        }
+    }
+}
+
+public boolean tupleInRange(Tuple tuple, Range[] ranges) {
+    for (int i = 0; i < 3; i++) {
+        Object value = tuple.getColumnValue(i);
+        if (!ranges[i].contains((Comparable) value)) {
+            return false;
+        }
+    }
+    return true;
+}
+
+public boolean childInRange(OctreeNode child, Range[] ranges) {
+    // Object x = child.getX();
+    // Object y = child.getY();
+    // Object z = child.getZ();
+    // if (!ranges[0].contains((Comparable) x) || !ranges[1].contains((Comparable) y) || !ranges[2].contains((Comparable) z)) {
+    //     return false;
+    // }
+    // return true;
+    boolean result = false;
+    
+        Range r = ranges[0];
+        Object lower = r.getLower();
+        Object upper = r.getUpper();
+        Object x = child.getX();
+        Object width = child.getWidth();
+        // me =< max  && me >= min
+        if(lower.equals(upper)){
+            // exact querey
+            if(((Comparable)lower).compareTo((Comparable)x) >= 0     && ((Comparable)upper).compareTo((Comparable)width) <= 0){
+                result = true;
+            }
+        }
+        else{
+            // range query
+            if(r.isInclusive()){
+                 if(((Comparable)lower).compareTo((Comparable)x) >= 0 && ((Comparable)upper).compareTo((Comparable)width) <= 0){
+                result = true;
+            }
+            }// A >= 5
+            else{
+                if(((Comparable)lower).compareTo((Comparable)x) > 0 && ((Comparable)upper).compareTo((Comparable)width) < 0){
+                result = true;
+            }
+
+            }
+           
+        }
+        r = ranges[1];
+        lower = r.getLower();
+        upper = r.getUpper();
+        Object y = child.getY();
+        Object height = child.getHeight();
+        // me =< max  && me >= min
+        if(lower.equals(upper)){
+            // exact querey
+            if(((Comparable)lower).compareTo((Comparable)y) >= 0     && ((Comparable)upper).compareTo((Comparable)height) <= 0){
+                result = true;
+            }
+        }
+        else{
+            // range query
+            if(r.isInclusive()){
+                 if(((Comparable)lower).compareTo((Comparable)y) >= 0 && ((Comparable)upper).compareTo((Comparable)height) <= 0){
+                result = true;
+            }
+            }// A >= 5
+            else{
+                if(((Comparable)lower).compareTo((Comparable)y) > 0 && ((Comparable)upper).compareTo((Comparable)height) < 0){
+                result = true;
+            }
+
+            }
+           
+        }
+        r = ranges[2];
+        lower = r.getLower();
+        upper = r.getUpper();
+        Object z = child.getZ();
+        Object depth = child.getDepth();
+        // me =< max  && me >= min
+        if(lower.equals(upper)){
+            // exact querey
+            if(((Comparable)lower).compareTo((Comparable)z) >= 0     && ((Comparable)upper).compareTo((Comparable)depth) <= 0){
+                result = true;
+            }
+        }
+        else{
+            // range query
+            if(r.isInclusive()){
+                 if(((Comparable)lower).compareTo((Comparable)z) >= 0 && ((Comparable)upper).compareTo((Comparable)depth) <= 0){
+                result = true;
+            }
+            }// A >= 5
+            else{
+                if(((Comparable)lower).compareTo((Comparable)z) > 0 && ((Comparable)upper).compareTo((Comparable)depth) < 0){
+                result = true;
+            }
+
+            }
+           
+        }
+
+    
+
+
+    return result;
+}
+
+// public Range getRange(String operator, Object value, Object min, Comparable max) {
+//     switch (operator) {
+//         case ">":
+//             return new Range((Comparable) value, max);
+//         case ">=":
+//             return new Range((Comparable) value, max, true);
+//         case "<":
+//             return new Range((Comparable) min, (Comparable) value);
+//         case "<=":
+//             return new Range((Comparable) min, (Comparable) value, true);
+//         case "!=":
+//             return new Range((Comparable) value, (Comparable) value, true);
+//         case "=":
+//             return new Range((Comparable) value, (Comparable) value);
+//         default:
+//             return null;
+//     }
+// }
 
 
 

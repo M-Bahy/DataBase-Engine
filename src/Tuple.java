@@ -65,5 +65,19 @@ public static String equateString(String x,String y){
     return x;
     }
 }
+public Object getColumnValue(int i) {
+    if(i==0){
+        return x;
+    }
+    else if(i==1){
+        return y;
+    }
+    else if(i==2){
+        return z;
+    }
+    else{
+        return null;
+    }
+}
 
 }

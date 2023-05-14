@@ -37,45 +37,65 @@ public class DBApp {
 	private final static String theDouble = "java.lang.Double";
 	private final static String theDate = "java.util.Date";
 	private final static String theInt = "java.lang.Integer";
-	private Vector<Octree> ocs = new Vector<Octree>();
-
+	private static Vector<Octree> ocs = new Vector<Octree>();
+	public DBApp () {
+		try{
+		ocs = (Vector<Octree>)	deserialize("Octrees");
+		
+		}
+		catch(Exception e) {
+			
+		}
+	}
 
 	public static void main(String[] args) throws Exception {
 		DBApp dbApp = new DBApp();
-		dbApp.init();
-		createTheTables(dbApp);
-		dbApp.insertStudentRecords(dbApp, 6);
-		printData();
-		String[] index = new String[3];
-		index[0] = "id";
-		index[1] = "gpa";
-		index[2] = "first_name";
-		dbApp.createIndex("students", index);
+		// dbApp.init();
+		// createTheTables(dbApp);
+		// dbApp.insertStudentRecords(dbApp, 6);
+		// printData();
+		// String[] index = new String[3];
+		// index[0] = "id";
+		// index[1] = "gpa";
+		// index[2] = "first_name";
+		// dbApp.createIndex("students", index);
 
-		Vector<Octree> ocs = (Vector<Octree>)	deserialize("Octrees");
-		System.out.println(ocs.get(0));
+		// Vector<Octree> ocs = (Vector<Octree>)	deserialize("Octrees");
+	//	System.out.println(ocs.get(0));
+		// String tableName, String columnName, String operator, Object value
+		// X: 81-8976 Y: 3.19 Z: hWknCP
+		//System.out.println(ocs.size());
+
+
+		SQLTerm s1 = new SQLTerm("students", "id", "!=", "81-8976");
+		SQLTerm s2 = new SQLTerm("students", "gpa", "!=", 3.19);
+		SQLTerm s3 = new SQLTerm("students", "first_name", "!=", "hWknCP");
+		SQLTerm[] arrSQLTerms = new SQLTerm[3];
+		arrSQLTerms[0] = s1;
+		arrSQLTerms[1] = s2;
+		arrSQLTerms[2] = s3;
+		String[] strarrOperators = new String[2];
+		strarrOperators[0] = "AND";
+		strarrOperators[1] = "AND";
+		Iterator resultSet = dbApp.selectFromTable(arrSQLTerms, strarrOperators);
+		//System.out.println(resultSet.);
+		System.out.println("ANA HENA 555555555555555555555555555555555");
+		while (resultSet.hasNext()) {
+			
+			System.out.println(resultSet.next());
+			//System.out.println("ANA HENA 555555555555555555555555555555555");
+		}
+		System.out.println("ANA HENA 555555555555555555555555555555555");
+
+
+
+			//System.out.println(ocs.size());
+
+
+
+		//dbApp.selectFromTable(null, args)
 		
-		// gpa > 3
-		//and gpa < 4
-		// System.out.println();
-		// System.out.println();
-		// System.out.println();
-		// System.out.println();
-		// System.out.println();
-		// System.out.println();
-		// SQLTerm s1 = new SQLTerm("students", "gpa", ">", new Double(3));
-		// SQLTerm s2 = new SQLTerm("students", "gpa", "<", new Double(4));
-		// SQLTerm[] arrSQLTerms = new SQLTerm[2];
-		// arrSQLTerms[0] = s1;
-		// arrSQLTerms[1] = s2;
-		// String[] strarrOperators = new String[1];
-		// strarrOperators[0] = "AND";
-		// Iterator resultSet = dbApp.selectFromTable(arrSQLTerms, strarrOperators);
-		// System.out.println("Printing the result set : ");
-		// while (resultSet.hasNext()) {
-		// 	Hashtable<String, Object> row = (Hashtable<String, Object>) resultSet.next();
-		// 	System.out.println(row);
-		// }
+		
 
 	}
 	private static void createTheTables(DBApp dbApp) throws Exception {
@@ -581,13 +601,7 @@ public class DBApp {
 		
 		
 	
-		try{
-		ocs = (Vector<Octree>)	deserialize("Octrees");
 		
-		}
-		catch(Exception e) {
-			
-		}
 		
 		
 		
@@ -838,22 +852,89 @@ public class DBApp {
 		colNames[1] = col2[0];
 		colNames[2] = col3[0];
 		
-		Object x = checkStringType(col1[2]);
-		Object width = checkStringType(col1[3]);
+		// Object x = checkStringType(col1[2]);
+		// Object width = checkStringType(col1[3]);
 		
-		Object y = checkStringType(col2[2]);
-		Object height = checkStringType(col2[3]);
+		// Object y = checkStringType(col2[2]);
+		// Object height = checkStringType(col2[3]);
 
-		Object z = checkStringType(col3[2]);
-		Object depth = checkStringType(col3[3]);		
+		// Object z = checkStringType(col3[2]);
+		// Object depth = checkStringType(col3[3]);
+		Object x = "";
+		Object width = "";
+		Object y = "";
+		Object height = "";
+		Object z = "";
+		Object depth = "";
+		switch(col1[1]){
+			case "java.lang.Integer":
+				x = Integer.parseInt(col1[2]);
+				width = Integer.parseInt(col1[3]);
+				break;
+			case "java.lang.Double":
+				x = Double.parseDouble(col1[2]);
+				width = Double.parseDouble(col1[3]);
+				break;
+			case "java.util.Date":
+				x = new Date(col1[2]);
+				width = new Date(col1[3]);
+				break;
+			case "java.lang.String":
+				x = col1[2];
+				width = col1[3];
+				break;
+			
+		}
+		switch(col2[1]){
+			case "java.lang.Integer":
+				y = Integer.parseInt(col2[2]);
+				height = Integer.parseInt(col2[3]);
+				break;
+			case "java.lang.Double":
+				y = Double.parseDouble(col2[2]);
+				height = Double.parseDouble(col2[3]);
+				break;
+			case "java.util.Date":
+				y = new Date(col2[2]);
+				height = new Date(col2[3]);
+				break;
+			case "java.lang.String":
+				y = col2[2];
+				height = col2[3];
+				break;
+			
+		}
+		switch(col3[1]){
+			case "java.lang.Integer":
+				z = Integer.parseInt(col3[2]);
+				depth = Integer.parseInt(col3[3]);
+				break;
+			case "java.lang.Double":
+				z = Double.parseDouble(col3[2]);
+				depth = Double.parseDouble(col3[3]);
+				break;
+			case "java.util.Date":
+				z = new Date(col3[2]);
+				depth = new Date(col3[3]);
+				break;
+			case "java.lang.String":
+				z = col3[2];
+				depth = col3[3];
+				break;
+			
+		}
+
+
+
 		
-		Octree octree = new Octree(x, y, z, width, height, depth, indexName, colNames);
+		Octree octree = new Octree(x, y, z, width, height, depth, indexName, colNames, strTableName);
 		
 		
 		// Sadwat, Ibrahim, Nour code starts here
 		Vector<Table> tables = (Vector<Table>) deserialize(strTableName);
 		if(tables.get(0).getIds().isEmpty()) {
 			serializeOctree(octree);
+			ocs = (Vector<Octree>) deserialize("Octrees");
 			return;
 		};
 
@@ -876,12 +957,14 @@ public class DBApp {
 		}
 	}
 	serializeOctree(octree);
+	ocs = (Vector<Octree>) deserialize("Octrees");
 
 	}
 
 	private Object checkStringType(String theString){
 
 		// Check Date is missing
+		
 		
 		Object x = theString;
 		try {
@@ -2113,18 +2196,27 @@ public class DBApp {
 		}
 		String term = "";
 		for (int  i = 0;i<arrSQLTerms.length;i++){
+			System.out.println(term);
 			if(i%2==0){
+				if(i==0)
+					term += arrSQLTerms[i].getStrColumnName();
+				else{
+					term += strarrOperators[i-1];
 				term += arrSQLTerms[i].getStrColumnName();
+				}
 			
 			}
 			else{
 				term += strarrOperators[i-1];
+				term += arrSQLTerms[i].getStrColumnName();
 			}
 
 		}
+		System.out.println("OMAAAAR"+term);
 		ArrayList <Integer> toBeUsed = new ArrayList<Integer>();
+		//System.out.println("THE NAME IS : "+ocs.get(0).getName());
 		for (int i = 0 ;i<ocs.size();i++){
-			if(ocs.get(i).getName().equals(tableName)){
+			if(ocs.get(i).getTableName().equals(tableName)){
 				//AND
 				String and = "AND";
 				String name1 = ocs.get(i).getColNames()[0]+and+ocs.get(i).getColNames()[1]+and+ocs.get(i).getColNames()[2];
@@ -2157,7 +2249,7 @@ public class DBApp {
 
 
 		//}
-
+			System.out.println( "Should be false : " +  toBeUsed.isEmpty());
 		
 		if(toBeUsed.isEmpty()){
 			// linear
@@ -2236,6 +2328,7 @@ public class DBApp {
 		}
 		else{
 			// Using Octree
+			System.out.println("Using Octreeeeeeeeeeee");
 			
 
 
@@ -2267,15 +2360,16 @@ public class DBApp {
 			String[] columns = new String[arrSQLTerms.length]; // columns that is included in the condition array(sqlTerms)
 			int noOfConditions = arrSQLTerms.length;
 			//getting the column names that are in the sqlterms array
-			for (int i = 0; i<arrSQLTerms.length; i++){
-				columns[i] = arrSQLTerms[i].getStrColumnName();}
+			for (int i = 0; i<arrSQLTerms.length; i++)
+				columns[i] = arrSQLTerms[i].getStrColumnName();
+			
 
 
 
 
 	
 	
-	
+				Hashtable<String,SQLTerm> h1 = new Hashtable<String,SQLTerm>();
 			Vector<SQLTerm>  conditionsOfIndexedColumns= new Vector<SQLTerm>();
 	
 			Vector<String> indexedColumns = new Vector<String>();
@@ -2293,6 +2387,7 @@ public class DBApp {
 										indexedColumns.add(columns[j]);
 										for (int h = 0; h < arrSQLTerms.length; h++) {
 											if (arrSQLTerms[h].getStrColumnName().equals(columns[j])) {
+												h1.put(columns[j], arrSQLTerms[h]);
 												conditionsOfIndexedColumns.add(arrSQLTerms[h]);
 												break;
 											}
@@ -2311,22 +2406,58 @@ public class DBApp {
 						}
 	}
 
+	System.out.println("indexedColumns: "+indexedColumns);
+	System.out.println("nonIndexedColumns: "+nonIndexedColumns);
+	System.out.println("conditionsOfIndexedColumns: "+conditionsOfIndexedColumns);
+	System.out.println("conditionsOfNonIndexedColumns: "+conditionsOfNonIndexedColumns);
+
+	List <Tuple> rs = new ArrayList<Tuple>();
 	Vector<Octree> indexOctrees = new Vector<Octree>();
 	for(int i = 0;i<toBeUsed.size();i++){
 		indexOctrees.add(ocs.get(i));
 	} 
 	for(int i = 0;i<indexOctrees.size();i++){
 		Octree o = indexOctrees.get(i);
-		
+		// SQLTerm sql1 = conditionsOfIndexedColumns.get(3*i);
+		// String colName1 = sql1.getStrColumnName();
+		// String operator1 = sql1.getStrOperator();
+		// Object value1 = sql1.getObjValue();
+
+		// SQLTerm sql = conditionsOfIndexedColumns.get(3*i);
+		// String colName = sql.getStrColumnName();
+		// String operator = sql.getStrOperator();
+		// Object value = sql.getObjValue();
 
 
+		// SQLTerm sql = conditionsOfIndexedColumns.get(3*i);
+		// String colName = sql.getStrColumnName();
+		// String operator = sql.getStrOperator();
+		// Object value = sql.getObjValue();
+		SQLTerm s1 = h1.get(o.getColNames()[0]);
+		SQLTerm s2 = h1.get(o.getColNames()[1]);
+		SQLTerm s3 = h1.get(o.getColNames()[2]);
+		String colName1 = s1.getStrColumnName();
+		String operator1 = s1.getStrOperator();
+		Object value1 = s1.getObjValue();
+		String colName2 = s2.getStrColumnName();
+		String operator2 = s2.getStrOperator();
+		Object value2 = s2.getObjValue();
+		String colName3 = s3.getStrColumnName();
+		String operator3 = s3.getStrOperator();
+		Object value3 = s3.getObjValue();
+
+
+
+		 rs.addAll( o.search(operator1, value1, operator2, value2, operator3, value3));
+
+		//System.out.println("ANA DA5ALT HENA YA RAB");
 
 	}
 
 
 
 			
-
+	it = rs.iterator();
 
 
 

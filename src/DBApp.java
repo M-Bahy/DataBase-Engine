@@ -53,14 +53,14 @@ public class DBApp {
 		// dbApp.init();
 		// createTheTables(dbApp);
 		// dbApp.insertStudentRecords(dbApp, 6);
-		// //printData();
+		// printData();
 		// String[] index = new String[3];
 		// index[0] = "id";
 		// index[1] = "gpa";
 		// index[2] = "first_name";
 		// dbApp.createIndex("students", index);
-		// printData();
-		// System.out.println(ocs.get(0));
+		//printData();
+		//System.out.println(ocs.get(0));
 
 		// Vector<Octree> ocs = (Vector<Octree>)	deserialize("Octrees");
 	//	System.out.println(ocs.get(0));
@@ -69,16 +69,20 @@ public class DBApp {
 		//System.out.println(ocs.size());
 
 		//X: 50-7952 Y: 3.12 Z: ZiDDlx
-		SQLTerm s1 = new SQLTerm("students", "id", "!=", "67-5025");
-		SQLTerm s2 = new SQLTerm("students", "gpa", "!=", 1.71);
-		SQLTerm s3 = new SQLTerm("students", "first_name", "!=", "gTFAWy");
-		SQLTerm[] arrSQLTerms = new SQLTerm[3];
+		SQLTerm s1 = new SQLTerm("students", "id", "=", "82-8772");
+		SQLTerm s2 = new SQLTerm("students", "gpa", "=", 4.32);
+		SQLTerm s3 = new SQLTerm("students", "first_name", "=", "pzSMNq");
+		SQLTerm s4 = new SQLTerm("students", "last_name", "=", "NfdxAL");
+		//82-8772,pzSMNq,NfdxAL,1992-09-28,4.32
+		SQLTerm[] arrSQLTerms = new SQLTerm[4];
 		arrSQLTerms[0] = s1;
 		arrSQLTerms[1] = s2;
 		arrSQLTerms[2] = s3;
-		String[] strarrOperators = new String[2];
+		arrSQLTerms[3] = s4;
+		String[] strarrOperators = new String[3];
 		strarrOperators[0] = "AND";
 		strarrOperators[1] = "AND";
+		strarrOperators[2] = "AND";
 		Iterator resultSet = dbApp.selectFromTable(arrSQLTerms, strarrOperators);
 		//System.out.println(resultSet.);
 		System.out.println("ANA HENA 555555555555555555555555555555555");
@@ -2183,7 +2187,9 @@ public class DBApp {
 	
 	public Iterator selectFromTable(SQLTerm[] arrSQLTerms, String[] strarrOperators) throws DBAppException {
 // 3la ndfa
-	
+	 
+
+        String fullterm = "";
 		boolean isNotEqual = false;
 		for(int y = 0 ;y<arrSQLTerms.length;y++){
 			if(arrSQLTerms[y].getStrOperator().equals("!=")){
@@ -2232,20 +2238,40 @@ public class DBApp {
 		for (int  i = 0;i<arrSQLTerms.length;i++){
 			System.out.println(term);
 			if(i%2==0){
-				if(i==0)
+				if(i==0){
 					term += arrSQLTerms[i].getStrColumnName();
+					fullterm +=arrSQLTerms[i].getStrColumnName()+"*";
+				fullterm += arrSQLTerms[i].getStrOperator()+"*";
+				fullterm +=arrSQLTerms[i].getObjValue()+"*";
+				}
 				else{
 					term += strarrOperators[i-1];
 				term += arrSQLTerms[i].getStrColumnName();
+				fullterm +=strarrOperators[i-1]+"*";
+				fullterm +=arrSQLTerms[i].getStrColumnName()+"*";
+				fullterm += arrSQLTerms[i].getStrOperator()+"*";
+				fullterm +=arrSQLTerms[i].getObjValue()+"*";
+				
+			
 				}
 			
 			}
 			else{
 				term += strarrOperators[i-1];
 				term += arrSQLTerms[i].getStrColumnName();
+
+				fullterm +=strarrOperators[i-1]+"*";
+				fullterm +=arrSQLTerms[i].getStrColumnName()+"*";
+				fullterm += arrSQLTerms[i].getStrOperator()+"*";
+				fullterm +=arrSQLTerms[i].getObjValue()+"*";
 			}
 
+			
 		}
+		fullterm = fullterm.substring(0,fullterm.length()-1);
+
+		System.out.println("Fullterm: "+fullterm);
+
 		System.out.println("OMAAAAR"+term);
 		ArrayList <Integer> toBeUsed = new ArrayList<Integer>();
 		//System.out.println("THE NAME IS : "+ocs.get(0).getName());
@@ -2253,16 +2279,18 @@ public class DBApp {
 			if(ocs.get(i).getTableName().equals(tableName)){
 				//AND
 				String and = "AND";
-				String name1 = ocs.get(i).getColNames()[0]+and+ocs.get(i).getColNames()[1]+and+ocs.get(i).getColNames()[2];
-				String name2 = ocs.get(i).getColNames()[0]+and+ocs.get(i).getColNames()[2]+and+ocs.get(i).getColNames()[1];
-				String name3 = ocs.get(i).getColNames()[1]+and+ocs.get(i).getColNames()[0]+and+ocs.get(i).getColNames()[2];
+				String name1 = ocs.get(i).getColNames()[0]+and+ocs.get(i).getColNames()[1]+and+ocs.get(i).getColNames()[2]; // abc
+				String name2 = ocs.get(i).getColNames()[0]+and+ocs.get(i).getColNames()[2]+and+ocs.get(i).getColNames()[1];  //bca
+				String name3 = ocs.get(i).getColNames()[1]+and+ocs.get(i).getColNames()[0]+and+ocs.get(i).getColNames()[2];  
 				String name4 = ocs.get(i).getColNames()[1]+and+ocs.get(i).getColNames()[2]+and+ocs.get(i).getColNames()[0];
 				String name5 = ocs.get(i).getColNames()[2]+and+ocs.get(i).getColNames()[0]+and+ocs.get(i).getColNames()[1];
 				String name6 = ocs.get(i).getColNames()[2]+and+ocs.get(i).getColNames()[1]+and+ocs.get(i).getColNames()[0];
 				if(term.contains(name1) ||term.contains(name2) ||term.contains(name3) ||term.contains(name4) ||term.contains(name5) ||term.contains(name6) ){
 					toBeUsed.add(i);
 
+					
 				}
+				System.out.println("TobeUsed: "+toBeUsed);
 				// tmpNames.add(name1);
 				// tmpNames.add(name2);
 				// tmpNames.add(name3);
@@ -2301,10 +2329,10 @@ public class DBApp {
 				return it;
 			}
 			System.out.println("results size "+results.size());
-			
-			for(int i = 0 ;i<results.size()-1;i++){
+			finalResultSet = results.get(0);
+			for(int i = 1 ;i<results.size()-1;i++){
 				Vector<Hashtable<String,Object>> set1 = results.get(i);
-				Vector<Hashtable<String,Object>> set2 = results.get(i+1);
+				Vector<Hashtable<String,Object>> set2 =finalResultSet;
 				String operator = strarrOperators[i];
 				switch(operator){
 					case "AND":
@@ -2438,7 +2466,8 @@ public class DBApp {
 									else
 										nonIndexedColumns.add(columns[j]);
 									for(int h=0;h<arrSQLTerms.length;h++){
-										if(arrSQLTerms[h].getStrColumnName().equals(columns[j])){
+										if(arrSQLTerms[h].getStrColumnName().equals(columns[j]) && !(conditionsOfIndexedColumns.contains(arrSQLTerms[h]))){
+											
 											conditionsOfNonIndexedColumns.add(arrSQLTerms[h]);
 											break;
 										}
@@ -2447,6 +2476,7 @@ public class DBApp {
 							}
 						}
 	}
+
 
 	System.out.println("indexedColumns: "+indexedColumns);
 	System.out.println("nonIndexedColumns: "+nonIndexedColumns);
@@ -2458,6 +2488,48 @@ public class DBApp {
 	for(int i = 0;i<toBeUsed.size();i++){
 		indexOctrees.add(ocs.get(i));
 	} 
+
+	// Vector<Vector<Hashtable<String,Object>>> R = new Vector<Vector<Hashtable<String,Object>>>();
+
+	// StringTokenizer ST = new StringTokenizer(fullterm,"*");
+	
+	// while(ST.hasMoreTokens()){
+	// 	String columnName1 = ST.nextToken();
+	// 	String columnOpr1 = ST.nextToken();
+	// 	String columnValue1 = ST.nextToken();
+	// 	String midOpr1="";
+	// 	if(ST.hasMoreTokens()){
+	// 		midOpr1 = ST.nextToken();
+		
+	// 	if(indexedColumns.contains(columnName1)){
+	// 		String columnName2 ="";
+	// 		String columnOpr2 = ST.nextToken();
+	// 	     String columnValue2 = ST.nextToken();
+
+
+
+	// 		 String columnName3 ="";
+	// 		 String columnOpr3 = ST.nextToken();
+	// 		  String columnValue3 = ST.nextToken();
+
+	// 		if(ST.hasMoreTokens()){
+	// 			columnName2 = ST.nextToken();
+	// 			columnOpr2 = ST.nextToken();
+	// 			columnValue2 =ST.nextToken();
+
+	// 		}
+
+	// 	}
+	// }
+
+	// }
+
+Vector<List<Tuple>>  octresults= new Vector<>();
+
+
+
+
+
 	for(int i = 0;i<indexOctrees.size();i++){
 		Octree o = indexOctrees.get(i);
 		// SQLTerm sql1 = conditionsOfIndexedColumns.get(3*i);
@@ -2489,18 +2561,56 @@ public class DBApp {
 		Object value3 = s3.getObjValue();
 
 
+List<Tuple> searchRes = o.search(operator1, value1, operator2, value2, operator3, value3);
+		 rs.addAll( searchRes);
+		 octresults.add(searchRes);
 
-		 rs.addAll( o.search(operator1, value1, operator2, value2, operator3, value3));
 		// System.out.println("rs size: "+rs.size());
 
 		//System.out.println("ANA DA5ALT HENA YA RAB");
 
+	}
+	StringTokenizer ST = new StringTokenizer(fullterm,"*");
+	
+    while(ST.hasMoreTokens()){
+		String columnName1 = ST.nextToken();
+		String columnOpr1 = ST.nextToken();
+		String columnValue1 = ST.nextToken();
+		String midOpr1="";
+		if(ST.hasMoreTokens()){
+			midOpr1 = ST.nextToken();
+		
+		if(indexedColumns.contains(columnName1)){
+			String columnName2 ="";
+			String columnOpr2  = "";
+		     String columnValue2 ="" ;
+
+
+
+			 String columnName3 ="";
+			 String columnOpr3 = "";
+			  String columnValue3 = "";
+
+			if(ST.hasMoreTokens()){
+				columnName2 = ST.nextToken();
+				columnOpr2 = ST.nextToken();
+				columnValue2 =ST.nextToken();
+
+			}
+			if(indexedColumns.contains(columnName2)){
+				
+			}
+
+		}
+	}
 	}
 
     //  
 
 			
 	it = rs.iterator();
+
+
 
 
 

@@ -2449,13 +2449,17 @@ public class DBApp {
 					Vector<SQLTerm> conditionsOfNonIndexedColumns=new Vector<SQLTerm>();
 					conditionsOfIndexedColumns=new Vector<SQLTerm>();
 	
+					ArrayList<String> arr = new ArrayList<>();
+
 					for (int j = 0; j<columns.length; j++){
 						for (int k = 0; k<Data.size();k++){
 							if ((Data.get(k)[0]).equals(tableName)){
 								if (Data.get(k)[1].equals(columns[j])){
 									if (!(Data.get(k)[4].equals("null"))) {
 										indexedColumns.add(columns[j]);
+										arr.add(Data.get(k)[4]);
 										for (int h = 0; h < arrSQLTerms.length; h++) {
+											
 											if (arrSQLTerms[h].getStrColumnName().equals(columns[j])) {
 												h1.put(columns[j], arrSQLTerms[h]);
 												conditionsOfIndexedColumns.add(arrSQLTerms[h]);
@@ -2464,7 +2468,10 @@ public class DBApp {
 										}
 									}
 									else
+								{
 										nonIndexedColumns.add(columns[j]);
+										arr.add("null");
+								}
 									for(int h=0;h<arrSQLTerms.length;h++){
 										if(arrSQLTerms[h].getStrColumnName().equals(columns[j]) && !(conditionsOfIndexedColumns.contains(arrSQLTerms[h]))){
 											
@@ -2598,7 +2605,7 @@ List<Tuple> searchRes = o.search(operator1, value1, operator2, value2, operator3
 
 			}
 			if(indexedColumns.contains(columnName2)){
-				
+
 			}
 
 		}

@@ -3,6 +3,7 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.Hashtable;
 import java.util.Iterator;
@@ -2457,9 +2458,9 @@ public class DBApp {
 								if (Data.get(k)[1].equals(columns[j])){
 									if (!(Data.get(k)[4].equals("null"))) {
 										indexedColumns.add(columns[j]);
-										arr.add(Data.get(k)[4]);
+										//arr.add(Data.get(k)[4]);
 										for (int h = 0; h < arrSQLTerms.length; h++) {
-											
+
 											if (arrSQLTerms[h].getStrColumnName().equals(columns[j])) {
 												h1.put(columns[j], arrSQLTerms[h]);
 												conditionsOfIndexedColumns.add(arrSQLTerms[h]);
@@ -2470,7 +2471,7 @@ public class DBApp {
 									else
 								{
 										nonIndexedColumns.add(columns[j]);
-										arr.add("null");
+										//arr.add("null");
 								}
 									for(int h=0;h<arrSQLTerms.length;h++){
 										if(arrSQLTerms[h].getStrColumnName().equals(columns[j]) && !(conditionsOfIndexedColumns.contains(arrSQLTerms[h]))){
@@ -2483,6 +2484,68 @@ public class DBApp {
 							}
 						}
 	}
+
+	
+
+	for(int i = 0;i<arrSQLTerms.length;i++){
+
+		if(indexedColumns.contains(arrSQLTerms[i].getStrColumnName())){
+			System.out.println("Yes it is indexed column");
+			for (int k = 0; k<Data.size();k++){
+				if ((Data.get(k)[0]).equals(tableName)){
+					if (Data.get(k)[1].equals(arrSQLTerms[i].getStrColumnName())){
+						arr.add(Data.get(k)[4]);
+						break;
+		}
+	}
+}
+		}
+		else
+		  arr.add("null");
+	}
+
+	
+	Vector<Vector<Hashtable<String,Object>>> resss = new Vector<Vector<Hashtable<String,Object>>>();
+	for(int i = 0;i<arr.size();i++){
+		System.out.println(Arrays.toString(arr.toArray()));
+		if(arr.get(i).equals("null") || arr.size() - i < 3){
+			Vector<Vector<Hashtable<String,Object>>> ressstmp = new Vector<Vector<Hashtable<String,Object>>>();
+
+			SQLTerm[] arrSqlTermsTmp = new SQLTerm[1];
+			arrSqlTermsTmp[0] = arrSQLTerms[i];
+			evaluateConditionsIndividually(arrSQLTerms, arrSqlTermsTmp[0].getStrTableName(), ressstmp);
+
+			System.out.println("ana gwa el null 3ashan msh 3lya index");
+			System.out.println("results :"+ressstmp);
+
+	}
+	else
+	{
+		Vector<Vector<Hashtable<String,Object>>> ressstmp = new Vector<Vector<Hashtable<String,Object>>>();
+		if(arr.size()-i >= 3){
+
+			if(arr.get(i).equals(arr.get(i+1)) && arr.get(i+1).equals(arr.get(i+2)))
+			{
+				for(int j = 0;j<ocs.size();j++){
+					Octree o = ocs.get(j);
+					if(o.getName().equals(arr.get(i)))
+					{
+						System.out.println(arrSQLTerms[i]);
+						List<Tuple> searchRes = o.search(arrSQLTerms[i].getStrOperator(), arrSQLTerms[i].getObjValue(),arrSQLTerms[i+1].getStrOperator(), arrSQLTerms[i+1].getObjValue(), arrSQLTerms[i+2].getStrOperator(), arrSQLTerms[i+2].getObjValue());
+
+						System.out.println("Search Results: "+searchRes);
+						System.out.println("Ana 3lay index");
+					}
+
+				}
+				
+			}
+			i+=2;
+		}
+
+	}
+}
+	System.out.println("Arr: value" + Arrays.toString(arr.toArray()));
 
 
 	System.out.println("indexedColumns: "+indexedColumns);

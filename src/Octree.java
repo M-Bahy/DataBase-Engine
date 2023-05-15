@@ -44,7 +44,9 @@ public class Octree implements Serializable {
         return colNames;
     }
     
-   
+   public void delete(Tuple tuple){
+        this.root.delete(tuple);
+    }
     
     
    

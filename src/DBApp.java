@@ -3,6 +3,7 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.Hashtable;
 import java.util.Iterator;
@@ -1090,9 +1091,11 @@ public class DBApp {
 	public void insertIntoTable2(String strTableName, Hashtable<String, Object> htblColNameValue) throws DBAppException {     
 		// check if table exit
 		Vector<String> tableNames = new Vector<String>();
+		String pkBahy = "";
+		Object pkValue = "";
 		int pageNumberForIndex = 0;
 		boolean octreeExists = false;
-		String octreeName = "";
+		ArrayList<String> octreeName = new ArrayList<String>();
 		//String [] cols = new String[3];
 		boolean [] condition = new boolean [htblColNameValue.keySet().size()];
 		int count = 0;
@@ -1125,7 +1128,7 @@ public class DBApp {
                 if(values[0].equals(strTableName)) {
 					if(!values[4].equals("null")){
 						octreeExists = true;
-						octreeName = values[4];
+						octreeName.add( values[4]);
 						
 					}
                 	// we got the table
@@ -1219,6 +1222,7 @@ public class DBApp {
 						// instead of == "True", use compareto(String)
                 		isClustering = true;
                 	    pk = values[1];
+						pkBahy=values[1];
 						thePK = pk;
                 	    dataType = values[2];
                 	}
@@ -1285,6 +1289,7 @@ public class DBApp {
 					out.writeObject(p);
 					out.close();
 					fileOut.close();
+					updateOctreeAfterInserting(htblColNameValue, pkBahy, octreeExists, octreeName,1);
 					
 					
 				} catch (Exception i) {
@@ -1372,6 +1377,7 @@ public class DBApp {
 							Hashtable<String, Object> shiftedRow = pp.getData().get(shiftedindex);
 							 // last entry to shift 
 							pp.getData().remove(shiftedindex);
+							// we stoped here
 							
 							pp.setSize(pp.getSize() - 1);
 							t.getRange().get(index).setMax(pp.getData().get(pp.getData().size()-1).get(pk));
@@ -1381,13 +1387,15 @@ public class DBApp {
 							//serialize pp 
 							//Date gg = (Date) shiftedRow.get("date_added");
 							
-							
+							updateOctreeAfterInserting(htblColNameValue, pkBahy, octreeExists, octreeName
+							,Integer.parseInt(pageID));
 							String oldPID = pageID;
 						
 							try {
 								int i = 0;
 								Object oldMAX = null;
 								Object oldMIN = null;
+								//updateOctreeAfterInserting(htblColNameValue, pkBahy, octreeExists, octreeName);
 								while(true){
 										index = t.search(shiftedRow.get(pk), dataType);
 										pageID = t.getIds().get( index);
@@ -1464,6 +1472,8 @@ public class DBApp {
 									out.writeObject(tableV);
 									out.close();
 									fileOut.close();
+									updateOctreeAfterInserting(htblColNameValue, pkBahy, octreeExists, octreeName
+									,Integer.parseInt(pageID));
 									
 									
 								} catch (Exception e) {
@@ -1593,6 +1603,8 @@ public class DBApp {
 							tableV.add(t);
 							FileOutputStream fileOut = new FileOutputStream(strTableName + ".bin");
 							ObjectOutputStream out = new ObjectOutputStream(fileOut);
+							updateOctreeAfterInserting(htblColNameValue, pkBahy, octreeExists, octreeName
+							,Integer.parseInt(pageID));
 							out.writeObject(tableV);
 							out.close();
 							fileOut.close();
@@ -1697,6 +1709,8 @@ public class DBApp {
 								tableV=null;
 								fileOut=null;
 								out=null;	
+								updateOctreeAfterInserting(htblColNameValue, pkBahy, octreeExists, octreeName,
+								Integer.parseInt(pageID));
 									
 							} catch (Exception e) {
 								//e.printStackTrace();
@@ -1732,6 +1746,8 @@ public class DBApp {
 							tableV=null;
 								fileOut=null;
 								out=null;	
+								updateOctreeAfterInserting(htblColNameValue, pkBahy, octreeExists, octreeName
+								, Integer.parseInt(pageID));
 								
 						} catch (Exception i) {
 							//i.printStackTrace();
@@ -1758,6 +1774,57 @@ public class DBApp {
 		
 		// here we should serialize the "insert 13" probllem
 	}
+
+	private void updateOctreeAfterInserting(Hashtable<String, Object> htblColNameValue, String pkBahy, boolean octreeExists,
+			ArrayList<String> octreeName,int p) throws DBAppException {
+		Object pkValue;
+		if(octreeExists){
+			for(int i = 0 ;i<octreeName.size();i++){
+				String name = octreeName.get(i);
+				Octree octree = null;
+				int toBeDeleted = -1;
+				for(int j = 0 ;j<ocs.size();j++){
+					if(ocs.get(j).getName().equals(name)){
+						octree = ocs.get(j);
+						toBeDeleted = j;
+						break;
+					}
+				}
+				String [] colNames =  octree.getColNames();
+				String col1 = colNames[0];
+				String col2 = colNames[1];
+				String col3 = colNames[2];
+				pkValue = htblColNameValue.get(pkBahy);
+				Reference r = new Reference(p,pkBahy,pkValue);
+				//ArrayList<Reference> refs = new ArrayList<>();
+				//refs.add(r);
+				Tuple t1 = new Tuple(htblColNameValue.get(col1),
+				htblColNameValue.get(col2),
+				htblColNameValue.get(col3),
+				r);
+				octree.insert(t1);
+
+				ocs.remove(toBeDeleted);
+				serializeOctree(octree);
+				ocs = (Vector<Octree>) deserialize("Octrees");
+			
+			}
+			
+
+
+
+
+			
+		}
+	}
+	
+	
+	
+	
+	
+	
+	
+	
 	// private void insertIntoIndex(Hashtable<String, Object> htblColNameValue, boolean octreeExists, String octreeName,int pageNumber) {
 	// 	if(octreeExists){
 	// 		Octree oct = null;
@@ -2457,7 +2524,7 @@ public class DBApp {
 								if (Data.get(k)[1].equals(columns[j])){
 									if (!(Data.get(k)[4].equals("null"))) {
 										indexedColumns.add(columns[j]);
-										arr.add(Data.get(k)[4]);
+										//arr.add(Data.get(k)[4]);
 										for (int h = 0; h < arrSQLTerms.length; h++) {
 											
 											if (arrSQLTerms[h].getStrColumnName().equals(columns[j])) {
@@ -2470,7 +2537,7 @@ public class DBApp {
 									else
 								{
 										nonIndexedColumns.add(columns[j]);
-										arr.add("null");
+										//arr.add("null");
 								}
 									for(int h=0;h<arrSQLTerms.length;h++){
 										if(arrSQLTerms[h].getStrColumnName().equals(columns[j]) && !(conditionsOfIndexedColumns.contains(arrSQLTerms[h]))){
@@ -2483,6 +2550,67 @@ public class DBApp {
 							}
 						}
 	}
+
+
+
+	for(int i = 0;i<arrSQLTerms.length;i++){
+
+		if(indexedColumns.contains(arrSQLTerms[i].getStrColumnName())){
+			System.out.println("Yes it is indexed column");
+			for (int k = 0; k<Data.size();k++){
+				if ((Data.get(k)[0]).equals(tableName)){
+					if (Data.get(k)[1].equals(arrSQLTerms[i].getStrColumnName())){
+						arr.add(Data.get(k)[4]);
+						break;
+		}
+	}
+}
+		}
+		else
+		  arr.add("null");
+	}
+
+	
+	Vector<Vector<Hashtable<String,Object>>> resss = new Vector<Vector<Hashtable<String,Object>>>();
+	for(int i = 0;i<arr.size();i++){
+		System.out.println(Arrays.toString(arr.toArray()));
+		if(arr.get(i).equals("null") || arr.size() - i < 3){
+			Vector<Vector<Hashtable<String,Object>>> ressstmp = new Vector<Vector<Hashtable<String,Object>>>();
+
+			SQLTerm[] arrSqlTermsTmp = new SQLTerm[1];
+			arrSqlTermsTmp[0] = arrSQLTerms[i];
+			evaluateConditionsIndividually(arrSQLTerms, arrSqlTermsTmp[0].getStrTableName(), ressstmp);
+
+			System.out.println("ana gwa el null 3ashan msh 3lya index");
+			System.out.println("results :"+ressstmp);
+
+	}
+	else
+	{
+		Vector<Vector<Hashtable<String,Object>>> ressstmp = new Vector<Vector<Hashtable<String,Object>>>();
+		if(arr.size()-i >= 3){
+
+			if(arr.get(i).equals(arr.get(i+1)) && arr.get(i+1).equals(arr.get(i+2)))
+			{
+				for(int j = 0;j<ocs.size();j++){
+					Octree o = ocs.get(j);
+					if(o.getName().equals(arr.get(i)))
+					{
+						System.out.println(arrSQLTerms[i]);
+						List<Tuple> searchRes = o.search(arrSQLTerms[i].getStrOperator(), arrSQLTerms[i].getObjValue(),arrSQLTerms[i+1].getStrOperator(), arrSQLTerms[i+1].getObjValue(), arrSQLTerms[i+2].getStrOperator(), arrSQLTerms[i+2].getObjValue());
+
+						System.out.println("Search Results: "+searchRes);
+						System.out.println("Ana 3lay index");
+					}
+
+				}
+				
+			}
+			i+=2;
+		}
+
+	}
+}
 
 
 	System.out.println("indexedColumns: "+indexedColumns);

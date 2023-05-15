@@ -140,7 +140,25 @@ public  class OctreeNode  implements Serializable  {
         this.depth = depth;
     }
 
-
+public void delete(Tuple tuple) {
+    Object x = tuple.getX();
+    Object y = tuple.getY();
+    Object z = tuple.getZ();
+    int index = getIndex(x, y, z);
+    if (index != -1 && this.children[0] != null) {
+        this.children[index].delete(tuple);
+        if (this.children[index].data.isEmpty()) {
+            this.children[index] = null;
+        }
+        return;
+    }
+    for (int i = 0; i < this.data.size(); i++) {
+        if (this.data.get(i).getX().equals(x) && this.data.get(i).getY().equals(y) && this.data.get(i).getZ().equals(z)) {
+            this.data.remove(i);
+            return;
+        }
+    }
+}
 
     public void insert( Tuple tuple) {
         Object x = tuple.getX();

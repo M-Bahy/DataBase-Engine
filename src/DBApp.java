@@ -2503,6 +2503,7 @@ public class DBApp {
 			//Vector<Hashtable<String,Object>> resultSet = new Vector<Hashtable<String,Object>>();
 			
 			evaluateConditionsIndividually(arrSQLTerms, tableName, results);
+			System.out.println("Results El Linear: "+ results);
 			//System.out.println(results.get(0));
 			//System.out.println(results.get(1));
 			Vector<Hashtable<String,Object>> finalResultSet = new Vector<Hashtable<String,Object>>();
@@ -2511,12 +2512,39 @@ public class DBApp {
 				it = finalResultSet.iterator();
 				return it;
 			}
+
+/*Vector<Hashtable<String,Object>> finalResultSet   = new Vector<Hashtable<String,Object>>(); 
+System.out.println("Final Result Set before for: "+finalResultSet);
+int k = 0;
+for(int i = 0 ;i<resss.size()-1;i++,k++){
+
+	System.out.println("Final Result Set after for : "+finalResultSet);
+	Vector<Hashtable<String,Object>> set1 = new Vector<Hashtable<String,Object>>();
+	            if(i == 0){
+				 set1= resss.get(i);
+				}
+				else
+				{
+					set1 = finalResultSet;
+				} */
+
+
+
 			System.out.println("results size "+results.size());
-			finalResultSet = results.get(0);
-			for(int i = 1 ;i<results.size()-1;i++){
-				Vector<Hashtable<String,Object>> set1 = results.get(i);
-				Vector<Hashtable<String,Object>> set2 =finalResultSet;
-				String operator = strarrOperators[i-1];
+			finalResultSet = new Vector<Hashtable<String,Object>>();
+			Vector<Hashtable<String,Object>> set1 = new Vector<Hashtable<String,Object>>();
+
+			for(int i = 0 ;i<results.size()-1;i++){
+				if(i == 0){
+					set1= results.get(i);
+				   }
+				   else
+				   {
+					set1 = finalResultSet;
+				   } 
+   
+				Vector<Hashtable<String,Object>> set2 =results.get(i+1);
+				String operator = strarrOperators[i];
 				switch(operator){
 					case "AND":
 					//System.out.println("ana fe el  and");

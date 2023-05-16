@@ -51,16 +51,16 @@ public class DBApp {
 
 	public static void main(String[] args) throws Exception {
 		DBApp dbApp = new DBApp();
-		dbApp.init();
-		createTheTables(dbApp);
-		dbApp.insertStudentRecords(dbApp, 6);
-		printData();
-		String[] index = new String[3];
-		index[0] = "id";
-		index[1] = "gpa";
-		index[2] = "first_name";
-		dbApp.createIndex("students", index);
-		//printData();
+		// dbApp.init();
+		// createTheTables(dbApp);
+		// dbApp.insertStudentRecords(dbApp, 6);
+		// printData();
+		// String[] index = new String[3];
+		// index[0] = "id";
+		// index[1] = "gpa";
+		// index[2] = "first_name";
+		// dbApp.createIndex("students", index);
+	//	printData();
 		//System.out.println(ocs.get(0));
 
 		// Vector<Octree> ocs = (Vector<Octree>)	deserialize("Octrees");
@@ -73,7 +73,7 @@ public class DBApp {
 		SQLTerm s1 = new SQLTerm("students", "id", "=", "82-8772");
 		SQLTerm s2 = new SQLTerm("students", "gpa", "=", 4.32);
 		SQLTerm s3 = new SQLTerm("students", "first_name", "=", "pzSMNq");
-		SQLTerm s4 = new SQLTerm("students", "last_name", "=", "NfdxAL");
+		SQLTerm s4 = new SQLTerm("students", "last_name", "=", "EGpfuC");
 		//82-8772,pzSMNq,NfdxAL,1992-09-28,4.32
 		SQLTerm[] arrSQLTerms = new SQLTerm[4];
 		arrSQLTerms[0] = s1;
@@ -81,7 +81,7 @@ public class DBApp {
 		arrSQLTerms[2] = s3;
 		arrSQLTerms[3] = s4;
 		String[] strarrOperators = new String[3];
-		strarrOperators[0] = "AND";
+		strarrOperators[0] = "OR";
 		strarrOperators[1] = "AND";
 		strarrOperators[2] = "AND";
 		Iterator resultSet = dbApp.selectFromTable(arrSQLTerms, strarrOperators);
@@ -92,7 +92,7 @@ public class DBApp {
 			System.out.println(resultSet.next());
 			//System.out.println("ANA HENA 555555555555555555555555555555555");
 		}
-		System.out.println("ANA HENA 555555555555555555555555555555555");
+		// System.out.println("ANA HENA 555555555555555555555555555555555");
 
 		//printData();
 
@@ -2519,6 +2519,7 @@ public class DBApp {
 				String operator = strarrOperators[i-1];
 				switch(operator){
 					case "AND":
+					//System.out.println("ana fe el  and");
 						for(int j = 0;  j<set1.size()    ;j++){
 							Hashtable<String,Object> row = set1.get(j);
 							//System.out.println(row);
@@ -2530,6 +2531,7 @@ public class DBApp {
 						}
 						break;
 					case "OR":
+					//System.out.println("ana fe el  or");
 						for(int j = 0;  j<set1.size()  ;j++){
 							Hashtable<String,Object> row = set1.get(j);
 							
@@ -2544,6 +2546,7 @@ public class DBApp {
 						}
 						break;
 					case "XOR":
+					//System.out.println("ana fe el  xor");
 						// A' B + A B'
 						Vector<Hashtable<String,Object>> tmp2 = new Vector<Hashtable<String,Object>>();
 						for(int j = 0;  j<set1.size()  ;j++){
@@ -2690,27 +2693,28 @@ public class DBApp {
 	Vector<Vector<Hashtable<String,Object>>> resss = new Vector<Vector<Hashtable<String,Object>>>();
 	for(int i = 0;i<arr.size();i++){
 		System.out.println(Arrays.toString(arr.toArray()));
-		if(arr.get(i).equals("null") || arr.size() - i < 3){
+		if(arr.get(i).equals("null") || arr.size() - i < 3 ||!(arr.get(i).equals(arr.get(i+1)) && arr.get(i+1).equals(arr.get(i+2))  && strarrOperators[i].equals("AND") && strarrOperators[i+1].equals("AND") )){
 			Vector<Vector<Hashtable<String,Object>>> ressstmp = new Vector<Vector<Hashtable<String,Object>>>();
 
 			SQLTerm[] arrSqlTermsTmp = new SQLTerm[1];
 			arrSqlTermsTmp[0] = arrSQLTerms[i];
-			evaluateConditionsIndividually(arrSQLTerms, arrSqlTermsTmp[0].getStrTableName(), ressstmp);
+			evaluateConditionsIndividually(arrSqlTermsTmp, arrSqlTermsTmp[0].getStrTableName(), ressstmp);
 
 			resss.add(ressstmp.get(0));
 
+			System.out.println("arrSqlTerm: "+arrSqlTermsTmp[0]);
+			System.out.println("results :"+ressstmp);
 
 
 			System.out.println("ana gwa el null 3ashan msh 3lya index");
-			System.out.println("results :"+ressstmp);
-
+			
 	}
 	else
 	{
-		Vector<Vector<Hashtable<String,Object>>> ressstmp = new Vector<Vector<Hashtable<String,Object>>>();
+		// Vector<Vector<Hashtable<String,Object>>> ressstmp = new Vector<Vector<Hashtable<String,Object>>>();
 		if(arr.size()-i >= 3){
 
-			if(arr.get(i).equals(arr.get(i+1)) && arr.get(i+1).equals(arr.get(i+2)))
+			if(arr.get(i).equals(arr.get(i+1)) && arr.get(i+1).equals(arr.get(i+2))  && strarrOperators[i].equals("AND") && strarrOperators[i+1] == "AND")
 			{
 				for(int j = 0;j<ocs.size();j++){
 					Octree o = ocs.get(j);
@@ -2727,8 +2731,8 @@ public class DBApp {
 						Iterator<Tuple> tmpIT = searchRes.iterator();
 
          Vector<Hashtable<String, Object>> fr = new Vector<Hashtable<String, Object>>();
-		while(it.hasNext()){
-			Tuple t = (Tuple) it.next();
+		while(tmpIT.hasNext()){
+			Tuple t = (Tuple) tmpIT.next();
 			Hashtable<String, Object> h = new Hashtable<String, Object>();
 			ArrayList<Reference> r = t.getReferences();
 			for(int x = 0;x<r.size();x++){
@@ -2769,11 +2773,15 @@ public class DBApp {
 
 						System.out.println("Search Results: "+searchRes);
 						System.out.println("Ana 3lay index");
+						System.out.println("fr: "+fr);
 					}
 
 				}
 				
 			}
+			
+			strarrOperators[i] = "NO";
+			strarrOperators[i+1] ="NO";
 			i+=2;
 		}
 
@@ -2786,13 +2794,26 @@ public class DBApp {
 	
 // }
 
-Vector<Hashtable<String,Object>> finalResultSet   = resss.get(0);
-for(int i = 1 ;i<resss.size()-1;i++){
-				Vector<Hashtable<String,Object>> set1 = resss.get(i);
-				Vector<Hashtable<String,Object>> set2 =finalResultSet;
-				String operator = strarrOperators[i-1];
+Vector<Hashtable<String,Object>> finalResultSet   = new Vector<Hashtable<String,Object>>(); 
+System.out.println("Final Result Set before for: "+finalResultSet);
+int k = 0;
+for(int i = 0 ;i<resss.size()-1;i++,k++){
+
+	System.out.println("Final Result Set after for : "+finalResultSet);
+	Vector<Hashtable<String,Object>> set1 = new Vector<Hashtable<String,Object>>();
+	            if(i == 0){
+				 set1= resss.get(i);
+				}
+				else
+				{
+					set1 = finalResultSet;
+				}
+				System.out.println("Set1: "+set1);
+				Vector<Hashtable<String,Object>> set2 =resss.get(i+1);
+				String operator = strarrOperators[k];
 				switch(operator){
 					case "AND":
+					    System.out.println("Ana fe el ANd");
 						for(int j = 0;  j<set1.size()    ;j++){
 							Hashtable<String,Object> row = set1.get(j);
 							//System.out.println(row);
@@ -2801,9 +2822,12 @@ for(int i = 1 ;i<resss.size()-1;i++){
 							if(set2.contains(row)){
 								finalResultSet.add(row);
 							}
+							
+							 
 						}
 						break;
 					case "OR":
+					System.out.println("Ana fe el OR");
 						for(int j = 0;  j<set1.size()  ;j++){
 							Hashtable<String,Object> row = set1.get(j);
 							
@@ -2818,6 +2842,7 @@ for(int i = 1 ;i<resss.size()-1;i++){
 						}
 						break;
 					case "XOR":
+					System.out.println("Ana fe el XOR");
 						// A' B + A B'
 						Vector<Hashtable<String,Object>> tmp2 = new Vector<Hashtable<String,Object>>();
 						for(int j = 0;  j<set1.size()  ;j++){
@@ -2845,6 +2870,8 @@ for(int i = 1 ;i<resss.size()-1;i++){
 								finalResultSet.add(row);
 							}
 						}
+						break;
+						default:i--;
 						break;
 						// Distinct
 				}
@@ -3043,7 +3070,7 @@ for(int i = 1 ;i<resss.size()-1;i++){
 	//}
 
 	private void evaluateConditionsIndividually(SQLTerm[] arrSQLTerms, String tableName, Vector<Vector<Hashtable<String, Object>>> results) throws DBAppException {
-		
+		System.out.println("Result in Methods Start: "+results);
 		for (int i = 0;i<arrSQLTerms.length;i++){
 			Vector<Hashtable<String, Object>> resultSet = new Vector<Hashtable<String, Object>>();
 			SQLTerm sql = arrSQLTerms[i];
@@ -3253,6 +3280,7 @@ for(int i = 1 ;i<resss.size()-1;i++){
 				}
 			}
 			/**/
+			System.out.println("Result in Methods endResultset: "+resultSet);
 			results.add(resultSet);
 		}
 	}

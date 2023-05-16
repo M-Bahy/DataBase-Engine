@@ -51,47 +51,63 @@ public class DBApp {
 
 	public static void main(String[] args) throws Exception {
 		DBApp dbApp = new DBApp();
-		// dbApp.init();
-		// createTheTables(dbApp);
-		// dbApp.insertStudentRecords(dbApp, 6);
+		//System.out.println(ocs.get(2));
+		dbApp.init();
+		createTheTables(dbApp);
+		
+		//printData();
+		String[] index = new String[3];
+		index[0] = "id";
+		index[1] = "gpa";
+		index[2] = "first_name";
+		dbApp.createIndex("students", index);
+		dbApp.insertStudentRecords(dbApp, 6);
 		// printData();
-		// String[] index = new String[3];
-		// index[0] = "id";
-		// index[1] = "gpa";
-		// index[2] = "first_name";
-		// dbApp.createIndex("students", index);
-	//	printData();
+
+
 		//System.out.println(ocs.get(0));
+		Hashtable<String, Object> row = new Hashtable<String, Object>();
+		row.put("id", "88-1096");
+		row.put("gpa", 4.32);
+		row.put("first_name", "pzSMNq");
+		row.put("last_name", "EGpfuC");
+		Date dob = new Date(1998 - 1900, 4 - 1, 29);
+            row.put("dob", dob);
+		dbApp.insertIntoTable("students", row);
+		System.out.println(" A&AAAAAAAAAAAAAAAAA "+ocs.size());
+		  System.out.println(ocs.get(0));
+
+		//printData();
 
 		// Vector<Octree> ocs = (Vector<Octree>)	deserialize("Octrees");
 	//	System.out.println(ocs.get(0));
 		// String tableName, String columnName, String operator, Object value
 		// X: 81-8976 Y: 3.19 Z: hWknCP
 		//System.out.println(ocs.size());
-
-		//X: 50-7952 Y: 3.12 Z: ZiDDlx
-		SQLTerm s1 = new SQLTerm("students", "id", "=", "82-8772");
-		SQLTerm s2 = new SQLTerm("students", "gpa", "=", 4.32);
-		SQLTerm s3 = new SQLTerm("students", "first_name", "=", "pzSMNq");
-		SQLTerm s4 = new SQLTerm("students", "last_name", "=", "EGpfuC");
-		//82-8772,pzSMNq,NfdxAL,1992-09-28,4.32
-		SQLTerm[] arrSQLTerms = new SQLTerm[4];
-		arrSQLTerms[0] = s1;
-		arrSQLTerms[1] = s2;
-		arrSQLTerms[2] = s3;
-		arrSQLTerms[3] = s4;
-		String[] strarrOperators = new String[3];
-		strarrOperators[0] = "OR";
-		strarrOperators[1] = "AND";
-		strarrOperators[2] = "AND";
-		Iterator resultSet = dbApp.selectFromTable(arrSQLTerms, strarrOperators);
-		//System.out.println(resultSet.);
-		System.out.println("ANA HENA 555555555555555555555555555555555");
-		while (resultSet.hasNext()) {
+		// System.out.println(ocs);
+		// //X: 50-7952 Y: 3.12 Z: ZiDDlx
+		// SQLTerm s1 = new SQLTerm("students", "id", "=", "82-8772");
+		// SQLTerm s2 = new SQLTerm("students", "gpa", "=", 4.32);
+		// SQLTerm s3 = new SQLTerm("students", "first_name", "=", "pzSMNq");
+		// SQLTerm s4 = new SQLTerm("students", "last_name", "=", "EGpfuC");
+		// //82-8772,pzSMNq,NfdxAL,1992-09-28,4.32
+		// SQLTerm[] arrSQLTerms = new SQLTerm[4];
+		// arrSQLTerms[0] = s1;
+		// arrSQLTerms[1] = s2;
+		// arrSQLTerms[2] = s3;
+		// arrSQLTerms[3] = s4;
+		// String[] strarrOperators = new String[3];
+		// strarrOperators[0] = "OR";
+		// strarrOperators[1] = "AND";
+		// strarrOperators[2] = "AND";
+		// Iterator resultSet = dbApp.selectFromTable(arrSQLTerms, strarrOperators);
+		// //System.out.println(resultSet.);
+		// System.out.println("ANA HENA 555555555555555555555555555555555");
+		// while (resultSet.hasNext()) {
 			
-			System.out.println(resultSet.next());
-			//System.out.println("ANA HENA 555555555555555555555555555555555");
-		}
+		// 	System.out.println(resultSet.next());
+		// 	//System.out.println("ANA HENA 555555555555555555555555555555555");
+		// }
 		// System.out.println("ANA HENA 555555555555555555555555555555555");
 
 		//printData();
@@ -121,6 +137,10 @@ public class DBApp {
 
         Hashtable<String, Object> row = new Hashtable<>();
         while ((record = studentsTable.readLine()) != null && c > 0) {
+			System.out.println(ocs);
+			System.out.println();
+			System.out.println();
+			System.out.println("IBRAHIM WAS HERE : "+ocs.size());
             String[] fields = record.split(",");
 
             row.put("id", fields[0]);
@@ -1782,6 +1802,7 @@ public class DBApp {
             
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
+			// This should be commented back
 			//e.printStackTrace();
 			throw new DBAppException();
 		}
@@ -1834,6 +1855,14 @@ public class DBApp {
 			ArrayList<String> octreeName,int p) throws DBAppException {
 		Object pkValue;
 		if(octreeExists){
+			System.out.println(octreeName);
+			for(int i = 0;i<octreeName.size();i++){
+				String name = octreeName.remove(i);
+				while(octreeName.contains(name)){
+					octreeName.remove(name);
+				}
+				octreeName.add(name);
+			}
 			for(int i = 0 ;i<octreeName.size();i++){
 				String name = octreeName.get(i);
 				Octree octree = null;
@@ -1858,10 +1887,12 @@ public class DBApp {
 				htblColNameValue.get(col3),
 				r);
 				octree.insert(t1);
-
+				System.out.println("dsdsds"+ocs.size());
 				ocs.remove(toBeDeleted);
+				System.out.println("dsdsds"+ocs.size());
 				serializeOctree(octree);
-				ocs = (Vector<Octree>) deserialize("Octrees");
+				System.out.println("dsdsds"+ocs.size());
+				
 			
 			}
 			
@@ -1869,7 +1900,7 @@ public class DBApp {
 
 
 
-			
+		ocs = (Vector<Octree>) deserialize("Octrees");	
 		}
 	}
 	
@@ -2295,10 +2326,17 @@ public class DBApp {
 	public static void serializeOctree (Octree o) throws DBAppException {
 		FileOutputStream fileOut;
 		ObjectOutputStream out;
-		Vector<Octree> ocs = null;
+		//Vector<Octree> ocs = null;
 		boolean exists = false;
 		try{
-		ocs = (Vector<Octree>)	deserialize("Octrees");
+		//ocs = (Vector<Octree>)	deserialize("Octrees");
+		File file = new File("Octrees.bin");
+ 
+			if (file.delete()) {
+			 System.out.println("File " + "Octrees.bin" + " deleted successfully.");
+		   } else {
+			 System.out.println("Failed to delete file " + "Octrees.bin");
+		}
 		exists = true;
 		}
 		catch(Exception e) {
@@ -2346,7 +2384,7 @@ public class DBApp {
 				throw new DBAppException();
 			}
 		}
-
+		ocs =  (Vector<Octree>) deserialize("Octrees");
 
 		/*try {
 			//Vector<String> p = new Vector<String>();
@@ -2553,7 +2591,7 @@ for(int i = 0 ;i<resss.size()-1;i++,k++){
 							//System.out.println(row);
 							//System.out.println(set2);
 							//System.out.println(set2.contains(row));
-							if(set2.contains(row)){
+							if(set2.contains(row) && !finalResultSet.contains(row)){
 								finalResultSet.add(row);
 							}
 						}

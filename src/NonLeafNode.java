@@ -7,7 +7,8 @@ public class NonLeafNode implements Node {
         this.min = min;
         this.max = max;
     }
-
+    // BAHY hena
+    //omar 
     public Node[] getChildren() {
         return children;
     }

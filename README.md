@@ -13,10 +13,7 @@ A simple database engine implemented in Java with paged storage and Octree-based
 ## Project structure
 - Core classes:
   - [src/DBApp.java](src/DBApp.java) — entry point, API, serialization, config.
-  - [src/Table.java](src/Table.java), [src/Page.java](src/Page.java), [src/Tuple.java](src/Tuple.java)
-  - [src/Octree.java](src/Octree.java), [src/OctreeNode.java](src/OctreeNode.java), [src/Reference.java](src/Reference.java), [src/Range.java](src/Range.java)
   - [src/SQLTerm.java](src/SQLTerm.java) — selection predicates
-  - [src/DBAppException.java](src/DBAppException.java)
 - Runtime artifacts:
   - table metadata: metadata.csv, table names: tableNames.bin
   - tables: {Table}.bin, pages: {Table}Page{ID}.bin
@@ -104,5 +101,3 @@ Reference implementations and examples:
 - Demo helpers in [src/DBApp.java](src/DBApp.java) can load rows from the CSVs to populate tables.
 - Runtime files (.bin, metadata.csv) are created in the project root.
 - Adjust config before first run to avoid re-initialization overwriting values.
-
-##
